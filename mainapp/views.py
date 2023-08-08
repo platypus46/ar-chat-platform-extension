@@ -4,6 +4,9 @@ from django.http import JsonResponse
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .models import CustomUser, Friendship
 
+def lobby(request):
+    return render(request, 'lobby.html')
+
 def signup_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)

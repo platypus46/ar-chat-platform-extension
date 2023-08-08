@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class CustomUser(AbstractUser):
-    full_name = models.CharField(max_length=100)
+    full_name = models.CharField(max_length=100, default='')
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     is_on_call = models.BooleanField(default=False)
 
@@ -18,7 +18,7 @@ class ChatRoom(models.Model):
     participants = models.ManyToManyField(CustomUser, related_name='chat_rooms')
 
 class ChatMessage(models.Model):
-    chat_room = models.ForeignKey(ChatRoom, related_name='messages', on_delete=models.CASCADE)
+    chat_room = models.ForeignKey(ChatRoom, related_name='messages', on_delete=models.CASCADE, null=True)
     sender = models.ForeignKey(CustomUser, related_name='sent_messages', on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)

@@ -15,6 +15,7 @@ const animationInterval = setInterval(() => {
 
   if (currentLength >= textToAnimate.length) {
     clearInterval(animationInterval);
+    document.getElementById("gray-box").style.display = "block";
   }
   currentLength++;
-}, 300); 
+}, 200); 

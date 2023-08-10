@@ -21,8 +21,14 @@
 
 #gray-box .button-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* 로그인 버튼 중앙 정렬 */
   margin-top: 5vh;
+}
+
+#gray-box .signup-button-container {
+  display: flex;
+  justify-content: center; /* 회원가입 버튼 중앙 정렬 */
+  margin-top: 2vh; /* 로그인 버튼과의 간격 */
 }
 
 #gray-box input[type="text"],
@@ -59,6 +65,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 
 
 

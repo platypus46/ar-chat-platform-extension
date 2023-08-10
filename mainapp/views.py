@@ -3,10 +3,6 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .models import CustomUser, Friendship
-from django.http import HttpResponseRedirect
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-
 
 def login_view(request):
     return render(request, 'login.html')

@@ -7,14 +7,19 @@
   </head>
   <body>
     <div id="gray-box" style="display: none;">
-      <div class="input-container">
-        <input type="text" placeholder="아이디" />
-        <input type="password" placeholder="비밀번호" />
-      </div>
-      <div class="button-container">
-        <button>로그인</button>
+      <form id="login-form">
+        <div class="input-container">
+          <input type="text" name="username" placeholder="아이디" />
+          <input type="password" name="password" placeholder="비밀번호" />
+        </div>
+        <div class="button-container">
+          <button type="submit">로그인</button>
+        </div>
+      </form>
+      <div class="signup-button-container">
         <button onclick="showSignup()">회원가입</button>
       </div>
+    </div>
     </div>
     <div id="signup-overlay">
       <div id="signup-box">

@@ -1,44 +1,49 @@
-{% load static %}
 <!DOCTYPE html>
-<html>
-  <head>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  </head>
-  <body>
-    <a-scene id="scene">
-      <a-text id="title" value="title" position="0 2 -5" scale="3 3 3" color="#00FF00"></a-text>
-      <a-camera></a-camera>
-    </a-scene>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>음성 녹음 및 재생</title>
+</head>
+<body>
+    <button id="start">녹음 시작</button>
+    <button id="stop" disabled>녹음 중지</button>
+    <button id="play" disabled>재생</button>
+    <audio id="audio"></audio>
 
     <script>
-      window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-      recognition.interimResults = true; // 실시간 결과
-      recognition.lang = 'en'; // 영어 인식
+        let mediaRecorder;
+        let audioChunks = [];
 
-      recognition.addEventListener('result', (e) => {
-        const text = Array.from(e.results)
-          .map(result => result[0].transcript)
-          .join('');
+        document.getElementById('start').addEventListener('click', function() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
 
-        // A-Frame 엔터티의 텍스트 업데이트
-        document.getElementById('title').setAttribute('value', text);
-      });
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        document.getElementById('audio').src = audioUrl;
+                        document.getElementById('play').disabled = false;
+                    };
 
-      recognition.addEventListener('end', recognition.start); // 음성 인식이 끝나면 다시 시작
+                    mediaRecorder.start();
+                    document.getElementById('stop').disabled = false;
+                });
+        });
 
-      // VR 모드 진입 이벤트
-      document.getElementById('scene').addEventListener('enter-vr', function () {
-        recognition.start(); // 음성 인식 시작
-      });
+        document.getElementById('stop').addEventListener('click', function() {
+            mediaRecorder.stop();
+            document.getElementById('stop').disabled = true;
+        });
 
-      // VR 모드 종료 이벤트
-      document.getElementById('scene').addEventListener('exit-vr', function () {
-        recognition.stop(); // 음성 인식 중지
-      });
-
-      // 기본 상태에서도 음성 인식을 시작하려면 아래 줄을 유지
-      recognition.start();
+        document.getElementById('play').addEventListener('click', function() {
+            document.getElementById('audio').play();
+        });
     </script>
-  </body>
+</body>
 </html>

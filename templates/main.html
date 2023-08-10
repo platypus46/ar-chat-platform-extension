@@ -1,192 +1,132 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
-<head>
-    <title>메신저</title>
-</head>
-<body>
-    <!-- 메인 화면 -->
-    <div id="main-content">
-        <h2>Main</h2>
-        <h3>|친구목록|</h3>
-        <!-- 친구 목록 표시 -->
-        <ul id="friend-list">
-            {% for friend in friends %}
-            <li>
-                {{ friend.friend.username }}
-                <button class="friend-delete-button" data-friendname="{{ friend.friend.username }}">Delete</button>
-                <button class="chat-button" data-friendname="{{ friend.friend.username }}">Chat</button>
-            </li>
-            {% endfor %}
-        </ul>
-        <!-- 친구 추가 입력란 -->
-        <input id="friend-add-input" type="text" size="100">
-        <input id="friend-add-submit" type="button" value="친구 추가">
-    </div>
-
-    <!-- 채팅 박스 -->
-    <div id="chat-box" style="display: none;">
-        <h3 id="chat-title"></h3>
-        <div id="chat-messages"></div>
-        <!-- 채팅 입력란 -->
-        <input id="chat-input" type="text" size="100">
-        <input id="chat-submit" type="button" value="메시지 전송">
-        <button id="chat-exit">Exit</button>
-    </div>
-
-    <script>
-        // WebSocket 연결 함수
-        var socket;
-
-        function connectWebSocket() {
-            var socketURL = 'ws://' + window.location.host + '/ws/main/{{ user.username }}/';
-            socket = new WebSocket(socketURL);
-
-            // WebSocket 메시지 수신 이벤트 핸들러
-            socket.onmessage = function(e) {
-                var data = JSON.parse(e.data);
-                // 친구 추가 메시지 처리
-                if ('friend_add' in data) {
-                    // 친구 추가
-                    var friend_add = data['friend_add'];
-                    var newListItem = document.createElement('li');
-                    newListItem.innerHTML = friend_add + 
-                    '<button class="friend-delete-button" data-friendname="' + friend_add + '">삭제</button>' +
-                    '<button class="chat-button" data-friendname="' + friend_add + '">채팅</button>';
-                    document.querySelector('#friend-list').appendChild(newListItem);
-
-                    newListItem.querySelector('.friend-delete-button').onclick = function(e) {
-                        var friendName = e.target.getAttribute('data-friendname');
-                        socket.send(JSON.stringify({
-                            'friend_delete': friendName
-                        }));
-                    };
-
-                    newListItem.querySelector('.chat-button').onclick = function(e) {
-                        var friendName = e.target.getAttribute('data-friendname');
-                        document.querySelector('#chat-title').textContent = friendName;
-                        document.querySelector('#main-content').style.display = 'none';
-                        document.querySelector('#chat-box').style.display = 'block';
-                        socket.send(JSON.stringify({
-                            'chat_start': friendName
-                        }));
-                    };
-                }
-                // 친구 삭제 메시지 처리
-                else if ('friend_delete' in data) {
-                    // 친구 삭제
-                    var friendName = data['friend_delete'];
-                    var listItems = document.querySelectorAll('#friend-list li');
-                    for (var i = 0; i < listItems.length; i++) {
-                        if (listItems[i].textContent.includes(friendName)) {
-                            listItems[i].remove();
-                            break;
-                        }
-                    }
-                }
-                // 채팅 메시지 처리
-                else if ('chat_message' in data && 'sender' in data) {
-                    // 채팅 메시지
-                    var chat_message = data['chat_message'];
-                    var sender = data['sender'];
-                    var messageElement = document.createElement('p');
-                    if (sender === '{{ user.username }}') {
-                        messageElement.className = 'my-message';
-                    } else {
-                        messageElement.className = 'friend-message';
-                    }
-                    messageElement.textContent = sender + ': ' + chat_message;
-                    document.querySelector('#chat-messages').appendChild(messageElement);
-                }
-                // 채팅 시작 메시지 처리
-                else if ('chat_start' in data) {
-                    // 채팅 시작
-                    var messages = data['chat_start'];
-                    var chatMessagesElement = document.querySelector('#chat-messages');
-                    chatMessagesElement.innerHTML = '';
-                    for (var i = 0; i < messages.length; i++) {
-                        var messageElement = document.createElement('p');
-                        if (messages[i]['sender'] === '{{ user.username }}') {
-                            messageElement.className = 'my-message';
-                        } else {
-                            messageElement.className = 'friend-message';
-                        }
-                        messageElement.textContent = messages[i]['sender'] + ': ' + messages[i]['message'];
-                        chatMessagesElement.appendChild(messageElement);
-                    }
-                    chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
-                }
-            };
-
-            // WebSocket 연결 해제 이벤트 핸들러
-            socket.onclose = function(e) {
-                console.error('Chat socket closed unexpectedly');
-                socket.close();
-                connectWebSocket();
-            };
-        }
-
-        // 초기에 WebSocket 연결 수행
-        connectWebSocket();
-
-        // 친구 추가 입력란
-        document.querySelector('#friend-add-input').focus();
-        document.querySelector('#friend-add-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  
-                document.querySelector('#friend-add-submit').click();
-            }
-        };
-
-        // 친구 추가 버튼 클릭 이벤트
-        document.querySelector('#friend-add-submit').onclick = function(e) {
-            var messageInputDom = document.querySelector('#friend-add-input');
-            var friend_add = messageInputDom.value;
-            socket.send(JSON.stringify({
-                'friend_add': friend_add
-            }));
-            messageInputDom.value = '';
-        };
-
-        // 동적 생성된 요소를 위한 클릭 이벤트 리스너 추가
-        document.addEventListener('click', function(e) {
-            if (e.target && e.target.classList.contains('friend-delete-button')) {
-                var friendName = e.target.getAttribute('data-friendname');
-                socket.send(JSON.stringify({
-                    'friend_delete': friendName
-                }));
-            } else if (e.target && e.target.classList.contains('chat-button')) {
-                var friendName = e.target.getAttribute('data-friendname');
-                document.querySelector('#chat-title').textContent = friendName;
-                document.querySelector('#main-content').style.display = 'none';
-                document.querySelector('#chat-box').style.display = 'block';
-                socket.send(JSON.stringify({
-                    'chat_start': friendName
-                }));
-            }
-        });
-
-        // 채팅방 나가기 버튼 클릭 이벤트
-        document.querySelector('#chat-exit').onclick = function(e) {
-            document.querySelector('#chat-messages').innerHTML = ''; //비우고 나감
-            document.querySelector('#chat-box').style.display = 'none';
-            document.querySelector('#main-content').style.display = 'block';
-        };
-
-        // 채팅 입력란 이벤트
-        document.querySelector('#chat-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {
-                document.querySelector('#chat-submit').click();
-            }
-        };
-
-        // 채팅 메시지 전송 버튼 클릭 이벤트
-        document.querySelector('#chat-submit').onclick = function(e) {
-            var messageInputDom = document.querySelector('#chat-input');
-            var message = messageInputDom.value;
-            socket.send(JSON.stringify({
-                'chat_message': message
-            }));
-            messageInputDom.value = '';
-        };
-    </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- UTF-8 인코딩 설정 -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.misc.min.js"></script>
+    <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
+    <script src="https://unpkg.com/super-hands@^3.0.3/dist/super-hands.min.js"></script>
+    <link rel="stylesheet" href="{% static 'main/css/main.css' %}" />
+  </head>
+  <body>
+    <a-scene physics="debug: true" light="defaultLightsEnabled:false">
+      <a-light type="ambient" color="#888"></a-light>
+      <a-light
+        type="directional"
+        color="#FFF"
+        intensity="1"
+        position="2 4 -3"
+      ></a-light>
+      <a-entity
+        id="rightHand"
+        laser-controls="hand: right"
+        raycaster="objects: .clickable; showLine: true"
+      ></a-entity>
+      <a-camera
+        ><a-entity
+          id="hideUIButton"
+          geometry="primitive: circle; radius: 0.1"
+          material="color: red"
+          position="-0.15 0.15 -0.15"
+          class="clickable"
+        ></a-entity>
+      </a-camera>
+      <a-entity
+        id="leftHand"
+        hand-controls="hand: left; handModelStyle: lowPoly"
+        super-hands=""
+      ></a-entity>
+      <a-entity
+        id="ui"
+        geometry="primitive: plane; width: 0.7; height: 1"
+        material="opacity: 0.5; transparent: true; color: white"
+        position="0.2 0.1 -0.5"
+        visible="false"
+        grabbable
+      >
+        <a-entity
+          id="chatbutton"
+          geometry="primitive: circle; radius: 0.05"
+          material="color: white"
+          position="-0.15 -0.1 -0.05"
+          class="clickable"
+        >
+          <a-text
+            value="chatbutton"
+            align="center"
+            color="black"
+            position="0 -0.025 0.01"
+            width="0.5"
+          ></a-text>
+        </a-entity>
+        <a-entity
+          id="button2"
+          geometry="primitive: circle; radius: 0.05"
+          material="color: white"
+          position="0 -0.1 -0.05"
+          class="clickable"
+        >
+          <a-text
+            value="game"
+            align="center"
+            color="black"
+            position="0 -0.025 0.01"
+            width="0.5"
+          ></a-text
+        ></a-entity>
+        <a-entity
+          id="button3"
+          geometry="primitive: circle; radius: 0.05"
+          material="color: white"
+          position="0.15 -0.1 -0.05"
+          class="clickable"
+        >
+          <a-text
+            value="misc"
+            align="center"
+            color="black"
+            position="0 -0.025 0.01"
+            width="0.5"
+          ></a-text
+        ></a-entity>
+        <a-entity
+          id="Cameralock"
+          geometry="primitive: circle; radius: 0.05"
+          material="color: white"
+          position="0.3 -0.1 -0.05"
+          class="clickable"
+        >
+          <a-text
+            value="Camera"
+            align="center"
+            color="black"
+            position="0 -0.025 0.01"
+            width="0.5"
+          ></a-text
+        ></a-entity>
+        <a-entity
+          id="profile"
+          geometry="primitive: plane; width: 0.3; height: 0.3"
+          material="color: blue; shading: flat"
+          position="0 0.15 -0.1"
+        >
+        </a-entity>
+        <a-entity
+          id="chat"
+          geometry="primitive: plane; width:0.4; height: 0.4"
+          material="color:white"
+          position="0 0.15 0"
+          ><a-entity
+            id="chatHeader"
+            geometry="primitive: plane; width:0.4; height: 0.05"
+            material="color:yellow"
+            position="0 0.25 0.01"
+          ></a-entity
+        ></a-entity>
+      </a-entity>
+    </a-scene>
+    <script src="{% static 'main/js/main.js' %}"></script>
+  </body>
 </html>

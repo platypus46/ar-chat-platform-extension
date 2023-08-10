@@ -1,0 +1,9 @@
+/* CSS를 사용하여 버튼의 스타일을 변경 */
+.a-enter-ar-button {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px; 
+  height: 50px; 
+}

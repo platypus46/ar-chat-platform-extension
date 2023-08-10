@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-^2i)m2w9n_)_+*8$pjh@!bj-7c=iy_%iti)z8_pkar*y7@n@r2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','8509-59-1-181-171.ngrok-free.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','856c-59-1-181-171.ngrok-free.app']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     # Add your app
     'mainapp',
     # Add channels
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -81,11 +83,11 @@ ROOT_URLCONF = 'config.urls'
 # CORS 설정
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
-    'https://8509-59-1-181-171.ngrok-free.app',  # 신뢰할 수 있는 출처 추가
+    'https://856c-59-1-181-171.ngrok-free.app',  # 신뢰할 수 있는 출처 추가
 ]
 
 # Security
-CSRF_TRUSTED_ORIGINS = ['https://8509-59-1-181-171.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://856c-59-1-181-171.ngrok-free.app']
 
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'myproject.routing.application'

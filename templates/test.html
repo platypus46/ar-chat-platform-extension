@@ -1,44 +1,44 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
-<head>
-  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-</head>
-<body>
-  <a-scene>
-    <a-entity camera position="0 1.6 0" look-controls></a-entity>
+  <head>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  </head>
+  <body>
+    <a-scene id="scene">
+      <a-text id="title" value="title" position="0 2 -5" scale="3 3 3" color="#00FF00"></a-text>
+      <a-camera></a-camera>
+    </a-scene>
 
-    <!-- a-input 컴포넌트를 사용한 텍스트 입력 요소 -->
-    <a-entity
-      a-input="value: inputText; on: input; multiline: false"
-      position="-1.5 1 -3"
-      scale="2 2 2"
-      text="value: Input Text; color: white; width: 2; align: center"
-    ></a-entity>
+    <script>
+      window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.interimResults = true; // 실시간 결과
+      recognition.lang = 'en'; // 영어 인식
 
-    <!-- a-input 컴포넌트로 입력한 텍스트를 출력하는 A-Frame 텍스트 요소 -->
-    <a-text id="displayText" position="1.5 1 -3" align="center" value="Initial Text" color="white"></a-text>
-  </a-scene>
+      recognition.addEventListener('result', (e) => {
+        const text = Array.from(e.results)
+          .map(result => result[0].transcript)
+          .join('');
 
-  <script>
-    const displayText = document.getElementById("displayText");
+        // A-Frame 엔터티의 텍스트 업데이트
+        document.getElementById('title').setAttribute('value', text);
+      });
 
-    AFRAME.registerComponent("a-input", {
-      schema: {
-        value: { default: "", type: "string" },
-        on: { default: "", type: "string" },
-        multiline: { default: false, type: "boolean" },
-      },
-      init: function () {
-        this.eventHandler = this.eventHandler.bind(this);
-        this.el.addEventListener(this.data.on, this.eventHandler);
-      },
-      eventHandler: function (event) {
-        if (!this.data.multiline) {
-          this.data.value = event.target.value;
-          displayText.setAttribute("value", this.data.value);
-        }
-      },
-    });
-  </script>
-</body>
+      recognition.addEventListener('end', recognition.start); // 음성 인식이 끝나면 다시 시작
+
+      // VR 모드 진입 이벤트
+      document.getElementById('scene').addEventListener('enter-vr', function () {
+        recognition.start(); // 음성 인식 시작
+      });
+
+      // VR 모드 종료 이벤트
+      document.getElementById('scene').addEventListener('exit-vr', function () {
+        recognition.stop(); // 음성 인식 중지
+      });
+
+      // 기본 상태에서도 음성 인식을 시작하려면 아래 줄을 유지
+      recognition.start();
+    </script>
+  </body>
 </html>

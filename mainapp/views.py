@@ -1,55 +1,39 @@
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
+from django.contrib.auth import  login
+from django.shortcuts import render
 from django.http import JsonResponse
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .models import CustomUser, Friendship
+from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
-def login(request):
+
+def login_view(request):
     return render(request, 'login.html')
+
+def lobby_view(request):
+    return render(request, 'lobby.html')
 
 def main_view(request, username):
     user = CustomUser.objects.get(username=username)
     friends = Friendship.objects.filter(user=user)
     return render(request, 'main.html', {'user': user, 'friends': friends})
 
-
-
-#로그인 참고용 코드
-def register_login(request):
+def register(request):
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'register':
             username = request.POST.get('username')
+            password = request.POST.get('password1')
             full_name = request.POST.get('full_name')
-            password1 = request.POST.get('password1')
-            password2 = request.POST.get('password2')
-            user = CustomUser.objects.create_user(username=username, password=password1, full_name=full_name)
-            login(request, user)
-            return JsonResponse({'status': 'success'})
-        elif action == 'login':
-            form = CustomAuthenticationForm(request, data=request.POST)
-            if form.is_valid():
-                user = form.get_user()
-                login(request, user)
-                return JsonResponse({'status': 'success'})
-            else:
-                return JsonResponse({'status': 'error', 'errors': form.errors})
-    return render(request, 'test.html', {'register_form': CustomUserCreationForm(), 'login_form': CustomAuthenticationForm()})
 
-#회원가입 참고용 코드
-def validate_step(request, step):
-    if request.method == 'POST':
-        if step == 1:
-            username = request.POST.get('username')
-            return JsonResponse({'status': 'success'})
-        elif step == 2:
-            full_name = request.POST.get('full_name')
-            return JsonResponse({'status': 'success'})
-        elif step == 3:
-            password1 = request.POST.get('password1')
-            password2 = request.POST.get('password2')
-            return JsonResponse({'status': 'success'})
-        else:
-            return JsonResponse({'status': 'error', 'errors': 'Invalid step'})
-    else:
-        return JsonResponse({'status': 'error', 'errors': 'Invalid method'})
+            # 사용자 생성
+            user = CustomUser.objects.create_user(username=username, password=password, full_name=full_name)
+
+            # 사용자 로그인
+            login(request, user)
+            return JsonResponse({'status': 'success'}) 
+
+    return JsonResponse({'status': 'error'})
+
+

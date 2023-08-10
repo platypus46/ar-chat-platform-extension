@@ -1,10 +1,9 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html>
   <head>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <link rel="stylesheet" href="{% static 'login/css/login_box.css' %}">
+    <link rel="stylesheet" href="{% static 'login/css/login_register.css' %}">
   </head>
   <body>
     <div id="gray-box" style="display: none;">
@@ -14,14 +13,32 @@
       </div>
       <div class="button-container">
         <button>로그인</button>
-        <button>회원가입</button>
+        <button onclick="showSignup()">회원가입</button>
       </div>
     </div>
-    <a-scene vr-mode-ui="enabled: false">
+    <div id="signup-overlay">
+      <div id="signup-box">
+        <form id="signup-form">
+          <div class="input-container">
+            <input type="text" name="username" placeholder="아이디" />
+            <input type="text" name="full_name" placeholder="이름" />
+            <input type="password" name="password1" placeholder="비밀번호" />
+            <input type="password" name="password2" placeholder="비밀번호 확인" />
+            <button type="button" onclick="closeSignup()">닫기</button>
+          </div>
+          <div class="button-container">
+            <button type="submit">회원가입</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <a-scene id="aframe-scene" vr-mode-ui="enabled: false">
       <a-camera position="0 20 80"></a-camera>
       <a-text id="animated-text" value="" position="0 30 50" align="center" color="black" width="10" scale="9 9 9"></a-text>
       <a-entity gltf-model="{% static 'login/gltf/background/scene.gltf' %}" rotation="0 90 0"></a-entity>
     </a-scene>
     <script src="{% static 'login/js/animation.js' %}"></script>
+    <script src="{% static 'login/js/login_register.js' %}"></script>
   </body>
 </html>
+

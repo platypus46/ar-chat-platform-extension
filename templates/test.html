@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+</head>
+<body>
+  <a-scene>
+    <a-entity camera position="0 1.6 0" look-controls></a-entity>
+
+    <!-- a-input 컴포넌트를 사용한 텍스트 입력 요소 -->
+    <a-entity
+      a-input="value: inputText; on: input; multiline: false"
+      position="-1.5 1 -3"
+      scale="2 2 2"
+      text="value: Input Text; color: white; width: 2; align: center"
+    ></a-entity>
+
+    <!-- a-input 컴포넌트로 입력한 텍스트를 출력하는 A-Frame 텍스트 요소 -->
+    <a-text id="displayText" position="1.5 1 -3" align="center" value="Initial Text" color="white"></a-text>
+  </a-scene>
+
+  <script>
+    const displayText = document.getElementById("displayText");
+
+    AFRAME.registerComponent("a-input", {
+      schema: {
+        value: { default: "", type: "string" },
+        on: { default: "", type: "string" },
+        multiline: { default: false, type: "boolean" },
+      },
+      init: function () {
+        this.eventHandler = this.eventHandler.bind(this);
+        this.el.addEventListener(this.data.on, this.eventHandler);
+      },
+      eventHandler: function (event) {
+        if (!this.data.multiline) {
+          this.data.value = event.target.value;
+          displayText.setAttribute("value", this.data.value);
+        }
+      },
+    });
+  </script>
+</body>
+</html>

@@ -33,3 +33,6 @@ def register(request):
     return JsonResponse({'status': 'error'})
 
 
+#코드 테스트 용 함수
+def test_view(request):
+    return render(request, 'test.html')

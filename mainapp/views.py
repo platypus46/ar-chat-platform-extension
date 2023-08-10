@@ -4,31 +4,7 @@ from django.http import JsonResponse
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .models import CustomUser, Friendship
 
-def lobby(request):
-    return render(request, 'lobby.html')
-
-def signup_view(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect('main', username=user.username)
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'signup.html', {'form': form})
-
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('main', username=user.username)
+def login(request):
     return render(request, 'login.html')
 
 def main_view(request, username):
@@ -38,7 +14,7 @@ def main_view(request, username):
 
 
 
-#참고용 코드입니다.
+#로그인 참고용 코드
 def register_login(request):
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -60,7 +36,7 @@ def register_login(request):
                 return JsonResponse({'status': 'error', 'errors': form.errors})
     return render(request, 'test.html', {'register_form': CustomUserCreationForm(), 'login_form': CustomAuthenticationForm()})
 
-
+#회원가입 참고용 코드
 def validate_step(request, step):
     if request.method == 'POST':
         if step == 1:

@@ -35,4 +35,5 @@ def register(request):
 
 #코드 테스트 용 함수
 def test_view(request):
-    return render(request, 'test.html')
+    context={}
+    return render(request, 'test.html',context=context)

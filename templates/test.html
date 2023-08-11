@@ -1,49 +1,37 @@
 <!DOCTYPE html>
+
+{% load static %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>음성 녹음 및 재생</title>
+    <title>Django Channels WebRTC</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'test/css/main.css'%}">
 </head>
 <body>
-    <button id="start">녹음 시작</button>
-    <button id="stop" disabled>녹음 중지</button>
-    <button id="play" disabled>재생</button>
-    <audio id="audio"></audio>
+    <h3 id="label-username">USERNAME</h3>
+    <div>
+        <input id="username"><button id="btn-join">Join Room</button>
+    </div>
 
-    <script>
-        let mediaRecorder;
-        let audioChunks = [];
+    <div class="main-grid-container">
+        <div id="video-container">
+            <div><video id="local-video" style="float: left;" autoplay playsinline></video></div>
+            <button id="btn-toggle-audid">Audio Mute</button>
+            <button id="btn-toggle-video">Video Off</button>
+        </div>
 
-        document.getElementById('start').addEventListener('click', function() {
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    mediaRecorder = new MediaRecorder(stream);
-                    mediaRecorder.ondataavailable = event => {
-                        audioChunks.push(event.data);
-                    };
+        <div id="chat">
+            <h3>CHAT</h3>
+            <div id="messages">
+                <ul id="message-list"></ul>
+            </div>
 
-                    mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                        const audioUrl = URL.createObjectURL(audioBlob);
-                        document.getElementById('audio').src = audioUrl;
-                        document.getElementById('play').disabled = false;
-                    };
+            <div><input id="msg"><button id="btn-send-msg">Send Message</button></div>
+            <button id="btn-share-scree">Share Screen</button>
+        </div>
+    </div>
 
-                    mediaRecorder.start();
-                    document.getElementById('stop').disabled = false;
-                });
-        });
-
-        document.getElementById('stop').addEventListener('click', function() {
-            mediaRecorder.stop();
-            document.getElementById('stop').disabled = true;
-        });
-
-        document.getElementById('play').addEventListener('click', function() {
-            document.getElementById('audio').play();
-        });
-    </script>
+    <script type="text/javascript" src="{% static 'test/js/main.js'%}"></script>
 </body>
 </html>

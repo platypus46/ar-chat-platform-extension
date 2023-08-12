@@ -37,3 +37,7 @@ def register(request):
 def test_view(request):
     context={}
     return render(request, 'test.html',context=context)
+
+def test1_view(request):
+    context={}
+    return render(request, 'test1.html')

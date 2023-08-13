@@ -3,13 +3,14 @@
 <html>
   <head>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="{% static 'login/css/login_register.css' %}">
   </head>
   <body>
     <div id="gray-box" style="display: none;">
       <form id="login-form">
         <div class="input-container">
-          <input type="text" name="username" placeholder="아이디" />
+          <input type="text" name="login-username" placeholder="아이디" />
           <input type="password" name="password" placeholder="비밀번호" />
         </div>
         <div class="button-container">
@@ -25,25 +26,41 @@
       <div id="signup-box">
         <form id="signup-form">
           <div class="input-container">
-            <input type="text" name="username" placeholder="아이디" />
-            <input type="text" name="full_name" placeholder="이름" />
-            <input type="password" name="password1" placeholder="비밀번호" />
-            <input type="password" name="password2" placeholder="비밀번호 확인" />
-            <button type="button" onclick="closeSignup()">닫기</button>
+            <div id="step1">
+              <form id="form_step1">
+                  {% csrf_token %}
+                  <label for="username">아이디:</label>
+                  <input type="text" id="signup-username" name="username">
+                  <button type="button" onclick="validateStep(1)">계속</button>
+              </form>
           </div>
-          <div class="button-container">
-            <button type="submit">회원가입</button>
+          <div id="step2" style="display: none;">
+              <form id="form_step2">
+                  {% csrf_token %}
+                  <label for="full_name">닉네임:</label>
+                  <input type="text" id="full_name" name="full_name">
+                  <button type="button" onclick="validateStep(2)">계속</button>
+              </form>
+          </div>
+          <div id="step3" style="display: none;">
+              <form id="form_step3">
+                  {% csrf_token %}
+                  <label for="password1">비밀번호:</label>
+                  <input type="password" id="password1" name="password1">
+                  <label for="password2">비밀번호 확인:</label>
+                  <input type="password" id="password2" name="password2">
+                  <button type="button" onclick="validateStep(3)">회원가입</button>
+              </form>
+          </div>
           </div>
         </form>
       </div>
     </div>
     <a-scene id="aframe-scene" vr-mode-ui="enabled: false">
       <a-camera position="0 20 80"></a-camera>
-      <a-text id="animated-text" value="" position="0 30 50" align="center" color="black" width="10" scale="9 9 9"></a-text>
       <a-entity gltf-model="{% static 'login/gltf/background/scene.gltf' %}" rotation="0 90 0"></a-entity>
     </a-scene>
     <script src="{% static 'login/js/animation.js' %}"></script>
     <script src="{% static 'login/js/login_register.js' %}"></script>
   </body>
 </html>
-

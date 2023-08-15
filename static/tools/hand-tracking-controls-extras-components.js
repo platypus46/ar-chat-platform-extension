@@ -692,7 +692,7 @@ exports.component = void 0;
 const component = AFRAME.registerComponent("finger-cursor", {
   schema: {
     lineColor: {
-      default: "transparent"   //이 부분 임의로 바꿈 ㅠㅠ
+      default: "transparent"   //check
     },
     lineLength: {
       default: "5"
@@ -703,9 +703,9 @@ const component = AFRAME.registerComponent("finger-cursor", {
   },
   init: function () {
     this.el.setAttribute("line", {
-      "color": "transparent",   //이 부분도 임의로 바꿈
+      "color": "transparent",   //check
       "start": "0 0 0",
-      "opacity": 0.25,
+      "opacity": 0,    //check
       "end": "0 0 -2"
     });
     this.el.setAttribute("cursor", {

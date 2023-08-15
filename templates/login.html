@@ -4,9 +4,29 @@
   <head>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/aframe-animation-component@4.1.0/dist/aframe-animation-component.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&family=Open+Sans&display=swap">
+  <style>
+    .title {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-weight: bold;
+      
+    }
+
+    .content {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: normal;
+    }
+  </style>
+
     <link rel="stylesheet" href="{% static 'login/css/login_register.css' %}">
   </head>
   <body>
+    <div class="rotation-controls" style="display: none;">
+      <img id="rotate-left" src="{% static 'login/icon/left.png' %}" onclick="rotateCameraByDegrees('left')" alt="왼쪽으로 회전" />
+      <img id="rotate-right" src="{% static 'login/icon/right.png' %}" onclick="rotateCameraByDegrees('right')" alt="오른쪽으로 회전" />
+    </div>
     <div id="gray-box" style="display: none;">
       <form id="login-form">
         <div class="input-container">
@@ -22,8 +42,7 @@
       </div>
     </div>
     </div>
-    <div id="signup-overlay">
-      <div id="signup-box">
+      <div id="signup-box" style="display: none;">
         <form id="signup-form">
           <div class="input-container">
             <div id="step1">
@@ -52,13 +71,18 @@
                   <button type="button" onclick="validateStep(3)">회원가입</button>
               </form>
           </div>
-          </div>
         </form>
+        <div class="exit-signup-button-container">
+          <button onclick="closeSignup()">나가기</button>
+        </div>
       </div>
     </div>
     <a-scene id="aframe-scene" vr-mode-ui="enabled: false">
-      <a-camera position="0 20 80"></a-camera>
+      <a-entity camera position="0 20 100">
+        <a-entity id="cursor" cursor="rayOrigin: mouse" raycaster></a-entity>
+      </a-entity>
       <a-entity gltf-model="{% static 'login/gltf/background/scene.gltf' %}" rotation="0 90 0"></a-entity>
+      <a-entity id="wooden-sign" gltf-model="{% static 'login/gltf/wooden_sign/scene.gltf' %}"  position="60 -5 50" rotation="0 0 0" scale="5 5 5" visible="false"></a-entity>
     </a-scene>
     <script src="{% static 'login/js/animation.js' %}"></script>
     <script src="{% static 'login/js/login_register.js' %}"></script>

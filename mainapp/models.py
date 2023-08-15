@@ -1,9 +1,13 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+def profile_pic_directory_path(instance, filename):
+    extension = filename.split('.')[-1]
+    return 'profile/{0}.{1}'.format(instance.username, extension)
+
 class CustomUser(AbstractUser):
     full_name = models.CharField(max_length=100, default='')
-    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+    profile_picture = models.ImageField(upload_to=profile_pic_directory_path, null=True, blank=True)
     is_on_call = models.BooleanField(default=False)
 
 class Subscription(models.Model):

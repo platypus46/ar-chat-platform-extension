@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-^2i)m2w9n_)_+*8$pjh@!bj-7c=iy_%iti)z8_pkar*y7@n@r2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '7e5f-59-1-181-171.ngrok-free.app']
+ALLOWED_HOSTS = ['localhost', 'e542-59-1-181-171.ngrok-free.app']
 
 
 # Application definition
@@ -83,11 +83,11 @@ ROOT_URLCONF = 'config.urls'
 # CORS 설정
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
-    'https://7e5f-59-1-181-171.ngrok-free.app',  # 신뢰할 수 있는 출처 추가
+    'https://e542-59-1-181-171.ngrok-free.app',  # 신뢰할 수 있는 출처 추가
 ]
 
 # Security
-CSRF_TRUSTED_ORIGINS = ['https://7e5f-59-1-181-171.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://e542-59-1-181-171.ngrok-free.app']
 
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'platyverse.routing.application'
@@ -143,6 +143,9 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Whitenoise static files
 WHITENOISE_STATIC_PREFIX = '/static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

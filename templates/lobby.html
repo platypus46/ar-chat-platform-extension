@@ -1,1 +1,17 @@
-<h1>{{ full_name }}님이 접속했습니다.</h1>
+{% load static %}
+<html>
+<head>
+    <!-- 외부 CSS 파일 로드 -->
+    <link rel="stylesheet" type="text/css" href="{% static 'lobby/css/lobby.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'lobby/js/profile.js' %}"></script>
+</head>
+<body>
+    <div>
+        <h1 id="title">PLATYVERSE 사전설정</h1>
+        <h2 id="user-info">{{ full_name }}님이 접속했습니다.</h2>
+        <img src="{% if profile_picture %}{{ profile_picture.url }}{% else %}{% static 'lobby/img/default_profile.png' %}{% endif %}" alt="{{ username }}의 프로필 사진" class="profile-pic" id="userProfilePic">
+        <input type="file" id="imageUpload" style="display: none;">
+    </div>
+</body>
+</html>

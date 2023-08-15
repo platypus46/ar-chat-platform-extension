@@ -1,9 +1,9 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render
 from django.http import JsonResponse
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .models import CustomUser, Friendship
 from django.views.decorators.csrf import csrf_exempt
+from .forms import ProfilePictureForm
 
 def login_view(request):
     if request.method == 'POST':
@@ -20,11 +20,23 @@ def login_view(request):
 
 def lobby_view(request):
     user = request.user
+    context = {}
     if user.is_authenticated:
-        full_name = user.full_name 
-        return render(request, 'lobby.html', {'full_name': full_name})
-    else:
-        return render(request, 'lobby.html')
+        context['username'] = user.username
+        context['full_name'] = user.full_name
+        context['profile_picture'] = user.profile_picture if user.profile_picture else None  
+    return render(request, 'lobby.html', context)
+
+@csrf_exempt
+def update_profile(request):
+    if request.method == "POST" and request.user.is_authenticated:
+        form = ProfilePictureForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'status': 'success', 'image_url': request.user.profile_picture.url})
+        else:
+            return JsonResponse({'status': 'error'})
+    return JsonResponse({'status': 'not allowed'})
 
 def main_view(request, username):
     user = CustomUser.objects.get(username=username)

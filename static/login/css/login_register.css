@@ -44,27 +44,56 @@
   border-radius: 5px;
 }
 
-#signup-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
 
 #signup-box {
+  position: fixed;
   background: #f0f0f0;
   width: 300px;
   padding: 20px;
-  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1000; 
 }
 
 
+.rotation-controls {
+  position: absolute;
+  top: 30%; /* 아래 위치에 버튼을 놓기 위해 top을 bottom으로 변경 */
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 1000; 
+}
 
+#rotate-left, #rotate-right {
+  cursor: pointer;
+  width: 40px; /* 이미지 크기 조절 */
+  height: 40px; /* 이미지 크기 조절 */
+}
 
+#help-textbox {
+  position: absolute;
+  background: transparent; /* 배경을 투명하게 변경 */
+  color: white; /* 글씨색을 흰색으로 변경 */
+  border: 1px solid transparent; /* 테두리 투명 */
+  padding: 15px;
+  width: 800px;
+  height: 500px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  font-weight: bold; /* 글씨 굵기를 굵게 설정 */
+  font-size: 20px;
+}
+
+#help-textbox button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent; /* 버튼 배경을 투명하게 변경 */
+  color: white; /* 버튼 내 글씨 색을 흰색으로 변경 */
+  font-weight: bold; /* 글씨 굵기를 굵게 설정 */
+  border: none; /* 버튼 테두리 제거 */
+}

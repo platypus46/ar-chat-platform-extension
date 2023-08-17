@@ -4,13 +4,30 @@
   <head>
     <meta charset="UTF-8" />
     <!-- UTF-8 인코딩 설정 -->
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.misc.min.js"></script>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
-    <script src="https://unpkg.com/super-hands@^3.0.3/dist/super-hands.min.js"></script>
+    <script src="{% static 'tools/aframe-hand-tracking-controls-extras.js' %}"></script>
+    <script src="{% static 'tools/hand-tracking-controls-extras-components.js' %}"></script>
     <link rel="stylesheet" href="{% static 'main/css/main.css' %}" />
   </head>
   <body>
+    <div
+      id="loadingScreen"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <div class="loader"></div>
+    </div>
     <a-scene physics="debug: true" light="defaultLightsEnabled:false">
       <a-light type="ambient" color="#888"></a-light>
       <a-light
@@ -20,112 +37,130 @@
         position="2 4 -3"
       ></a-light>
       <a-entity
-        id="rightHand"
-        laser-controls="hand: right"
-        raycaster="objects: .clickable; showLine: true"
-      ></a-entity>
-      <a-camera
-        ><a-entity
-          id="hideUIButton"
-          geometry="primitive: circle; radius: 0.1"
-          material="color: red"
-          position="-0.15 0.15 -0.15"
-          class="clickable"
-        ></a-entity>
-      </a-camera>
-      <a-entity
         id="leftHand"
-        hand-controls="hand: left; handModelStyle: lowPoly"
-        super-hands=""
+        hand-tracking-controls="hand: left;"
+        hand-tracking-extras
+        ><a-entity
+          finger-cursor
+          raycaster="objects: .clickable; far: 1"
+        ></a-entity
       ></a-entity>
       <a-entity
-        id="ui"
-        geometry="primitive: plane; width: 0.7; height: 1"
-        material="opacity: 0.5; transparent: true; color: white"
-        position="0.2 0.1 -0.5"
-        visible="false"
-        grabbable
+        id="rightHand"
+        hand-tracking-controls="hand: right;"
+        hand-tracking-extras
       >
         <a-entity
-          id="chatbutton"
-          geometry="primitive: circle; radius: 0.05"
-          material="color: white"
-          position="-0.15 -0.1 -0.05"
-          class="clickable"
-        >
-          <a-text
-            value="chatbutton"
-            align="center"
-            color="black"
-            position="0 -0.025 0.01"
-            width="0.5"
-          ></a-text>
-        </a-entity>
-        <a-entity
-          id="button2"
-          geometry="primitive: circle; radius: 0.05"
-          material="color: white"
-          position="0 -0.1 -0.05"
-          class="clickable"
-        >
-          <a-text
-            value="game"
-            align="center"
-            color="black"
-            position="0 -0.025 0.01"
-            width="0.5"
-          ></a-text
-        ></a-entity>
-        <a-entity
-          id="button3"
-          geometry="primitive: circle; radius: 0.05"
-          material="color: white"
-          position="0.15 -0.1 -0.05"
-          class="clickable"
-        >
-          <a-text
-            value="misc"
-            align="center"
-            color="black"
-            position="0 -0.025 0.01"
-            width="0.5"
-          ></a-text
-        ></a-entity>
-        <a-entity
-          id="Cameralock"
-          geometry="primitive: circle; radius: 0.05"
-          material="color: white"
-          position="0.3 -0.1 -0.05"
-          class="clickable"
-        >
-          <a-text
-            value="Camera"
-            align="center"
-            color="black"
-            position="0 -0.025 0.01"
-            width="0.5"
-          ></a-text
-        ></a-entity>
-        <a-entity
-          id="profile"
-          geometry="primitive: plane; width: 0.3; height: 0.3"
-          material="color: blue; shading: flat"
-          position="0 0.15 -0.1"
-        >
-        </a-entity>
-        <a-entity
-          id="chat"
-          geometry="primitive: plane; width:0.4; height: 0.4"
-          material="color:white"
-          position="0 0.15 0"
-          ><a-entity
-            id="chatHeader"
-            geometry="primitive: plane; width:0.4; height: 0.05"
-            material="color:yellow"
-            position="0 0.25 0.01"
-          ></a-entity
+          finger-cursor
+          raycaster="objects: .clickable; far: 1"
         ></a-entity>
       </a-entity>
+      <a-camera id="camera"
+        ><a-entity id="hideUIButton" position="-0.15 -0.3 -0.4">
+          <a-cylinder
+              geometry="radius: 0.03; height: 0.01; segmentsRadial: 32"
+              material="color: green"
+              rotation="90 0 0"
+              class="clickable"
+          ></a-cylinder>
+      </a-entity>
+        <a-entity
+          id="ui"
+          geometry="primitive: plane; width: 0.4; height: 0.55"
+          material="opacity: 0.5; transparent: true; color: white"
+          position="0 0.15 -0.5"
+          visible="false"
+          > <a-entity
+          id="profile"
+          geometry="primitive: plane; width: 0.25; height: 0.25"
+          material="color: blue; opacity: 0.5"
+          position="0 0.13 0.01"
+        ></a-entity>
+          <a-entity
+            id="chat"
+            geometry="primitive: plane; width:0.4; height: 0.4"
+            material="color:white"
+            position="0 0.14 0"
+            ><a-entity
+              id="chatHeader"
+              geometry="primitive: plane; width:0.4; height: 0.05"
+              material="color:yellow"
+              position="0 0.25 0.01"
+            ></a-entity
+          ></a-entity>
+          <a-entity
+            id="chatbutton"
+            geometry="primitive: circle; radius: 0.05"
+            material="color: white"
+            position="-0.15 -0.1 -0.05"
+            class="clickable"
+          >
+            <a-text
+              value="chatbutton"
+              align="center"
+              color="black"
+              position="0 -0.025 0.01"
+              width="0.5"
+            ></a-text>
+          </a-entity>
+          <a-entity
+            id="button2"
+            geometry="primitive: circle; radius: 0.05"
+            material="color: white"
+            position="-0.05 -0.1 -0.05"
+            class="clickable"
+          >
+            <a-text
+              value="game"
+              align="center"
+              color="black"
+              position="0 -0.025 0.01"
+              width="0.5"
+            ></a-text
+          ></a-entity>
+          <a-entity
+            id="button3"
+            geometry="primitive: circle; radius: 0.05"
+            material="color: white"
+            position="0.05 -0.1 -0.05"
+            class="clickable"
+          >
+            <a-text
+              value="misc"
+              align="center"
+              color="black"
+              position="0 -0.025 0.01"
+              width="0.5"
+            ></a-text
+          ></a-entity>
+          <a-entity
+            id="Cameralock"
+            geometry="primitive: circle; radius: 0.05"
+            material="color: white"
+            position="0.15 -0.1 -0.05"
+            class="clickable"
+          >
+            <a-text
+              value="Camera"
+              align="center"
+              color="black"
+              position="0 -0.025 0.01"
+              width="0.5"
+            ></a-text
+          ></a-entity>
+        </a-entity>
+        <!-- Left Control Buttons -->
+        <a-entity position="0.05 -0.3 -0.4" id="xypad">
+          <a-box position="0 0.06 0" width="0.06" height="0.06" depth="0.02" color="blue" class="clickable" id="up"></a-box>
+          <a-box position="0 -0.06 0" width="0.06" height="0.06" depth="0.02" color="blue" class="clickable" id="down"></a-box>
+          <a-box position="-0.06 0 0" width="0.06" height="0.06" depth="0.02" color="blue" class="clickable" id="left"></a-box>
+          <a-box position="0.06 0 0" width="0.06" height="0.06" depth="0.02" color="blue" class="clickable" id="right"></a-box>
+        </a-entity>
+        <a-entity position="0.2 -0.2 -0.4" id="zpad">
+          <a-cylinder position="0 -0.1 0" radius="0.02" height="0.02" color="red" rotation="90 0 0" class="clickable" id="forward"></a-cylinder>
+          <a-cylinder position="0 -0.15 0" radius="0.02" height="0.02" color="red" rotation="90 0 0" class="clickable" id="backward"></a-cylinder>
+        </a-entity>
+      </a-camera>
     </a-scene>
     <script src="{% static 'main/js/main.js' %}"></script>
   </body>

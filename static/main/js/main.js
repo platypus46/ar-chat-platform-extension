@@ -7,9 +7,17 @@ let button2 = document.querySelector("#button2");
 let button3 = document.querySelector("#button3");
 //카메라 락 버튼 지정
 let cameralock = document.querySelector("#Cameralock");
-let camera = document.querySelector("a-camera");
+let camera = document.querySelector("#camera");
+let lockToCamera = false;
 //초기 UI 위치 설정
-let initialUIPosition = { x: 0.2, y: 0.1, z: -0.5 };
+let initialUIPosition = { x: 0, y: 0.15, z: -0.5 };
+//움직임 숫자 지정
+const moveAmount = 0.1;
+
+//동작패드
+let xypad = document.querySelector("#xypad");
+let zpad = document.querySelector("#zpad");
+
 scene.addEventListener("enter-vr", function () {
   ui.setAttribute("visible", "true");
 });
@@ -17,57 +25,6 @@ scene.addEventListener("enter-vr", function () {
 scene.addEventListener("exit-vr", function () {
   ui.setAttribute("visible", "false");
 });
-function initializeCameraLocking() {
-  let lockToCamera = false;
-  // cameralock 클릭 리스너 설정
-  cameralock.addEventListener("click", function () {
-    if (lockToCamera) {
-      // UI 고정 해제
-      lockToCamera = false;
-      // 필요하다면 초기의 다른 위치나 상태로 UI를 복원
-      ui.setAttribute(
-        "position",
-        `${initialUIPosition.x} ${initialUIPosition.y} ${initialUIPosition.z}`
-      );
-    } else {
-      // UI를 카메라 앞에 고정
-      attachUIToCamera();
-      lockToCamera = true;
-    }
-  });
-
-  // UI가 카메라에 고정된 상태에서 카메라가 움직일 때 UI 위치 업데이트
-  camera.addEventListener("componentchanged", function (evt) {
-    if (
-      lockToCamera &&
-      (evt.detail.name === "rotation" || evt.detail.name === "position")
-    ) {
-      attachUIToCamera();
-    }
-  });
-}
-function attachUIToCamera() {
-  const distanceFromCamera = 1;
-
-  let cameraPosition = camera.getAttribute("position");
-  let cameraRotation = camera.getAttribute("rotation");
-
-  let theta = (cameraRotation.y * Math.PI) / 180;
-
-  // UI 위치를 계산합니다.
-  let newUIPosition = {
-    x: cameraPosition.x + distanceFromCamera * Math.sin(theta) + 0.2, // 0.3 값을 조절하여 우측 위치를 조정
-    y: cameraPosition.y + 0.2, // 0.3 값을 조절하여 상단 위치를 조정
-    z: cameraPosition.z - distanceFromCamera * Math.cos(theta),
-  };
-
-  ui.setAttribute(
-    "position",
-    `${newUIPosition.x} ${newUIPosition.y} ${newUIPosition.z}`
-  );
-  ui.setAttribute("rotation", `0 ${cameraRotation.y} 0`);
-}
-
 function initializeChatUI() {
   // 채팅창 기본 선언
   let chat = document.querySelector("#chat");
@@ -93,21 +50,47 @@ function initializeChatUI() {
     }
   });
 }
+function initializeCameraLocking() {
+  // 카메라 락 버튼 클릭 리스너 설정
+  cameralock.addEventListener("click", function () {
+    if (lockToCamera) {
+      // 종속성 해제
+      lockToCamera = false;
+      ui.removeAttribute("look-at"); // look-at 컴포넌트 제거
+      enableUIButtons(); // UI 이동 버튼 활성화
+    } else {
+      // UI를 카메라를 바라보게 설정
+      ui.setAttribute("look-at", "[camera]"); // 카메라의 ID가 'camera'라고 가정
+      lockToCamera = true;
+      disableUIButtons(); // UI 이동 버튼 비활성화
+    }
+  });
+}
 function initializehideUI() {
   //UI숨김버튼 선언
   let UIhide = document.querySelector("#hideUIButton");
-  const initialPosition = "0.35 1 -0.5";
+
   // 버튼을 클릭할 때마다 UI의 visible 상태를 변경
   UIhide.addEventListener("click", function () {
     if (ui.getAttribute("visible")) {
       // UI가 현재 보이는 상태라면 숨기기
       ui.setAttribute("visible", false);
+      xypad.setAttribute("visible", false);
+      zpad.setAttribute("visible", false);
       pauseUI(ui); // 여기서 pauseUI 함수 호출
+      // 만약 lockToCamera가 활성화되어 있다면 해제
+      if (lockToCamera) {
+        lockToCamera = false;
+        ui.removeAttribute("look-at"); // look-at 컴포넌트 제거
+        enableUIButtons(); // UI 이동 버튼 활성화
+      }
     } else {
       // UI가 현재 숨겨진 상태라면 보이게 하기
       ui.setAttribute("visible", true);
+      xypad.setAttribute("visible", true);
+      zpad.setAttribute("visible", true);
       playUI(ui); // 여기서 playUI 함수 호출
-      ui.setAttribute("position", initialPosition);
+      ui.setAttribute("position", positionToString(initialUIPosition));
     }
   });
 }
@@ -128,8 +111,90 @@ function playUI(entity) {
     children[i].play();
   }
 }
+function positionToString(position) {
+  //포지션 환원 함수
+  return `${position.x} ${position.y} ${position.z}`;
+}
+function disableUIButtons() {
+  //UI 이동버튼 무력화
+  const buttons = ["up", "down", "left", "right", "forward", "backward"];
+  buttons.forEach((buttonId) => {
+    const button = document.getElementById(buttonId);
+    button.removeEventListener("click", moveUI);
+    button.setAttribute("material", "opacity", 0.5);
+  });
+}
 
+function enableUIButtons() {
+  //UI 이동버튼 활성화
+  const buttons = ["up", "down", "left", "right", "forward", "backward"];
+  buttons.forEach((buttonId) => {
+    const button = document.getElementById(buttonId);
+    button.addEventListener("click", moveUI);
+    button.setAttribute("material", "opacity", 1.0);
+  });
+}
+function moveUI(event) {
+  const direction = event.target.id;
+  const currentPosition = ui.getAttribute("position");
+  switch (direction) {
+    case "up":
+      ui.setAttribute("position", {
+        x: currentPosition.x,
+        y: currentPosition.y + moveAmount,
+        z: currentPosition.z,
+      });
+      break;
+    case "down":
+      ui.setAttribute("position", {
+        x: currentPosition.x,
+        y: currentPosition.y - moveAmount,
+        z: currentPosition.z,
+      });
+      break;
+    case "left":
+      ui.setAttribute("position", {
+        x: currentPosition.x - moveAmount,
+        y: currentPosition.y,
+        z: currentPosition.z,
+      });
+      break;
+    case "right":
+      ui.setAttribute("position", {
+        x: currentPosition.x + moveAmount,
+        y: currentPosition.y,
+        z: currentPosition.z,
+      });
+      break;
+    case "forward":
+      ui.setAttribute("position", {
+        x: currentPosition.x,
+        y: currentPosition.y,
+        z: currentPosition.z - moveAmount,
+      });
+      break;
+    case "backward":
+      ui.setAttribute("position", {
+        x: currentPosition.x,
+        y: currentPosition.y,
+        z: currentPosition.z + moveAmount,
+      });
+      break;
+  }
+}
+window.addEventListener("DOMContentLoaded", function () {
+  var arButton = document.querySelector(".a-enter-ar-button");
+  if (arButton) {
+    arButton.disabled = true;
+  }
+});
 scene.addEventListener("loaded", function () {
+  // 로딩 스크린 숨기기
+  var loadingScreen = document.getElementById("loadingScreen");
+  if (loadingScreen) {
+    loadingScreen.style.display = "none";
+  }
+
   var vrButton = document.querySelector(".a-enter-vr-button");
   if (vrButton) {
     vrButton.style.display = "none";
@@ -139,12 +204,13 @@ scene.addEventListener("loaded", function () {
   if (arButton) {
     arButton.style.width = "150px";
     arButton.style.height = "50px";
+    arButton.disabled = false; // 버튼 활성화
     arButton.addEventListener("click", function () {
       ui.setAttribute("visible", "true");
     });
   }
-
   initializeCameraLocking();
   initializeChatUI();
   initializehideUI();
+  enableUIButtons();
 });

@@ -9,92 +9,54 @@ let button3 = document.querySelector("#button3");
 let cameralock = document.querySelector("#Cameralock");
 let camera = document.querySelector("#camera");
 let lockToCamera = false;
+//
+let chat = document.querySelector("#chat");
+let profile = document.querySelector("#profile");
 //초기 UI 위치 설정
 let initialUIPosition = { x: 0, y: 0.15, z: -0.5 };
+let currentUIPosition = {
+  x: 0, // 초기 x 좌표
+  y: 0.15, // 초기 y 좌표
+  z: -0.5, // 초기 z 좌표
+};
 //움직임 숫자 지정
 const moveAmount = 0.1;
-
+//HiduUI객체화
+let hideUI = document.querySelector("#hideUIButton");
 //동작패드
 let xypad = document.querySelector("#xypad");
 let zpad = document.querySelector("#zpad");
-
+//채팅,UI 시각화 관련 변수 전역화
+let isUIVisible = true;
+let isChatVisible = false;
 scene.addEventListener("enter-vr", function () {
   ui.setAttribute("visible", "true");
 });
-
 scene.addEventListener("exit-vr", function () {
   ui.setAttribute("visible", "false");
 });
-function initializeChatUI() {
-  // 채팅창 기본 선언
-  let chat = document.querySelector("#chat");
-  chat.setAttribute("visible", false);
-  let isChatVisible = false;
-  let profile = document.querySelector("#profile");
-  // chatbutton 클릭 리스너 설정
-  chatbutton.addEventListener("click", function () {
-    if (isChatVisible) {
-      // 채팅창이 보이는 상태에서 버튼을 눌렀을 때 원래 상태로 복원
-      chat.setAttribute("visible", false); // 채팅창 숨김
-      button2.setAttribute("visible", true); // 버튼 2 보이게 함
-      button3.setAttribute("visible", true); // 버튼 3 보이게 함
-      profile.setAttribute("visible", true); // 프로필 보이게 함
-      isChatVisible = false; // 상태 업데이트
-    } else {
-      // 채팅창이 숨겨진 상태에서 버튼을 눌렀을 때 채팅 UI로 전환
-      chat.setAttribute("visible", true); // 채팅창 보이게 함
-      button2.setAttribute("visible", false); // 버튼 2 숨김
-      button3.setAttribute("visible", false); // 버튼 3 숨김
-      profile.setAttribute("visible", false); // 프로필 숨김
-      isChatVisible = true; // 상태 업데이트
-    }
-  });
+function toggleChat() {
+  //채팅창 띄우기 및 감추기
+  chat.setAttribute("visible", !isChatVisible);
+  button2.setAttribute("visible", isChatVisible);
+  button3.setAttribute("visible", isChatVisible);
+  profile.setAttribute("visible", isChatVisible);
+  isChatVisible = !isChatVisible;
 }
-function initializeCameraLocking() {
-  // 카메라 락 버튼 클릭 리스너 설정
-  cameralock.addEventListener("click", function () {
-    if (lockToCamera) {
-      // 종속성 해제
-      lockToCamera = false;
-      ui.removeAttribute("look-at"); // look-at 컴포넌트 제거
-      enableUIButtons(); // UI 이동 버튼 활성화
-    } else {
-      // UI를 카메라를 바라보게 설정
-      ui.setAttribute("look-at", "[camera]"); // 카메라의 ID가 'camera'라고 가정
-      lockToCamera = true;
-      disableUIButtons(); // UI 이동 버튼 비활성화
-    }
-  });
+function toggleUIVisibility() {
+  //UI전체 숨김 및 노출
+  if (isUIVisible) {
+    pauseall(ui);
+    disableUIButtons();
+  } else {
+    playall(ui);
+    enableUIButtons();
+    ui.setAttribute("position", positionToString(initialUIPosition));
+  }
+  ui.setAttribute("visible", !isUIVisible);
+  isUIVisible = !isUIVisible;
 }
-function initializehideUI() {
-  //UI숨김버튼 선언
-  let UIhide = document.querySelector("#hideUIButton");
-
-  // 버튼을 클릭할 때마다 UI의 visible 상태를 변경
-  UIhide.addEventListener("click", function () {
-    if (ui.getAttribute("visible")) {
-      // UI가 현재 보이는 상태라면 숨기기
-      ui.setAttribute("visible", false);
-      xypad.setAttribute("visible", false);
-      zpad.setAttribute("visible", false);
-      pauseUI(ui); // 여기서 pauseUI 함수 호출
-      // 만약 lockToCamera가 활성화되어 있다면 해제
-      if (lockToCamera) {
-        lockToCamera = false;
-        ui.removeAttribute("look-at"); // look-at 컴포넌트 제거
-        enableUIButtons(); // UI 이동 버튼 활성화
-      }
-    } else {
-      // UI가 현재 숨겨진 상태라면 보이게 하기
-      ui.setAttribute("visible", true);
-      xypad.setAttribute("visible", true);
-      zpad.setAttribute("visible", true);
-      playUI(ui); // 여기서 playUI 함수 호출
-      ui.setAttribute("position", positionToString(initialUIPosition));
-    }
-  });
-}
-function pauseUI(entity) {
+function pauseall(entity) {
   // 엔티티와 그 자식들을 일시 중지
   entity.pause();
   let children = entity.children;
@@ -102,8 +64,7 @@ function pauseUI(entity) {
     children[i].pause();
   }
 }
-
-function playUI(entity) {
+function playall(entity) {
   // 엔티티와 그 자식들을 재개
   entity.play();
   let children = entity.children;
@@ -124,7 +85,6 @@ function disableUIButtons() {
     button.setAttribute("material", "opacity", 0.5);
   });
 }
-
 function enableUIButtons() {
   //UI 이동버튼 활성화
   const buttons = ["up", "down", "left", "right", "forward", "backward"];
@@ -134,53 +94,99 @@ function enableUIButtons() {
     button.setAttribute("material", "opacity", 1.0);
   });
 }
+//친구 추가 및 삭제 코드
+function addFriend(event) {
+  event.preventDefault();
+  let friendName = document.getElementById("friendName").value;
+  // `data-friend-name` 속성을 추가한 친구 항목 생성
+  let newFriendItem = `<div data-friend-name="${friendName}">${friendName} <button onclick='removeFriend("${friendName}")'>X</button></div>`;
+  let currentList = document.querySelector("#friendList").innerHTML;
+  let newList = currentList + newFriendItem;
+  document.querySelector("#friendList").innerHTML = newList;
+  updateScroll();
+  // 추가된 버튼에 이벤트 리스너 연결
+  const deleteButton = document.querySelector(
+    `[data-friend-name="${friendName}"] button`
+  );
+  deleteButton.addEventListener("click", function () {
+    removeFriend(friendName);
+  });
+}
+function showDeleteButtons() {
+  let currentList = document.querySelector("#friendList").innerHTML;
+  let modifiedList = currentList.replace(
+    /<\/div>/g,
+    ' <button class="dynamicDeleteButton">X</button></div>'
+  );
+  document.querySelector("#friendList").innerHTML = modifiedList;
+  const deleteButtons = document.querySelectorAll(".dynamicDeleteButton");
+  deleteButtons.forEach((button) => {
+    button.addEventListener("click", function (event) {
+      const name = event.target.closest("div").getAttribute("data-friend-name");
+      removeFriend(name);
+    });
+  });
+  updateScroll();
+}
+function removeFriend(name) {
+  let currentList = document.querySelector("#friendList").innerHTML;
+  let modifiedList = currentList.replace(
+    new RegExp(
+      `<div>${name} <button onclick='removeFriend("${name}")'>X</button></div>`
+    ),
+    ""
+  );
+  document.querySelector("#friendList").innerHTML = modifiedList;
+  updateScroll();
+}
+function updateScroll() {
+  const list = document.querySelector("#friendList");
+  const container = document.querySelector("#friendListContainer");
+  // 스타일 속성에서 높이 가져오기
+  const styleAttributes = container.getAttribute("style").split(";");
+  let containerHeightInMeters;
+  // 각 스타일 속성을 순회하면서 높이를 찾기
+  for (let attr of styleAttributes) {
+    if (attr.trim().startsWith("height")) {
+      containerHeightInMeters = parseFloat(attr.split(":")[1]);
+      break;
+    }
+  }
+  // width 1m = 987 height 1m = 739
+  // 메터를 픽셀로 변환
+  const containerHeightInPx = containerHeightInMeters * 739;
+  list.style.maxHeight = `${containerHeightInPx}px`;
+  if (list.scrollHeight > list.clientHeight) {
+    list.style.overflowY = "scroll";
+  } else {
+    list.style.overflowY = "hidden";
+  }
+}
 function moveUI(event) {
+  //3차원 좌표부터 변경(실제 UI 움직이기 전)
   const direction = event.target.id;
-  const currentPosition = ui.getAttribute("position");
   switch (direction) {
     case "up":
-      ui.setAttribute("position", {
-        x: currentPosition.x,
-        y: currentPosition.y + moveAmount,
-        z: currentPosition.z,
-      });
+      currentUIPosition.y += moveAmount;
       break;
     case "down":
-      ui.setAttribute("position", {
-        x: currentPosition.x,
-        y: currentPosition.y - moveAmount,
-        z: currentPosition.z,
-      });
+      currentUIPosition.y -= moveAmount;
       break;
     case "left":
-      ui.setAttribute("position", {
-        x: currentPosition.x - moveAmount,
-        y: currentPosition.y,
-        z: currentPosition.z,
-      });
+      currentUIPosition.x -= moveAmount;
       break;
     case "right":
-      ui.setAttribute("position", {
-        x: currentPosition.x + moveAmount,
-        y: currentPosition.y,
-        z: currentPosition.z,
-      });
+      currentUIPosition.x += moveAmount;
       break;
     case "forward":
-      ui.setAttribute("position", {
-        x: currentPosition.x,
-        y: currentPosition.y,
-        z: currentPosition.z - moveAmount,
-      });
+      currentUIPosition.z -= moveAmount;
       break;
     case "backward":
-      ui.setAttribute("position", {
-        x: currentPosition.x,
-        y: currentPosition.y,
-        z: currentPosition.z + moveAmount,
-      });
+      currentUIPosition.z += moveAmount;
       break;
   }
+  // 실제 UI의 위치를 변경
+  ui.setAttribute("position", positionToString(currentUIPosition));
 }
 window.addEventListener("DOMContentLoaded", function () {
   var arButton = document.querySelector(".a-enter-ar-button");
@@ -194,12 +200,10 @@ scene.addEventListener("loaded", function () {
   if (loadingScreen) {
     loadingScreen.style.display = "none";
   }
-
   var vrButton = document.querySelector(".a-enter-vr-button");
   if (vrButton) {
     vrButton.style.display = "none";
   }
-
   var arButton = document.querySelector(".a-enter-ar-button");
   if (arButton) {
     arButton.style.width = "150px";
@@ -207,10 +211,25 @@ scene.addEventListener("loaded", function () {
     arButton.disabled = false; // 버튼 활성화
     arButton.addEventListener("click", function () {
       ui.setAttribute("visible", "true");
+      hideUI.setAttribute("visible", "true");
+      xypad.setAttribute("visible", "true");
+      zpad.setAttribute("visible", "true");
     });
   }
-  initializeCameraLocking();
-  initializeChatUI();
-  initializehideUI();
+  chatbutton.addEventListener("click", toggleChat);
+  hideUI.addEventListener("click", toggleUIVisibility);
   enableUIButtons();
+});
+document.querySelector("#chat").addEventListener("loaded", function () {
+  const addButton = document.getElementById("addButton");
+  const showDeleteButton = document.querySelector(
+    "#chatHeader button[onclick='showDeleteButtons()']"
+  );
+  if (addButton) {
+    addButton.addEventListener("click", addFriend); //updatescroll() 있음
+  }
+  if (showDeleteButton) {
+    showDeleteButton.addEventListener("click", showDeleteButtons); //updatescroll() 있음
+  }
+  updateScroll(); // 초기 스크롤 업데이트
 });

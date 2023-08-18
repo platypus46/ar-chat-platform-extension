@@ -1,17 +1,258 @@
 {% load static %}
 <html>
 <head>
-    <!-- 외부 CSS 파일 로드 -->
+    <!-- 로비화면 -->
     <link rel="stylesheet" type="text/css" href="{% static 'lobby/css/lobby.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'lobby/js/profile.js' %}"></script>
+
+     <!-- AR화면 -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.0.0/dist/aframe-extras.min.js"></script>
+    <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
+    <script src="{% static 'tools/aframe-hand-tracking-controls-extras.js' %}"></script>
+    <script src="{% static 'tools/hand-tracking-controls-extras-components.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'lobby/css/AR.css' %}" />
+    <script src="{% static 'lobby/js/AR.js' %}"></script>
 </head>
 <body>
     <div>
         <h1 id="title">PLATYVERSE 사전설정</h1>
-        <h2 id="user-info">{{ full_name }}님이 접속했습니다.</h2>
-        <img src="{% if profile_picture %}{{ profile_picture.url }}{% else %}{% static 'lobby/img/default_profile.png' %}{% endif %}" alt="{{ username }}의 프로필 사진" class="profile-pic" id="userProfilePic">
-        <input type="file" id="imageUpload" style="display: none;">
+        <div class="user-notification">{{ full_name }}님이 접속했습니다.</div>
+        <div class="profile-container">
+            <img src="{% if profile_picture %}{{ profile_picture.url }}{% else %}{% static 'lobby/img/default_profile.png' %}{% endif %}" alt="{{ username }}의 프로필 사진" class="profile-pic" id="userProfilePic">
+            <input type="file" id="imageUpload" style="display: none;">
+        </div>
     </div>
+    <div class="subscriber-list">
+        <h3>구독 목록</h3>
+        <div class="scrollable-content"> 
+            {% for subscription in user.subscriptions.all %}
+                <div class="subscriber-item">
+                    {{ subscription.subscribed_to.full_name }} 
+                </div>
+            {% empty %}
+                <div>구독 목록이 없습니다.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 로딩 스크린 -->
+    <div id="loadingScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center;">
+        <div class="loader"></div>
+    </div>
+    <a-scene physics="debug: true" light="defaultLightsEnabled:false">
+        <a-light type="ambient" color="#888"></a-light>
+        <a-light
+          type="directional"
+          color="#FFF"
+          intensity="1"
+          position="2 4 -3"
+        ></a-light>
+        <a-entity
+          id="leftHand"
+          hand-tracking-controls="hand: left;"
+          hand-tracking-extras
+          ><a-entity
+            finger-cursor
+            raycaster="objects: .clickable; far: 1"
+          ></a-entity
+        ></a-entity>
+        <a-entity
+          id="rightHand"
+          hand-tracking-controls="hand: right;"
+          hand-tracking-extras
+        >
+          <a-entity
+            finger-cursor
+            raycaster="objects: .clickable; far: 1"
+          ></a-entity>
+        </a-entity>
+        <a-camera id="camera"
+          ><a-entity id="hideUIButton" position="-0.15 -0.3 -0.4" visible="false">
+            <a-cylinder
+              geometry="radius: 0.03; height: 0.01; segmentsRadial: 32"
+              material="color: green"
+              rotation="90 0 0"
+              class="clickable"
+            ></a-cylinder>
+          </a-entity>
+          <a-entity
+            id="ui"
+            geometry="primitive: plane; width: 0.4; height: 0.55"
+            material="opacity: 0.5; transparent: true; color: white"
+            position="0 0.15 -0.5"
+            visible="false"
+          >
+            <a-entity
+              id="profile"
+              geometry="primitive: plane; width: 0.25; height: 0.25"
+              material="color: blue; opacity: 0.5"
+              position="0 0.13 0.01"
+            ></a-entity>
+            <a-entity
+              id="chat"
+              geometry="primitive: plane; width:0.4; height: 0.4"
+              material="color:white"
+              position="0 0.1 -0.01"
+              visible="false"
+            >
+              <a-entity
+                id="chatHeader"
+                geometry="primitive: plane; width:0.4; height: 0.05"
+                material="color:yellow"
+                position="0 0.5 -0.01"
+              >
+                <a-entity
+                  htmlembed
+                  position="0 0 0"
+                  style="width: 190.8px; height: 36.95px"
+                >
+                  <button
+                    id="addButton"
+                    onclick="showAddFriendForm()"
+                    class="clickable"
+                  >
+                    Add Friend
+                  </button>
+                  <button onclick="showDeleteButtons()" class="clickable">
+                    Delete Friend
+                  </button>
+                </a-entity>
+                <a-entity
+                  id="friendListContainer"
+                  htmlembed
+                  position="0 -0.2 0.01"
+                  style="width: 394.8px; height: 259.65px"
+                >
+                  <div
+                    id="friendList"
+                    style="max-height: 320px; overflow-y: auto"
+                  ></div>
+                </a-entity>
+              </a-entity>
+            </a-entity>
+            <a-entity
+              id="chatbutton"
+              geometry="primitive: circle; radius: 0.05"
+              material="color: white"
+              position="-0.15 -0.1 -0.05"
+              class="clickable"
+            >
+              <a-text
+                value="chatbutton"
+                align="center"
+                color="black"
+                position="0 -0.025 0.01"
+                width="0.5"
+              ></a-text>
+            </a-entity>
+            <a-entity
+              id="button2"
+              geometry="primitive: circle; radius: 0.05"
+              material="color: white"
+              position="-0.05 -0.1 -0.05"
+              class="clickable"
+            >
+              <a-text
+                value="game"
+                align="center"
+                color="black"
+                position="0 -0.025 0.01"
+                width="0.5"
+              ></a-text
+            ></a-entity>
+            <a-entity
+              id="button3"
+              geometry="primitive: circle; radius: 0.05"
+              material="color: white"
+              position="0.05 -0.1 -0.05"
+              class="clickable"
+            >
+              <a-text
+                value="misc"
+                align="center"
+                color="black"
+                position="0 -0.025 0.01"
+                width="0.5"
+              ></a-text
+            ></a-entity>
+            <a-entity
+              id="Cameralock"
+              geometry="primitive: circle; radius: 0.05"
+              material="color: white"
+              position="0.15 -0.1 -0.05"
+              class="clickable"
+            >
+              <a-text
+                value="Camera"
+                align="center"
+                color="black"
+                position="0 -0.025 0.01"
+                width="0.5"
+              ></a-text
+            ></a-entity>
+          </a-entity>
+          <!-- Left Control Buttons -->
+          <a-entity position="0.05 -0.3 -0.4" id="xypad" visible="false">
+            <a-box
+              position="0 0.06 0"
+              width="0.06"
+              height="0.06"
+              depth="0.02"
+              color="blue"
+              class="clickable"
+              id="up"
+            ></a-box>
+            <a-box
+              position="0 -0.06 0"
+              width="0.06"
+              height="0.06"
+              depth="0.02"
+              color="blue"
+              class="clickable"
+              id="down"
+            ></a-box>
+            <a-box
+              position="-0.06 0 0"
+              width="0.06"
+              height="0.06"
+              depth="0.02"
+              color="blue"
+              class="clickable"
+              id="left"
+            ></a-box>
+            <a-box
+              position="0.06 0 0"
+              width="0.06"
+              height="0.06"
+              depth="0.02"
+              color="blue"
+              class="clickable"
+              id="right"
+            ></a-box>
+          </a-entity>
+          <a-entity position="0.2 -0.2 -0.4" id="zpad" visible="false">
+            <a-cylinder
+              position="0 -0.1 0"
+              radius="0.02"
+              height="0.02"
+              color="red"
+              rotation="90 0 0"
+              class="clickable"
+              id="forward"
+            ></a-cylinder>
+            <a-cylinder
+              position="0 -0.15 0"
+              radius="0.02"
+              height="0.02"
+              color="red"
+              rotation="90 0 0"
+              class="clickable"
+              id="backward"
+            ></a-cylinder>
+          </a-entity>
+        </a-camera>
+      </a-scene>
 </body>
 </html>

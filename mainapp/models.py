@@ -1,9 +1,26 @@
+import os
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 def profile_pic_directory_path(instance, filename):
     extension = filename.split('.')[-1]
-    return 'profile/{0}.{1}'.format(instance.username, extension)
+    
+    filename_1 = f"profile/{instance.username}_1.{extension}"
+    filename_2 = f"profile/{instance.username}_2.{extension}"
+    
+    full_path_1 = os.path.join(settings.MEDIA_ROOT, filename_1)
+    full_path_2 = os.path.join(settings.MEDIA_ROOT, filename_2)
+    
+    if os.path.exists(full_path_1):
+        os.remove(full_path_1)
+        return filename_2
+    elif os.path.exists(full_path_2):
+        os.remove(full_path_2)
+        return filename_1
+    else:
+        return filename_1
 
 class CustomUser(AbstractUser):
     full_name = models.CharField(max_length=100, default='')

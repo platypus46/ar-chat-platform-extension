@@ -97,25 +97,24 @@ function finalRegistration() {
 }
 
 document.getElementById('login-form').addEventListener('submit', function(e) {
-  e.preventDefault();
-  var formData = new FormData(this);
-  fetch('/login/', {
-      method: 'POST',
-      body: formData,
-      headers: {
-          'X-CSRFToken': getCookie('csrftoken')
-      }
-  })
-  .then(response => response.json())
-  .then(data => {
-      if (data.status === 'success') {
-          window.location.href = '/lobby/';
-      } else {
-          alert(data.message);
-      }
+    e.preventDefault();
+    var formData = new FormData(this);
+    fetch('/login/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            window.location.href = '/lobby/' + data.username + '/';
+        } else {
+            alert(data.message);
+        }
+    });
   });
-});
-
 function getCookie(name) {
   var cookieArr = document.cookie.split(";");
   for (var i = 0; i < cookieArr.length; i++) {

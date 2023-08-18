@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from .models import CustomUser, Friendship
 from django.views.decorators.csrf import csrf_exempt
 from .forms import ProfilePictureForm
+from django.shortcuts import redirect
 
 def login_view(request):
     if request.method == 'POST':
@@ -12,20 +13,29 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return JsonResponse({'status': 'success'})
+            return JsonResponse({'status': 'success', 'username': user.username})
         else:
             return JsonResponse({'status': 'error', 'message': 'Invalid username or password'})
 
     return render(request, 'login.html')
 
-def lobby_view(request):
-    user = request.user
+
+def lobby_view(request, username):
+    try:
+        user = CustomUser.objects.get(username=username)
+    except CustomUser.DoesNotExist:
+        return render(request, 'error.html', {'message': '잘못된 사용자입니다.'})
+
     context = {}
     if user.is_authenticated:
         context['username'] = user.username
         context['full_name'] = user.full_name
-        context['profile_picture'] = user.profile_picture if user.profile_picture else None  
+        context['profile_picture'] = user.profile_picture if user.profile_picture else None
+        context['subscriptions'] = user.subscriptions.all()
+        context['friends'] = user.friends.all()
+
     return render(request, 'lobby.html', context)
+
 
 @csrf_exempt
 def update_profile(request):

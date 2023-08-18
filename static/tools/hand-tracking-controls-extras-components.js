@@ -698,7 +698,7 @@ const component = AFRAME.registerComponent("finger-cursor", {
       default: "5"
     },
     pointThreshold: {
-      default: 0.95 //0.95였음
+      default: 0.95 
     }
   },
   init: function () {

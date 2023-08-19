@@ -119,7 +119,7 @@ def transcribe(request):
             with sr.AudioFile(wav_audio_path) as source:
                 audio_data = recognizer.record(source)
                 try:
-                    text = recognizer.recognize_google(audio_data, language="ko-KR")
+                    text = recognizer.recognize_google(audio_data, language="en")
                     return JsonResponse({'transcription': text})
                 except sr.UnknownValueError:
                     return JsonResponse({'error': 'Google 음성 인식이 오디오를 이해할 수 없습니다.'})

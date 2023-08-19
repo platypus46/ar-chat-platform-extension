@@ -6,13 +6,12 @@ document.addEventListener("DOMContentLoaded", function() {
     let chatbutton = document.querySelector("#chatbutton");
     let button2 = document.querySelector("#button2");
     let button3 = document.querySelector("#button3");
-    //카메라 락 버튼 지정
-    let cameralock = document.querySelector("#Cameralock");
-    let camera = document.querySelector("#camera");
-    let lockToCamera = false;
-    //
+ 
     let chat = document.querySelector("#chat");
     let profile = document.querySelector("#profile");
+
+    let recordButton = document.querySelector("#recordButton");
+
     //초기 UI 위치 설정
     let initialUIPosition = { x: 0, y: 0.15, z: -0.5 };
     let currentUIPosition = {
@@ -38,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
       hideUI.setAttribute("visible", "false");
       xypad.setAttribute("visible", "false");
       zpad.setAttribute("visible", "false");
+      recordButton.setAttribute("visible", "false");
     });
     function toggleChat() {
       //채팅창 띄우기 및 감추기
@@ -82,16 +82,16 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     function disableUIButtons() {
       //UI 이동버튼 무력화
-      const buttons = ["up", "down", "left", "right", "forward", "backward"];
+      const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton"];
       buttons.forEach((buttonId) => {
         const button = document.getElementById(buttonId);
         button.removeEventListener("click", moveUI);
-        button.setAttribute("material", "opacity", 0.5);
+        button.setAttribute("material", "opacity", 0);
       });
     }
     function enableUIButtons() {
       //UI 이동버튼 활성화
-      const buttons = ["up", "down", "left", "right", "forward", "backward"];
+      const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton"];
       buttons.forEach((buttonId) => {
         const button = document.getElementById(buttonId);
         button.addEventListener("click", moveUI);
@@ -218,6 +218,7 @@ document.addEventListener("DOMContentLoaded", function() {
           hideUI.setAttribute("visible", "true");
           xypad.setAttribute("visible", "true");
           zpad.setAttribute("visible", "true");
+          recordButton.setAttribute("visible", "true");
         });
       }
       chatbutton.addEventListener("click", toggleChat);

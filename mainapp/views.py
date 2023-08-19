@@ -5,6 +5,12 @@ from .models import CustomUser, Friendship
 from django.views.decorators.csrf import csrf_exempt
 from .forms import ProfilePictureForm
 from django.shortcuts import redirect
+import speech_recognition as sr
+import subprocess
+import logging
+import os
+
+logger = logging.getLogger(__name__)
 
 def login_view(request):
     if request.method == 'POST':
@@ -86,6 +92,51 @@ def validate_step(request, step):
             return JsonResponse({'status': 'error', 'errors': 'Invalid step'})
     else:
         return JsonResponse({'status': 'error', 'errors': 'Invalid method'})
+    
+def convert_to_wav(input_file, output_file):
+    command = ["ffmpeg", "-i", input_file, output_file]
+    subprocess.run(command, check=True)
+
+@csrf_exempt
+def transcribe(request):
+    if request.method == 'POST':
+        recognizer = sr.Recognizer()
+        audio_file = request.FILES['audio']
+
+        temp_audio_path = "temp_audio.webm"
+        wav_audio_path = "temp_audio.wav"
+
+        try:
+            # Save the audio file temporarily
+            with open(temp_audio_path, 'wb+') as dest:
+                for chunk in audio_file.chunks():
+                    dest.write(chunk)
+
+            # Convert the webm file to wav format
+            convert_to_wav(temp_audio_path, wav_audio_path)
+
+            # Use the converted wav file for recognition
+            with sr.AudioFile(wav_audio_path) as source:
+                audio_data = recognizer.record(source)
+                try:
+                    text = recognizer.recognize_google(audio_data, language="ko-KR")
+                    return JsonResponse({'transcription': text})
+                except sr.UnknownValueError:
+                    return JsonResponse({'error': 'Google 음성 인식이 오디오를 이해할 수 없습니다.'})
+                except sr.RequestError:
+                    return JsonResponse({'error': 'Google 음성 인식 서비스에 요청을 할 수 없습니다.'})
+
+        except Exception as e:
+            return JsonResponse({'error': f'오류가 발생했습니다: {str(e)}'})
+        
+        finally:
+            # Clean up the temporary files
+            if os.path.exists(temp_audio_path):
+                os.remove(temp_audio_path)
+            if os.path.exists(wav_audio_path):
+                os.remove(wav_audio_path)
+
+    return JsonResponse({'error': '잘못된 요청 방식입니다.'})
 
 #코드 테스트 용 함수
 def test_view(request):

@@ -56,7 +56,7 @@
           hand-tracking-extras
           ><a-entity
             finger-cursor
-            raycaster="objects: .clickable; far: 0.5"
+            raycaster="objects: .clickable; far: 0.1"
           ></a-entity
         ></a-entity>
         <a-entity
@@ -66,12 +66,14 @@
         >
           <a-entity
             finger-cursor
-            raycaster="objects: .clickable; far: 0.5"
+            raycaster="objects: .clickable; far: 0.08"
           ></a-entity>
         </a-entity>
         <a-camera id="camera"
           >
-          <a-text id="sttText" value="text" position="0 0 -1" scale="1.5 1.5 1.5"></a-text>
+          <a-entity id="Text"  position="-1 0 -2" visible="false">
+            <a-text id="sttText" value="PLATYVERSE" color="#FFFFFF" shader="msdf" font="https://raw.githubusercontent.com/myso-kr/aframe-fonts-korean/master/fonts/ofl/nanumgothic/NanumGothic-Regular.json"></a-text>     
+          </a-entity>
           <a-entity id="hideUIButton" position="-0.15 -0.3 -0.4" visible="false">
             <a-cylinder
               geometry="radius: 0.03; height: 0.01; segmentsRadial: 32"
@@ -255,9 +257,11 @@
               id="backward"
             ></a-cylinder>
           </a-entity>
-          <a-box position="-0.1 -0.2 -0.4" width="0.06" height="0.06" depth="0.02" color="yellow" class="clickable" id="recordButton" visible="false">
-            <a-text value="not recording" align="center" position="0 0 0.011" scale="0.03 0.03 0.03" id="recordText"></a-text>
-          </a-box>
+          <a-entity position="-0.1 -0.2 -0.4"  id="talkpad" visible="false">
+            <a-box position="0 0 0" width="0.06" height="0.06" depth="0.02" color="yellow" class="clickable" id="recordButton">
+              <a-text value="not recording" align="center" position="0 0 0.011" scale="0.03 0.03 0.03" id="recordText"></a-text>
+            </a-box>
+          </a-entity>
         </a-camera>
       </a-scene>
 </body>

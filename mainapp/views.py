@@ -119,16 +119,20 @@ def transcribe(request):
             with sr.AudioFile(wav_audio_path) as source:
                 audio_data = recognizer.record(source)
                 try:
-                    text = recognizer.recognize_google(audio_data, language="en")
+                    text = recognizer.recognize_google(audio_data, language="ko-kr")
+                    print(f"Recognized Text: {text}")  # <-- 로그를 찍는 부분
                     return JsonResponse({'transcription': text})
                 except sr.UnknownValueError:
+                    print("Could not understand audio")  # <-- 로그를 찍는 부분
                     return JsonResponse({'error': 'Google 음성 인식이 오디오를 이해할 수 없습니다.'})
                 except sr.RequestError:
+                    print("Could not request results")  # <-- 로그를 찍는 부분
                     return JsonResponse({'error': 'Google 음성 인식 서비스에 요청을 할 수 없습니다.'})
 
         except Exception as e:
+            print(f"An error occurred: {str(e)}")  # <-- 로그를 찍는 부분
             return JsonResponse({'error': f'오류가 발생했습니다: {str(e)}'})
-        
+
         finally:
             # Clean up the temporary files
             if os.path.exists(temp_audio_path):

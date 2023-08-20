@@ -1,10 +1,8 @@
-// AR.js
-
 let isRecording = false;
 let mediaRecorder;
 let audioChunks = [];
 
-// Initialize media recorder
+
 async function initRecorder() {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   mediaRecorder = new MediaRecorder(stream);

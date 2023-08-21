@@ -28,3 +28,4 @@ tzdata==2023.3
 zope.interface==6.0
 whitenoise==6.5.0
 django-cors-headers==3.7.0
+SpeechRecognition==3.10.0

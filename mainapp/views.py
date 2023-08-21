@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import CustomUser, Friendship
+from .models import CustomUser, FriendRequest, Friendship, Notification
 from django.views.decorators.csrf import csrf_exempt
 from .forms import ProfilePictureForm
 from django.shortcuts import redirect
@@ -38,7 +38,8 @@ def lobby_view(request, username):
         context['full_name'] = user.full_name
         context['profile_picture'] = user.profile_picture if user.profile_picture else None
         context['subscriptions'] = user.subscriptions.all()
-        context['friends'] = user.friends.all()
+        context['friends'] = [friendship.friend for friendship in user.friendships.all()]
+        context['notifications'] = Notification.objects.filter(user=user)
 
     return render(request, 'lobby.html', context)
 

@@ -13,8 +13,10 @@
     <script src="{% static 'tools/aframe-hand-tracking-controls-extras.js' %}"></script>
     <script src="{% static 'tools/hand-tracking-controls-extras-components.js' %}"></script>
     <link rel="stylesheet" href="{% static 'lobby/css/AR.css' %}" />
+    <link rel="stylesheet" href="{% static 'lobby/css/lobby.css' %}" />
     <script src="{% static 'lobby/js/AR.js' %}"></script>
     <script src="{% static 'lobby/js/record.js' %}"></script>
+    <script src="{% static 'lobby/js/lobby.js' %}"></script>
 </head>
 <body>
     <div>
@@ -36,6 +38,29 @@
                 <div>구독 목록이 없습니다.</div>
             {% endfor %}
         </div>
+    </div>
+    <div id="notificationSection" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+      <button id="notificationIcon">🔔</button>
+      <ul id="notificationList" style="display:none; position: absolute; top: 30px; right: 0; background-color: #fff; border: 1px solid #ccc; padding: 10px; z-index: 1000;">
+          {% for notification in notifications %}
+          <li>
+              {{ notification.message }}
+              <button class="acceptFriendRequest" data-id="{{ notification.id }}">수락</button>
+              <button class="closeNotification" data-id="{{ notification.id }}">닫기</button>
+          </li>
+          {% endfor %}
+      </ul>
+    </div>
+    <div id="friendListSection">
+      <ul id="friendNames">
+          {% for friend in friends %}
+          <li>{{ friend.full_name }}</li>
+          {% endfor %}
+      </ul>
+      <div id="friendAddSection">
+          <input type="text" id="newFriendName" placeholder="친구 아이디 입력">
+          <button id="addFriendButton">친구 추가</button>
+      </div>
     </div>
 
     <!-- 로딩 스크린 -->

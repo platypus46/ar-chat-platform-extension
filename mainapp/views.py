@@ -39,7 +39,7 @@ def lobby_view(request, username):
         context['profile_picture'] = user.profile_picture if user.profile_picture else None
         context['subscriptions'] = user.subscriptions.all()
         context['friends'] = [friendship.friend for friendship in user.friendships.all()]
-        context['notifications'] = Notification.objects.filter(user=user)
+        context['notifications'] = Notification.objects.filter(user=user, is_read=False)
 
     return render(request, 'lobby.html', context)
 

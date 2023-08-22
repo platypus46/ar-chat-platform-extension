@@ -26,7 +26,7 @@ class LobbyConsumer(AsyncWebsocketConsumer):
         if message_type == 'friend_request':
             from_user = text_data_json['from_user']
             to_user = text_data_json['to_user']
-            notification = await self.create_friend_request(from_user, to_user)
+            notification, from_user_object = await self.create_friend_request(from_user, to_user)  # 이 부분 수정
 
             # to_user에게만 알림을 보냅니다.
             await self.channel_layer.group_send(
@@ -34,7 +34,7 @@ class LobbyConsumer(AsyncWebsocketConsumer):
                 {
                     'type': 'send_notification',
                     'message': 'friend_request',
-                    'from_full_name': notification.user.full_name,
+                    'from_full_name': from_user_object.full_name,  # 이 부분을 수정
                     'notification_id': notification.id
                 }
             )
@@ -63,8 +63,8 @@ class LobbyConsumer(AsyncWebsocketConsumer):
         from_user_object = CustomUser.objects.get(username=from_user)
         to_user_object = CustomUser.objects.get(username=to_user)
         friend_request = FriendRequest.objects.create(from_user=from_user_object, to_user=to_user_object)
-        notification = Notification.objects.create(user=from_user_object, message=f"{from_user_object.full_name}님이 친구 요청을 보냈습니다.", related_request=friend_request)
-        return notification
+        notification = Notification.objects.create(user=to_user_object, message=f"{from_user_object.full_name}님이 친구 요청을 보냈습니다.", related_request=friend_request)
+        return notification, from_user_object  
 
     async def update_friend_list(self, event):
         new_friend_name = event['new_friend_name']
@@ -121,6 +121,7 @@ class LobbyConsumer(AsyncWebsocketConsumer):
             friend_request.from_user.username,
             {
                 'type': 'send_notification',
+                'message': 'friend_request_accepted', 
                 'from_full_name': friend_request.to_user.full_name
             }
         )

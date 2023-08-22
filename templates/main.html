@@ -11,7 +11,7 @@
     <script src="{% static 'tools/hand-tracking-controls-extras-components.js' %}"></script>
     <link rel="stylesheet" href="{% static 'lobby/css/AR.css' %}" />
   </head>
-   <body>
+  <body>
     <div
       id="loadingScreen"
       style="
@@ -68,7 +68,7 @@
           id="ui"
           geometry="primitive: plane; width: 0.4; height: 0.55"
           material="opacity: 0.5; transparent: true; color: white"
-          position="0 0.15 -0.5"
+          position="0 0 -0.5"
           visible="false"
         >
           <a-entity
@@ -78,107 +78,73 @@
             position="0 0.13 0.01"
           ></a-entity>
           <a-entity
-            id="chat"
+            id="friend"
             geometry="primitive: plane; width:0.4; height: 0.4"
-            material="color:white"
+            material="color:green"
             position="0 0.1 -0.01"
             visible="false"
           >
             <a-entity
-              id="chatHeader"
-              geometry="primitive: plane; width:0.4; height: 0.05"
+              id="friendHeader"
+              geometry="primitive: plane; width:0.35; height: 0.03"
               material="color:yellow"
-              position="0 0.5 -0.01"
+              position="0 0.175 0.1"
+            ></a-entity>
+            <a-entity
+              id="friendsContainer"
+              position="0 -0.025 0"
+              width="0.4"
+              height="0.35"
             >
-              <a-entity
-                htmlembed
-                position="0 0 0"
-                style="width: 190.8px; height: 36.95px"
-              >
-                <button
-                  id="addButton"
-                  onclick="showAddFriendForm()"
-                  class="clickable"
-                >
-                  Add Friend
-                </button>
-                <button onclick="showDeleteButtons()" class="clickable">
-                  Delete Friend
-                </button>
-              </a-entity>
-              <a-entity
-                id="friendListContainer"
-                htmlembed
-                position="0 -0.2 0.01"
-                style="width: 394.8px; height: 259.65px"
-              >
-                <div
-                  id="friendList"
-                  style="max-height: 320px; overflow-y: auto"
-                ></div>
-              </a-entity>
             </a-entity>
           </a-entity>
-          <a-entity
-            id="chatbutton"
-            geometry="primitive: circle; radius: 0.05"
-            material="color: white"
-            position="-0.15 -0.1 -0.05"
-            class="clickable"
-          >
-            <a-text
-              value="chatbutton"
-              align="center"
-              color="black"
-              position="0 -0.025 0.01"
-              width="0.5"
-            ></a-text>
+          <a-entity id="uibuttons">
+            <a-entity
+              id="chatbutton"
+              geometry="primitive: circle; radius: 0.05"
+              material="color: white"
+              position="-0.1 -0.1 0.05"
+              class="clickable"
+            >
+              <a-text
+                value="chatbutton"
+                align="center"
+                color="black"
+                position="0 -0.025 0.01"
+                width="0.5"
+              ></a-text>
+            </a-entity>
+            <a-entity
+              id="button2"
+              geometry="primitive: circle; radius: 0.05"
+              material="color: white"
+              position="0 -0.1 0.05"
+              class="clickable"
+            >
+              <a-text
+                value="game"
+                align="center"
+                color="black"
+                position="0 -0.025 0.01"
+                width="0.5"
+              ></a-text>
+            </a-entity>
+            <a-entity
+              id="button3"
+              geometry="primitive: circle; radius: 0.05"
+              material="color: white"
+              position="0.1 -0.1 0.05"
+              class="clickable"
+            >
+              <a-text
+                value="misc"
+                align="center"
+                color="black"
+                position="0 -0.025 0.01"
+                width="0.5"
+              ></a-text>
+            </a-entity>
           </a-entity>
-          <a-entity
-            id="button2"
-            geometry="primitive: circle; radius: 0.05"
-            material="color: white"
-            position="-0.05 -0.1 -0.05"
-            class="clickable"
-          >
-            <a-text
-              value="game"
-              align="center"
-              color="black"
-              position="0 -0.025 0.01"
-              width="0.5"
-            ></a-text
-          ></a-entity>
-          <a-entity
-            id="button3"
-            geometry="primitive: circle; radius: 0.05"
-            material="color: white"
-            position="0.05 -0.1 -0.05"
-            class="clickable"
-          >
-            <a-text
-              value="misc"
-              align="center"
-              color="black"
-              position="0 -0.025 0.01"
-              width="0.5"
-            ></a-text
-          ></a-entity>
-          <a-entity
-            id="Cameralock"
-            geometry="primitive: circle; radius: 0.05"
-            material="color: white"
-            position="0.15 -0.1 -0.05"
-            class="clickable"
-          >
-            <a-text
-              value="Camera"
-              align="center"
-              color="black"
-              position="0 -0.025 0.01"
-              width="0.5"
-            ></a-text
-          ></a-entity>
         </a-entity>
         <!-- Left Control Buttons -->
         <a-entity position="0.05 -0.3 -0.4" id="xypad" visible="false">

@@ -5,20 +5,23 @@ let ui = document.getElementById("ui");
 let chatbutton = document.querySelector("#chatbutton");
 let button2 = document.querySelector("#button2");
 let button3 = document.querySelector("#button3");
-//카메라 락 버튼 지정
-let cameralock = document.querySelector("#Cameralock");
-let camera = document.querySelector("#camera");
-let lockToCamera = false;
-//
-let chat = document.querySelector("#chat");
+
+//내부 객체 오브넥트화
+let friend = document.querySelector("#friend");
 let profile = document.querySelector("#profile");
 //초기 UI 위치 설정
-let initialUIPosition = { x: 0, y: 0.15, z: -0.5 };
+const initialUIPosition = { x: 0, y: 0, z: -0.5 };
 let currentUIPosition = {
   x: 0, // 초기 x 좌표
-  y: 0.15, // 초기 y 좌표
+  y: 0, // 초기 y 좌표
   z: -0.5, // 초기 z 좌표
 };
+// 초기 상태에서 AR 버튼을 비활성화
+var arButton = document.querySelector(".a-enter-ar-button");
+if (arButton) {
+  arButton.disabled = true; // 버튼 비활성화
+}
+
 //움직임 숫자 지정
 const moveAmount = 0.1;
 //HiduUI객체화
@@ -29,19 +32,29 @@ let zpad = document.querySelector("#zpad");
 //채팅,UI 시각화 관련 변수 전역화
 let isUIVisible = true;
 let isChatVisible = false;
+
 scene.addEventListener("enter-vr", function () {
   ui.setAttribute("visible", "true");
 });
+
 scene.addEventListener("exit-vr", function () {
   ui.setAttribute("visible", "false");
 });
 function toggleChat() {
   //채팅창 띄우기 및 감추기
-  chat.setAttribute("visible", !isChatVisible);
+  friend.setAttribute("visible", !isChatVisible);
   button2.setAttribute("visible", isChatVisible);
   button3.setAttribute("visible", isChatVisible);
   profile.setAttribute("visible", isChatVisible);
+  if (isChatVisible == false) {
+    enableChatButtons();
+  } else {
+    enableUIButtons();
+  }
   isChatVisible = !isChatVisible;
+  if (isChatVisible) {
+    displayFriends();
+  }
 }
 function toggleUIVisibility() {
   //UI전체 숨김 및 노출
@@ -56,6 +69,7 @@ function toggleUIVisibility() {
   ui.setAttribute("visible", !isUIVisible);
   isUIVisible = !isUIVisible;
 }
+
 function pauseall(entity) {
   // 엔티티와 그 자식들을 일시 중지
   entity.pause();
@@ -64,6 +78,7 @@ function pauseall(entity) {
     children[i].pause();
   }
 }
+
 function playall(entity) {
   // 엔티티와 그 자식들을 재개
   entity.play();
@@ -82,84 +97,67 @@ function disableUIButtons() {
   buttons.forEach((buttonId) => {
     const button = document.getElementById(buttonId);
     button.removeEventListener("click", moveUI);
-    button.setAttribute("material", "opacity", 0.5);
+    button.setAttribute("material", "opacity", 0);
   });
 }
+
 function enableUIButtons() {
   //UI 이동버튼 활성화
   const buttons = ["up", "down", "left", "right", "forward", "backward"];
   buttons.forEach((buttonId) => {
     const button = document.getElementById(buttonId);
     button.addEventListener("click", moveUI);
+    // movechat 이벤트 리스너가 있으면 제거
+    button.removeEventListener("click", movechat);
     button.setAttribute("material", "opacity", 1.0);
   });
 }
-//친구 추가 및 삭제 코드
-function addFriend(event) {
-  event.preventDefault();
-  let friendName = document.getElementById("friendName").value;
-  // `data-friend-name` 속성을 추가한 친구 항목 생성
-  let newFriendItem = `<div data-friend-name="${friendName}">${friendName} <button onclick='removeFriend("${friendName}")'>X</button></div>`;
-  let currentList = document.querySelector("#friendList").innerHTML;
-  let newList = currentList + newFriendItem;
-  document.querySelector("#friendList").innerHTML = newList;
-  updateScroll();
-  // 추가된 버튼에 이벤트 리스너 연결
-  const deleteButton = document.querySelector(
-    `[data-friend-name="${friendName}"] button`
-  );
-  deleteButton.addEventListener("click", function () {
-    removeFriend(friendName);
+function enableChatButtons() {
+  //채팅 버튼으로 변환
+  const buttonIds = ["up", "down", "left", "right", "forward", "backward"];
+  buttonIds.forEach((buttonId) => {
+    const button = document.getElementById(buttonId);
+    button.removeEventListener("click", moveUI);
+    button.addEventListener("click", movechat);
+    button.setAttribute("material", "opacity", 0.5);
   });
 }
-function showDeleteButtons() {
-  let currentList = document.querySelector("#friendList").innerHTML;
-  let modifiedList = currentList.replace(
-    /<\/div>/g,
-    ' <button class="dynamicDeleteButton">X</button></div>'
-  );
-  document.querySelector("#friendList").innerHTML = modifiedList;
-  const deleteButtons = document.querySelectorAll(".dynamicDeleteButton");
-  deleteButtons.forEach((button) => {
-    button.addEventListener("click", function (event) {
-      const name = event.target.closest("div").getAttribute("data-friend-name");
-      removeFriend(name);
-    });
-  });
-  updateScroll();
-}
-function removeFriend(name) {
-  let currentList = document.querySelector("#friendList").innerHTML;
-  let modifiedList = currentList.replace(
-    new RegExp(
-      `<div>${name} <button onclick='removeFriend("${name}")'>X</button></div>`
-    ),
-    ""
-  );
-  document.querySelector("#friendList").innerHTML = modifiedList;
-  updateScroll();
-}
-function updateScroll() {
-  const list = document.querySelector("#friendList");
-  const container = document.querySelector("#friendListContainer");
-  // 스타일 속성에서 높이 가져오기
-  const styleAttributes = container.getAttribute("style").split(";");
-  let containerHeightInMeters;
-  // 각 스타일 속성을 순회하면서 높이를 찾기
-  for (let attr of styleAttributes) {
-    if (attr.trim().startsWith("height")) {
-      containerHeightInMeters = parseFloat(attr.split(":")[1]);
+function movechat(event) {
+  switch (event.target.id) {
+    case "up":
+      if (selectedIndex > 0) {
+        selectedIndex--;
+        displayFriends();
+      }
       break;
-    }
-  }
-  // width 1m = 987 height 1m = 739
-  // 메터를 픽셀로 변환
-  const containerHeightInPx = containerHeightInMeters * 739;
-  list.style.maxHeight = `${containerHeightInPx}px`;
-  if (list.scrollHeight > list.clientHeight) {
-    list.style.overflowY = "scroll";
-  } else {
-    list.style.overflowY = "hidden";
+    case "down":
+      if (selectedIndex < itemsPerPage - 1) {
+        selectedIndex++;
+        displayFriends();
+      }
+      break;
+    case "left":
+      if (currentPage > 0) {
+        currentPage--;
+        displayFriends();
+      }
+      break;
+    case "right":
+      if ((currentPage + 1) * itemsPerPage < friends.length) {
+        currentPage++;
+        displayFriends();
+      }
+      break;
+    case "forward":
+      displayConversation();
+      break;
+    case "backward":
+      const friendsContainer = document.getElementById("friendsContainer");
+      while (friendsContainer.firstChild) {
+        friendsContainer.removeChild(friendsContainer.firstChild);
+      }
+      displayFriends();
+      break;
   }
 }
 function moveUI(event) {
@@ -185,25 +183,82 @@ function moveUI(event) {
       currentUIPosition.z += moveAmount;
       break;
   }
+
   // 실제 UI의 위치를 변경
   ui.setAttribute("position", positionToString(currentUIPosition));
 }
-window.addEventListener("DOMContentLoaded", function () {
-  var arButton = document.querySelector(".a-enter-ar-button");
-  if (arButton) {
-    arButton.disabled = true;
+// 친구 관련 의사코드
+const friends = [
+  { name: "dog", conversation: "dog bark bark" },
+  { name: "cat", conversation: "cat meow" },
+  { name: "bird", conversation: "bird singing" },
+  { name: "lion", conversation: "lion growls" },
+  { name: "elephant", conversation: "elephant nose is long" },
+  { name: "giraff", conversation: "giraffs neck is long " },
+  { name: "bear", conversation: "bear likes honey" },
+];
+let currentPage = 0;
+let selectedIndex = 0;
+const itemsPerPage = 5;
+const MAX_WIDTH = 0.4; // Maximum width for text
+const MAX_HEIGHT = 0.35; // Maximum height for text
+const LINE_HEIGHT = 0.08; // Estimated height for each line of text
+
+function displayFriends() {
+  const start = currentPage * itemsPerPage;
+  const end = start + itemsPerPage;
+  const currentFriends = friends.slice(start, end);
+
+  const friendsContainer = document.getElementById("friendsContainer");
+  while (friendsContainer.firstChild) {
+    friendsContainer.removeChild(friendsContainer.firstChild);
   }
-});
+
+  currentFriends.forEach((friend, index) => {
+    const entity = document.createElement("a-entity");
+    entity.setAttribute(
+      "text",
+      `value: ${friend.name}; color: white; align: center;`
+    );
+    entity.setAttribute("position", `0 ${0.07 * (2 - index)} 0`); // 위치 조절
+    if (index === selectedIndex) {
+      entity.setAttribute("text", `color: yellow`); // 선택된 친구
+    }
+    friendsContainer.appendChild(entity);
+  });
+}
+function displayConversation() {
+  const selectedFriend = friends[currentPage * itemsPerPage + selectedIndex];
+  const friendsContainer = document.getElementById("friendsContainer");
+
+  // Clear previous content
+  while (friendsContainer.firstChild) {
+    friendsContainer.removeChild(friendsContainer.firstChild);
+  }
+
+  const conversations = document.createElement("a-entity");
+  conversations.setAttribute(
+    "text",
+    `value: ${selectedFriend.conversation}; color: white; align: center;`
+  );
+  conversations.setAttribute("position", "0 0 0"); //중앙에 텍스트 배치
+  friendsContainer.appendChild(conversations);
+
+  document.getElementById("friendList").setAttribute("visible", "false");
+}
+
 scene.addEventListener("loaded", function () {
   // 로딩 스크린 숨기기
   var loadingScreen = document.getElementById("loadingScreen");
   if (loadingScreen) {
     loadingScreen.style.display = "none";
   }
+
   var vrButton = document.querySelector(".a-enter-vr-button");
   if (vrButton) {
     vrButton.style.display = "none";
   }
+
   var arButton = document.querySelector(".a-enter-ar-button");
   if (arButton) {
     arButton.style.width = "150px";
@@ -219,17 +274,4 @@ scene.addEventListener("loaded", function () {
   chatbutton.addEventListener("click", toggleChat);
   hideUI.addEventListener("click", toggleUIVisibility);
   enableUIButtons();
-});
-document.querySelector("#chat").addEventListener("loaded", function () {
-  const addButton = document.getElementById("addButton");
-  const showDeleteButton = document.querySelector(
-    "#chatHeader button[onclick='showDeleteButtons()']"
-  );
-  if (addButton) {
-    addButton.addEventListener("click", addFriend); //updatescroll() 있음
-  }
-  if (showDeleteButton) {
-    showDeleteButton.addEventListener("click", showDeleteButtons); //updatescroll() 있음
-  }
-  updateScroll(); // 초기 스크롤 업데이트
 });

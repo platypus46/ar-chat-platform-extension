@@ -14,6 +14,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
        libpq-dev \
        gcc \
+       ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 # Add requirements.txt file to the container

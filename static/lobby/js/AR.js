@@ -14,10 +14,10 @@ document.addEventListener("DOMContentLoaded", function() {
     let talkpad = document.querySelector("#talkpad");
   
     //초기 UI 위치 설정
-    let initialUIPosition = { x: 0, y: 0.15, z: -0.5 };
+    let initialUIPosition = { x: 0.2, y: 0.13, z: -0.5 };
     let currentUIPosition = {
-      x: 0, // 초기 x 좌표
-      y: 0.15, // 초기 y 좌표
+      x: 0.2, // 초기 x 좌표
+      y: 0.13, // 초기 y 좌표
       z: -0.5, // 초기 z 좌표
     };
     //움직임 숫자 지정
@@ -27,9 +27,14 @@ document.addEventListener("DOMContentLoaded", function() {
     //동작패드
     let xypad = document.querySelector("#xypad");
     let zpad = document.querySelector("#zpad");
+
+    //텍스트 입력 및 지우기 버튼
+    let p_pad = document.querySelector("#p-pad");
+
     //채팅,UI 시각화 관련 변수 전역화
     let isUIVisible = true;
     let isChatVisible = false;
+    
     scene.addEventListener("enter-vr", function () {
       ui.setAttribute("visible", "true");
     });
@@ -40,7 +45,9 @@ document.addEventListener("DOMContentLoaded", function() {
       zpad.setAttribute("visible", "false");
       sttText.setAttribute("visible", "false");
       talkpad.setAttribute("visible", "false");
+      p_pad.setAttribute("visible", "false");
     });
+
     function toggleChat() {
       //채팅창 띄우기 및 감추기
       chat.setAttribute("visible", !isChatVisible);
@@ -54,9 +61,11 @@ document.addEventListener("DOMContentLoaded", function() {
       if (isUIVisible) {
         pauseall(ui);
         disableUIButtons();
+        hideUI.setAttribute("visible", "true");
       } else {
         playall(ui);
         enableUIButtons();
+        hideUI.setAttribute("visible", "false");
         ui.setAttribute("position", positionToString(initialUIPosition));
       }
       ui.setAttribute("visible", !isUIVisible);
@@ -84,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     function disableUIButtons() {
       //UI 이동버튼 무력화
-      const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText"];
+      const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText","input-button",'eraser-button'];
       buttons.forEach((buttonId) => {
         const button = document.getElementById(buttonId);
         button.setAttribute("visible", "false");
@@ -92,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     function enableUIButtons() {
       //UI 이동버튼 활성화
-      const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText"];
+      const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText","input-button","eraser-button"];
       buttons.forEach((buttonId) => {
         const button = document.getElementById(buttonId);
         button.setAttribute("visible", "true");
@@ -223,6 +232,8 @@ document.addEventListener("DOMContentLoaded", function() {
           zpad.setAttribute("visible", "true");
           talkpad.setAttribute("visible", "true");
           Text.setAttribute("visible", "true");
+          p_pad.setAttribute("visible", "true");
+          hideUI.setAttribute("visible", "false");
         });
       }
       chatbutton.addEventListener("click", toggleChat);
@@ -242,4 +253,14 @@ document.addEventListener("DOMContentLoaded", function() {
       }
       updateScroll(); // 초기 스크롤 업데이트
     });
+
+    // 여기서부터 명령어 관련 코드라고 생각하면 됨.
+    let sttText = document.querySelector("#sttText");
+    let inputButton = document.querySelector("#input-button");
+
+    inputButton.addEventListener("click", function() {
+    if(sttText.getAttribute("value") === "초기화") {
+        toggleUIVisibility(); 
+    }
+});
 });

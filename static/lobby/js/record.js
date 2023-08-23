@@ -1,6 +1,14 @@
 let isRecording = false;
 let mediaRecorder;
 let audioChunks = [];
+let sttText = document.querySelector("#sttText");
+
+
+function eraseText() {
+  let sttText = document.querySelector("#sttText");
+  sttText.setAttribute("value", "");
+  sttText.setAttribute("width", "0.7");
+}
 
 
 async function initRecorder() {
@@ -24,9 +32,10 @@ async function initRecorder() {
     const data = await response.json();
     
     if (data.transcription) {
-      document.querySelector("#sttText").setAttribute("value", data.transcription);
+      const sttText = document.querySelector("#sttText");
+      sttText.setAttribute("value", data.transcription);
+      sttText.setAttribute("width", "0.7");
     }
-
     audioChunks = [];
   };
 }
@@ -36,6 +45,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
   const recordButton = document.getElementById("recordButton");
   const recordText = document.getElementById("recordText");
+  const eraserButton = document.getElementById("eraser-button");
 
   recordButton.addEventListener("click", () => {
     if (isRecording) {
@@ -46,15 +56,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
       mediaRecorder.start();
       recordText.setAttribute("value", "recording...");
       isRecording = true;
-
-
-      setTimeout(() => {
-        if (isRecording) {
-          mediaRecorder.stop();
-          recordText.setAttribute("value", "not recording");
-          isRecording = false;
-        }
-      }, 5000);
     }
   });
+  eraserButton.addEventListener("click", eraseText);
 });
+
+

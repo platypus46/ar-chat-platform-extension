@@ -31,7 +31,6 @@ urlpatterns = [
     path('register_login/', views.register, name='register'),
     path('update_profile/', views.update_profile, name='update_profile'),
     path('transcribe/', views.transcribe, name='transcribe'),
-    path('get_friends_and_conversations/', views.get_friends_and_conversations, name='get_friends_and_conversations'),
 ]
 
 if settings.DEBUG:  # 개발 모드에서만

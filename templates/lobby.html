@@ -109,65 +109,45 @@
             ></a-cylinder>
           </a-entity>
           <a-entity
-            id="ui"
-            geometry="primitive: plane; width: 0.4; height: 0.55"
-            material="opacity: 0.5; transparent: true; color: white"
-            position="0.2 0.13 -0.5"
+          id="ui"
+          geometry="primitive: plane; width: 0.4; height: 0.55"
+          material="opacity: 0.5; transparent: true; color: white"
+          position="0.2 0.13 -0.5"
+          visible="false"
+        >
+          <a-entity
+            id="profile"
+            geometry="primitive: plane; width: 0.25; height: 0.25"
+            material="color: blue; opacity: 0.5"
+            position="0 0.13 0.01"
+          ></a-entity>
+          <a-entity
+            id="friend"
+            geometry="primitive: plane; width:0.4; height: 0.4"
+            material="color:green"
+            position="0 0.1 -0.01"
             visible="false"
           >
             <a-entity
-              id="profile"
-              geometry="primitive: plane; width: 0.25; height: 0.25"
-              material="color: blue; opacity: 0.5"
-              position="0 0.13 0.01"
+              id="friendHeader"
+              geometry="primitive: plane; width:0.35; height: 0.03"
+              material="color:yellow"
+              position="0 0.175 0.1"
             ></a-entity>
             <a-entity
-              id="chat"
-              geometry="primitive: plane; width:0.4; height: 0.4"
-              material="color:white"
-              position="0 0.1 -0.01"
-              visible="false"
+              id="friendsContainer"
+              position="0 -0.025 0"
+              width="0.4"
+              height="0.35"
             >
-              <a-entity
-                id="chatHeader"
-                geometry="primitive: plane; width:0.4; height: 0.05"
-                material="color:yellow"
-                position="0 0.5 -0.01"
-              >
-                <a-entity
-                  htmlembed
-                  position="0 0 0"
-                  style="width: 190.8px; height: 36.95px"
-                >
-                  <button
-                    id="addButton"
-                    onclick="showAddFriendForm()"
-                    class="clickable"
-                  >
-                    Add Friend
-                  </button>
-                  <button onclick="showDeleteButtons()" class="clickable">
-                    Delete Friend
-                  </button>
-                </a-entity>
-                <a-entity
-                  id="friendListContainer"
-                  htmlembed
-                  position="0 -0.2 0.01"
-                  style="width: 394.8px; height: 259.65px"
-                >
-                  <div
-                    id="friendList"
-                    style="max-height: 320px; overflow-y: auto"
-                  ></div>
-                </a-entity>
-              </a-entity>
             </a-entity>
+          </a-entity>
+          <a-entity id="uibuttons">
             <a-entity
               id="chatbutton"
               geometry="primitive: circle; radius: 0.05"
               material="color: white"
-              position="-0.15 -0.1 -0.05"
+              position="-0.1 -0.1 0.05"
               class="clickable"
             >
               <a-text
@@ -182,7 +162,7 @@
               id="button2"
               geometry="primitive: circle; radius: 0.05"
               material="color: white"
-              position="-0.05 -0.1 -0.05"
+              position="0 -0.1 0.05"
               class="clickable"
             >
               <a-text
@@ -191,13 +171,13 @@
                 color="black"
                 position="0 -0.025 0.01"
                 width="0.5"
-              ></a-text
-            ></a-entity>
+              ></a-text>
+            </a-entity>
             <a-entity
               id="button3"
               geometry="primitive: circle; radius: 0.05"
               material="color: white"
-              position="0.05 -0.1 -0.05"
+              position="0.1 -0.1 0.05"
               class="clickable"
             >
               <a-text
@@ -206,24 +186,10 @@
                 color="black"
                 position="0 -0.025 0.01"
                 width="0.5"
-              ></a-text
-            ></a-entity>
-            <a-entity
-              id="Cameralock"
-              geometry="primitive: circle; radius: 0.05"
-              material="color: white"
-              position="0.15 -0.1 -0.05"
-              class="clickable"
-            >
-              <a-text
-                value="Camera"
-                align="center"
-                color="black"
-                position="0 -0.025 0.01"
-                width="0.5"
-              ></a-text
-            ></a-entity>
+              ></a-text>
+            </a-entity>
           </a-entity>
+        </a-entity>
           <!-- Left Control Buttons -->
           <a-entity position="0.05 -0.3 -0.4" id="xypad" visible="false">
             <a-box
@@ -299,5 +265,5 @@
           </a-entity>
         </a-camera>
       </a-scene>
-</body>
+  </body>
 </html>

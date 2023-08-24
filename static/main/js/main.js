@@ -42,7 +42,7 @@ scene.addEventListener("exit-vr", function () {
 });
 function toggleChat() {
   //채팅창 띄우기 및 감추기
-  friend.setAttribute("visible", !isChatVisible);
+  chat.setAttribute("visible", !isChatVisible);
   button2.setAttribute("visible", isChatVisible);
   button3.setAttribute("visible", isChatVisible);
   profile.setAttribute("visible", isChatVisible);
@@ -61,9 +61,11 @@ function toggleUIVisibility() {
   if (isUIVisible) {
     pauseall(ui);
     disableUIButtons();
+    hideUI.setAttribute("visible", "true");
   } else {
     playall(ui);
     enableUIButtons();
+    hideUI.setAttribute("visible", "false");
     ui.setAttribute("position", positionToString(initialUIPosition));
   }
   ui.setAttribute("visible", !isUIVisible);
@@ -122,6 +124,7 @@ function enableChatButtons() {
     button.setAttribute("material", "opacity", 0.5);
   });
 }
+
 function movechat(event) {
   switch (event.target.id) {
     case "up":

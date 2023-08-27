@@ -1,8 +1,12 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+from asgiref.sync import sync_to_async
 from django.contrib.auth.models import User
-from .models import CustomUser, FriendRequest, Friendship, Notification
+from django.contrib.auth import get_user_model
+from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoom, ChatMessage
+
+User = get_user_model()
 
 class LobbyConsumer(AsyncWebsocketConsumer):
     async def connect(self):

@@ -47,6 +47,7 @@ class FriendRequest(models.Model):
 
 
 class ChatRoom(models.Model):
+    name = models.CharField(max_length=255, unique=True)
     participants = models.ManyToManyField(CustomUser, related_name='chat_rooms')
 
 

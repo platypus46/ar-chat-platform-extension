@@ -1,206 +1,206 @@
 document.addEventListener("DOMContentLoaded", function() {
-    //scene,UI 객체화
-    let scene = document.querySelector("a-scene");
-    let ui = document.getElementById("ui");
-    // 채팅버튼 객체화
-    let chatbutton = document.querySelector("#chatbutton");
-    let button2 = document.querySelector("#button2");
-    let button3 = document.querySelector("#button3");
+  //scene,UI 객체화
+  let scene = document.querySelector("a-scene");
+  let ui = document.getElementById("ui");
+  // 채팅버튼 객체화
+  let chatbutton = document.querySelector("#chatbutton");
+  let button2 = document.querySelector("#button2");
+  let button3 = document.querySelector("#button3");
  
-    let friend = document.querySelector("#friend");
-    let profile = document.querySelector("#profile");
+  let friend = document.querySelector("#friend");
+  let profile = document.querySelector("#profile");
 
-    let Text = document.querySelector("#Text");
-    let talkpad = document.querySelector("#talkpad");
+  let Text = document.querySelector("#Text");
+  let talkpad = document.querySelector("#talkpad");
   
     //초기 UI 위치 설정
-    let initialUIPosition = { x: 0.2, y: 0.13, z: -0.5 };
-    let currentUIPosition = {
-      x: 0.2, // 초기 x 좌표
-      y: 0.13, // 초기 y 좌표
-      z: -0.5, // 초기 z 좌표
-    };
-    //움직임 숫자 지정
-    const moveAmount = 0.1;
-    //HiduUI객체화
-    let hideUI = document.querySelector("#hideUIButton");
-    //동작패드
-    let xypad = document.querySelector("#xypad");
-    let zpad = document.querySelector("#zpad");
+  let initialUIPosition = { x: 0.2, y: 0.13, z: -0.5 };
+  let currentUIPosition = {
+    x: 0.2, // 초기 x 좌표
+    y: 0.13, // 초기 y 좌표
+    z: -0.5, // 초기 z 좌표
+  };
+  //움직임 숫자 지정
+  const moveAmount = 0.1;
+  //HiduUI객체화
+  let hideUI = document.querySelector("#hideUIButton");
+  //동작패드
+  let xypad = document.querySelector("#xypad");
+  let zpad = document.querySelector("#zpad");
 
-    //텍스트 입력 및 지우기 버튼
-    let p_pad = document.querySelector("#p-pad");
+  //텍스트 입력 및 지우기 버튼
+  let p_pad = document.querySelector("#p-pad");
 
-    //채팅,UI 시각화 관련 변수 전역화
-    let isUIVisible = true;
-    let isChatVisible = false;
+  //채팅,UI 시각화 관련 변수 전역화
+  let isUIVisible = true;
+  let isChatVisible = false;
     
-    scene.addEventListener("enter-vr", function () {
-      ui.setAttribute("visible", "true");
-    });
-    scene.addEventListener("exit-vr", function () {
-      ui.setAttribute("visible", "false");
+  scene.addEventListener("enter-vr", function () {
+    ui.setAttribute("visible", "true");
+  });
+  scene.addEventListener("exit-vr", function () {
+    ui.setAttribute("visible", "false");
+    hideUI.setAttribute("visible", "false");
+    xypad.setAttribute("visible", "false");
+    zpad.setAttribute("visible", "false");
+    sttText.setAttribute("visible", "false");
+    talkpad.setAttribute("visible", "false");
+    p_pad.setAttribute("visible", "false");
+  });
+
+  function toggleChat() {
+    //채팅창 띄우기 및 감추기
+    friend.setAttribute("visible", !isChatVisible);
+    button2.setAttribute("visible", isChatVisible);
+    button3.setAttribute("visible", isChatVisible);
+    profile.setAttribute("visible", isChatVisible);
+    if (isChatVisible == false) {
+      enableChatButtons();
+    } else {
+      enableUIButtons();
+    }
+    isChatVisible = !isChatVisible;
+    if (isChatVisible) {
+      displayFriends();
+    }
+  }
+  function toggleUIVisibility() {
+    //UI전체 숨김 및 노출
+    if (isUIVisible) {
+      pauseall(ui);
+      disableUIButtons();
+      hideUI.setAttribute("visible", "true");
+    } else {
+      playall(ui);
+      enableUIButtons();
       hideUI.setAttribute("visible", "false");
-      xypad.setAttribute("visible", "false");
-      zpad.setAttribute("visible", "false");
-      sttText.setAttribute("visible", "false");
-      talkpad.setAttribute("visible", "false");
-      p_pad.setAttribute("visible", "false");
+      ui.setAttribute("position", positionToString(initialUIPosition));
+    }
+    ui.setAttribute("visible", !isUIVisible);
+    isUIVisible = !isUIVisible;
+  }
+  function pauseall(entity) {
+    // 엔티티와 그 자식들을 일시 중지
+    entity.pause();
+    let children = entity.children;
+    for (let i = 0; i < children.length; i++) {
+      children[i].pause();
+    }
+  }
+  function playall(entity) {
+    // 엔티티와 그 자식들을 재개
+    entity.play();
+    let children = entity.children;
+    for (let i = 0; i < children.length; i++) {
+      children[i].play();
+    }
+  }
+  function positionToString(position) {
+    //포지션 환원 함수
+    return `${position.x} ${position.y} ${position.z}`;
+  }
+  function disableUIButtons() {
+    //UI 이동버튼 무력화
+    const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText","input-button",'eraser-button'];
+    buttons.forEach((buttonId) => {
+      const button = document.getElementById(buttonId);
+      button.setAttribute("visible", "false");
     });
+  }
+  function enableUIButtons() {
+    //UI 이동버튼 활성화
+    const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText","input-button","eraser-button"];
+    buttons.forEach((buttonId) => {
+      const button = document.getElementById(buttonId);
+      button.setAttribute("visible", "true");
+      button.addEventListener("click", moveUI);
+    });
+  }
 
-    function toggleChat() {
-      //채팅창 띄우기 및 감추기
-      friend.setAttribute("visible", !isChatVisible);
-      button2.setAttribute("visible", isChatVisible);
-      button3.setAttribute("visible", isChatVisible);
-      profile.setAttribute("visible", isChatVisible);
-      if (isChatVisible == false) {
-        enableChatButtons();
-      } else {
-        enableUIButtons();
-      }
-      isChatVisible = !isChatVisible;
-      if (isChatVisible) {
-        displayFriends();
-      }
-    }
-    function toggleUIVisibility() {
-      //UI전체 숨김 및 노출
-      if (isUIVisible) {
-        pauseall(ui);
-        disableUIButtons();
-        hideUI.setAttribute("visible", "true");
-      } else {
-        playall(ui);
-        enableUIButtons();
-        hideUI.setAttribute("visible", "false");
-        ui.setAttribute("position", positionToString(initialUIPosition));
-      }
-      ui.setAttribute("visible", !isUIVisible);
-      isUIVisible = !isUIVisible;
-    }
-    function pauseall(entity) {
-      // 엔티티와 그 자식들을 일시 중지
-      entity.pause();
-      let children = entity.children;
-      for (let i = 0; i < children.length; i++) {
-        children[i].pause();
-      }
-    }
-    function playall(entity) {
-      // 엔티티와 그 자식들을 재개
-      entity.play();
-      let children = entity.children;
-      for (let i = 0; i < children.length; i++) {
-        children[i].play();
-      }
-    }
-    function positionToString(position) {
-      //포지션 환원 함수
-      return `${position.x} ${position.y} ${position.z}`;
-    }
-    function disableUIButtons() {
-      //UI 이동버튼 무력화
-      const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText","input-button",'eraser-button'];
-      buttons.forEach((buttonId) => {
-        const button = document.getElementById(buttonId);
-        button.setAttribute("visible", "false");
-      });
-    }
-    function enableUIButtons() {
-      //UI 이동버튼 활성화
-      const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText","input-button","eraser-button"];
-      buttons.forEach((buttonId) => {
-        const button = document.getElementById(buttonId);
-        button.setAttribute("visible", "true");
-        button.addEventListener("click", moveUI);
-      });
-    }
+  function enableChatButtons() {
+    //채팅 버튼으로 변환
+    const buttonIds = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText","input-button","eraser-button"];
+    buttonIds.forEach((buttonId) => {
+      const button = document.getElementById(buttonId);
+      button.removeEventListener("click", moveUI);
+      button.addEventListener("click", movechat);
+      button.setAttribute("visible", "true");
+    });
+  }
 
-    function enableChatButtons() {
-      //채팅 버튼으로 변환
-      const buttonIds = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText","input-button","eraser-button"];
-      buttonIds.forEach((buttonId) => {
-        const button = document.getElementById(buttonId);
-        button.removeEventListener("click", moveUI);
-        button.addEventListener("click", movechat);
-        button.setAttribute("visible", "true");
-      });
-    }
-
-    function movechat(event) {
-      switch (event.target.id) {
-        case "up":
-          if (selectedIndex > 0) {
-            selectedIndex--;
-            displayFriends();
-          }
-          break;
-        case "down":
-          if (selectedIndex < itemsPerPage - 1) {
-            selectedIndex++;
-            displayFriends();
-          }
-          break;
-        case "left":
-          if (currentPage > 0) {
-            currentPage--;
-            displayFriends();
-          }
-          break;
-        case "right":
-          if ((currentPage + 1) * itemsPerPage < friends.length) {
-            currentPage++;
-            displayFriends();
-          }
-          break;
-        case "forward":
-          displayConversation();
-          break;
-        case "backward":
-          const friendsContainer = document.getElementById("friendsContainer");
-          while (friendsContainer.firstChild) {
-            friendsContainer.removeChild(friendsContainer.firstChild);
-          }
+  function movechat(event) {
+    switch (event.target.id) {
+      case "up":
+        if (selectedIndex > 0) {
+          selectedIndex--;
           displayFriends();
-          break;
-        default:
-          break;
-      }
+         }
+        break;
+      case "down":
+        if (selectedIndex < itemsPerPage - 1) {
+          selectedIndex++;
+          displayFriends();
+        }
+        break;
+      case "left":
+        if (currentPage > 0) {
+          currentPage--;
+          displayFriends();
+        }
+        break;
+      case "right":
+        if ((currentPage + 1) * itemsPerPage < friends.length) {
+          currentPage++;
+          displayFriends();
+        }
+        break;
+      case "forward":
+        displayConversation();
+        break;
+      case "backward":
+        const friendsContainer = document.getElementById("friendsContainer");
+        while (friendsContainer.firstChild) {
+          friendsContainer.removeChild(friendsContainer.firstChild);
+        }
+        displayFriends();
+        break;
+      default:
+        break;
     }
+  }
     
-    function moveUI(event) {
-      //3차원 좌표부터 변경(실제 UI 움직이기 전)
-      const direction = event.target.id;
-      switch (direction) {
-        case "up":
-          currentUIPosition.y += moveAmount;
-          break;
-        case "down":
-          currentUIPosition.y -= moveAmount;
-          break;
-        case "left":
-          currentUIPosition.x -= moveAmount;
-          break;
-        case "right":
-          currentUIPosition.x += moveAmount;
-          break;
-        case "forward":
-          currentUIPosition.z -= moveAmount;
-          break;
-        case "backward":
-          currentUIPosition.z += moveAmount;
-          break;
-        default:
-          break;
-      }
-      // 실제 UI의 위치를 변경
-      ui.setAttribute("position", positionToString(currentUIPosition));
+  function moveUI(event) {
+    //3차원 좌표부터 변경(실제 UI 움직이기 전)
+    const direction = event.target.id;
+    switch (direction) {
+      case "up":
+        currentUIPosition.y += moveAmount;
+        break;
+      case "down":
+        currentUIPosition.y -= moveAmount;
+        break;
+      case "left":
+        currentUIPosition.x -= moveAmount;
+        break;
+      case "right":
+        currentUIPosition.x += moveAmount;
+        break;
+      case "forward":
+        currentUIPosition.z -= moveAmount;
+        break;
+      case "backward":
+        currentUIPosition.z += moveAmount;
+        break;
+      default:
+        break;
     }
+    // 실제 UI의 위치를 변경
+    ui.setAttribute("position", positionToString(currentUIPosition));
+  }
 
-     // 친구 관련 의사코드
+  // 친구 관련 의사코드
   let friends = [
-    { name: "개", conversation: "멍멍" },
+    { name: "dog", conversation: "dog bark bark" },
     { name: "cat", conversation: "cat meow" },
     { name: "bird", conversation: "bird singing" },
     { name: "lion", conversation: "lion growls" },
@@ -212,9 +212,6 @@ document.addEventListener("DOMContentLoaded", function() {
   let currentPage = 0;
   let selectedIndex = 0;
   const itemsPerPage = 5;
-  const MAX_WIDTH = 0.4; // Maximum width for text
-  const MAX_HEIGHT = 0.35; // Maximum height for text
-  const LINE_HEIGHT = 0.08; // Estimated height for each line of text
 
   function displayFriends() {
     const start = currentPage * itemsPerPage;

@@ -24,7 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login_view, name='login'),
     path('lobby/<str:username>/', views.lobby_view, name='lobby'),
-    path('main/<str:username>/', views.main_view, name='main'),
     path('test/', views.test_view, name='test'),
     path('test1/', views.test1_view, name='test1'),
     path('validate_step/<int:step>/', views.validate_step, name='validate_step'),

@@ -43,19 +43,23 @@
     <div id="notificationSection" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
       <button id="notificationIcon">🔔</button>
       <ul id="notificationList" style="display:none; position: absolute; top: 30px; right: 0; background-color: #fff; border: 1px solid #ccc; padding: 10px; z-index: 1000;">
-          {% for notification in notifications %}
-          <li>
-              {{ notification.message }}
-              <button class="acceptFriendRequest" data-id="{{ notification.id }}">수락</button>
-              <button class="closeNotification" data-id="{{ notification.id }}">닫기</button>
-          </li>
-          {% endfor %}
+        {% for notification in notifications %}
+        <li class="notificationElementClass" data-id="{{ notification.id }}">
+            {{ notification.message }}
+            <button class="acceptFriendRequest" data-id="{{ notification.id }}">수락</button>
+            <button class="closeNotification" data-id="{{ notification.id }}">닫기</button>
+        </li>
+        {% endfor %}
       </ul>
     </div>
     <div id="friendListSection">
       <ul id="friendNames">
           {% for friend in friends %}
-          <li>{{ friend.full_name }}</li>
+          <li>
+              <span>{{ friend.full_name }}</span>
+              <button class="deleteFriendButton" onclick="deleteFriend('{{ friend.username }}')">삭제</button>
+              <button class="chatFriendButton" onclick="chatWithFriend('{{ friend.username }}')">채팅</button>
+          </li>
           {% endfor %}
       </ul>
       <div id="friendAddSection">

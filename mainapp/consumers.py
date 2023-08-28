@@ -1,8 +1,6 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from asgiref.sync import sync_to_async
-from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoom, ChatMessage
 
@@ -49,17 +47,27 @@ class LobbyConsumer(AsyncWebsocketConsumer):
 
         elif message_type == 'close_notification':
             notification_id = text_data_json['notification_id']
+            if not notification_id:
+                print("Invalid notification ID")
+                return
             await self.close_notification(notification_id)
+
+        elif message_type == 'delete_friend':
+            from_user = text_data_json['from_user']
+            friend_user = text_data_json['friend_user']
+            await self.handle_delete_friend(from_user, friend_user)
 
     async def send_notification(self, event):
         message = event['message']
         from_full_name = event.get('from_full_name', '')
         notification_id = event.get('notification_id', '')
+        friend_username = event.get('friend_username', '')
 
         await self.send(text_data=json.dumps({
             'message': message,
             'from_full_name': from_full_name,
-            'notification_id': notification_id
+            'notification_id': notification_id,
+            'friend_username': friend_username
         }))
 
     @database_sync_to_async
@@ -130,8 +138,48 @@ class LobbyConsumer(AsyncWebsocketConsumer):
             }
         )
 
+    @database_sync_to_async  # 동기 함수
+    def delete_friend(self, from_username, friend_username):
+        from_user = CustomUser.objects.get(username=from_username)
+        friend_user = CustomUser.objects.get(username=friend_username)
+
+        # Refresh the state from the database
+        from_user.refresh_from_db()
+        friend_user.refresh_from_db()
+
+        # DB에서 친구 관계를 삭제
+        deleted1 = Friendship.objects.filter(user=from_user, friend=friend_user).delete()
+        deleted2 = Friendship.objects.filter(user=friend_user, friend=from_user).delete()
+    
+        return deleted1 and deleted2
+
+    async def handle_delete_friend(self, from_username, friend_username):
+        is_deleted = await self.delete_friend(from_username, friend_username)
+        if is_deleted:  # 실제로 삭제되었다면 알림을 전송
+            await self.channel_layer.group_send(
+                self.room_name,
+                {
+                    'type': 'send_notification',
+                    'message': 'friend_deleted',
+                    'friend_username': friend_username,
+                }
+            )   
+            await self.channel_layer.group_send(
+                friend_username,
+                {
+                    'type': 'send_notification',
+                    'message': 'friend_deleted',
+                    'friend_username': from_username,
+                }
+            )
+
         
     @database_sync_to_async
     def close_notification(self, notification_id):
-        notification = Notification.objects.get(id=notification_id)
-        notification.delete()
+        try:
+            notification = Notification.objects.get(id=notification_id)
+            notification.delete()
+        except Notification.DoesNotExist:
+            print(f"No notification found with ID: {notification_id}")
+        except Exception as e:
+            print(f"An error occurred: {e}")

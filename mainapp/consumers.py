@@ -1,8 +1,11 @@
+from django.core.exceptions import ObjectDoesNotExist
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
+from asgiref.sync import sync_to_async
 from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoom, ChatMessage
+from channels.exceptions import DenyConnection
 
 User = get_user_model()
 
@@ -183,3 +186,99 @@ class LobbyConsumer(AsyncWebsocketConsumer):
             print(f"No notification found with ID: {notification_id}")
         except Exception as e:
             print(f"An error occurred: {e}")
+
+
+CustomUser = get_user_model()
+
+
+@database_sync_to_async
+def get_or_create_chatroom(participant1, participant2):
+    participant1_obj = CustomUser.objects.get(username=participant1)
+    participant2_obj = CustomUser.objects.get(username=participant2)
+
+    room_name = f"{participant1}_{participant2}" if participant1 < participant2 else f"{participant2}_{participant1}"
+    room, created = ChatRoom.objects.get_or_create(
+        name=room_name, 
+        participant1=participant1_obj, 
+        participant2=participant2_obj
+    )
+    return room
+
+@database_sync_to_async  # 이 데코레이터 추가
+def check_user_in_room(scope_user, room):
+    allowed_users = [str(room.participant1.username), str(room.participant2.username), 'admin']
+    return str(scope_user.username) in allowed_users
+
+class ChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        try:
+            self.room_name = self.scope['url_route']['kwargs']['room_name']
+            self.room_group_name = f'chat_{self.room_name}'
+            participant1, participant2 = self.room_name.split("_")
+
+            room = await get_or_create_chatroom(participant1, participant2)
+
+            is_user_in_room = await check_user_in_room(self.scope["user"], room)  
+
+            if not is_user_in_room:
+                print(f"Denying connection to room {self.room_name}")  # 로그를 찍어서 확인
+                print(f"Scope user: {self.scope['user'].username}")  # Add this line
+                print(f"Room participants: {room.participant1.username}, {room.participant2.username}")  # Add this line
+                raise DenyConnection("Not allowed to join this room")
+
+            print(f"Connecting to room {self.room_name}")  # 로그를 찍어서 확인
+            await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+            await self.accept()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            raise DenyConnection(str(e))
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+        sender = text_data_json.get('sender', self.scope["user"].username)  
+
+
+        await self.save_message(self.room_name, sender, message)
+
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': message,
+                'sender': sender 
+            }
+        )
+
+    async def chat_message(self, event):
+        message = event['message']
+        sender = event['sender']
+
+        await self.send(text_data=json.dumps({
+            'message_type': 'new_message',
+            'message': message,
+            'sender': sender
+        }))
+
+    @database_sync_to_async
+    def save_message(self, room_name, sender, message):
+        room = ChatRoom.objects.get(name=room_name)
+        user = CustomUser.objects.get(username=sender)
+        ChatMessage.objects.create(chat_room=room, sender=user, message=message)
+
+    @database_sync_to_async
+    def get_last_50_messages(self, room_name):
+        room = ChatRoom.objects.get(name=room_name)
+        messages = ChatMessage.objects.filter(chat_room=room).order_by('-timestamp')[:50]
+        return [
+            {'sender': msg.sender.username, 'message': msg.message} 
+            for msg in reversed(messages) 
+            if msg.sender.username in [room.participant1.username, room.participant2.username]
+        ]
+    

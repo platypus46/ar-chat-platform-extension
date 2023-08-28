@@ -9,7 +9,6 @@
     />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'lobby/js/profile.js' %}"></script>
-    <script src="{% static 'lobby/js/lobby.js' %}"></script>
     <script src="{% static 'lobby/js/gpt_api_key.js' %}"></script>
 
     <!-- AR화면 -->
@@ -69,6 +68,20 @@
         {% endfor %}
       </div>
     </div>
+
+    <div id="chatOverlay" style="display:none; z-index: 1000; position: fixed; top: 30%; right: 10px;">
+      <div id="chatHeader">
+        <span id="chatFriendName"></span>
+        <button id="closeChat">닫기</button>
+      </div>
+      <div id="chatMessages">
+        <!-- 채팅 메시지가 여기에 표시됩니다 -->
+      </div>
+      <div id="chatInputSection">
+        <input type="text" id="chatInput" placeholder="메시지 입력..." />
+        <button id="sendChatMessage">전송</button>
+      </div>
+    </div>
     <div
       id="notificationSection"
       style="position: fixed; top: 20px; right: 20px; z-index: 1000"
@@ -107,6 +120,7 @@
           <span>{{ friend.full_name }}</span>
           <button
             class="deleteFriendButton"
+            data-username="{{ friend.username }}" 
             onclick="deleteFriend('{{ friend.username }}')"
           >
             삭제
@@ -394,4 +408,5 @@
       </a-camera>
     </a-scene>
   </body>
+  <script src="{% static 'lobby/js/lobby.js' %}"></script>
 </html>

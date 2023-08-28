@@ -1,6 +1,82 @@
+let chatSocket;  // 전역 변수로 선언
+const urlParts = window.location.pathname.split('/');
+const username = urlParts[urlParts.length - 2];
+const ws_protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+
+function chatWithFriend(friendUsername) {
+    if (chatSocket) {
+        chatSocket.close();
+    }
+
+    document.querySelector('#chatInput').onkeyup = null;
+    document.querySelector('#sendChatMessage').onclick = null;
+
+      // 새로운 WebSocket을 열고 전역 변수를 업데이트
+    const room_name = friendUsername < username ? `${friendUsername}_${username}` : `${username}_${friendUsername}`;
+    chatSocket = new WebSocket(ws_protocol + window.location.host + '/ws/chat/' + room_name + '/');
+
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        if (data.message_type === 'load_messages') {
+            data.messages.forEach(msg => {
+                displayMessage(msg.sender, msg.message);
+            });
+        } else if (data.message_type === 'new_message') {
+            displayMessage(data.sender, data.message);
+        }
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chatInput').onkeyup = function(e) {
+        if (e.keyCode === 13) {
+            const messageInputDom = document.querySelector('#chatInput');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'sender': username
+            }));
+            messageInputDom.value = '';
+        }
+    };
+
+    document.querySelector('#sendChatMessage').addEventListener('click', function() {
+        const messageInputDom = document.querySelector('#chatInput');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'sender': username  
+        }));
+        messageInputDom.value = '';
+    });
+
+    openChatOverlay(friendUsername);
+}
+
+function displayMessage(sender, message) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageElement = document.createElement('p');
+    messageElement.innerHTML = `<strong>${sender}</strong>: ${message}`;
+    chatMessages.appendChild(messageElement);
+}
+
+function openChatOverlay(friendUsername) {
+    document.getElementById('chatOverlay').style.display = 'block';
+    document.getElementById('chatFriendName').innerText = friendUsername;
+}
+
+function closeChatOverlay() {
+    document.getElementById('chatOverlay').style.display = 'none';
+    document.getElementById('chatMessages').innerHTML = ''; 
+}
+
+document.getElementById('closeChat').addEventListener('click', closeChatOverlay);
+
+
 document.addEventListener('DOMContentLoaded', function() {
-    const urlParts = window.location.pathname.split('/');
-    const username = urlParts[urlParts.length - 2];
     const ws_protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
     const socket = new WebSocket(ws_protocol + window.location.host + '/ws/lobby/' + username + '/');
 

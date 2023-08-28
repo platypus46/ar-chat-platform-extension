@@ -49,7 +49,9 @@ class FriendRequest(models.Model):
 
 class ChatRoom(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    participants = models.ManyToManyField(CustomUser, related_name='chat_rooms')
+    # Change this to ForeignKey
+    participant1 = models.ForeignKey(CustomUser, related_name='chat_rooms1', on_delete=models.CASCADE)
+    participant2 = models.ForeignKey(CustomUser, related_name='chat_rooms2', on_delete=models.CASCADE)
 
 
 class ChatMessage(models.Model):

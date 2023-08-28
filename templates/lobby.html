@@ -1,13 +1,17 @@
 {% load static %}
 <html>
-<head>
+  <head>
     <!-- 로비화면 -->
-    <link rel="stylesheet" type="text/css" href="{% static 'lobby/css/lobby.css' %}">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'lobby/css/lobby.css' %}"
+    />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'lobby/js/profile.js' %}"></script>
     <script src="{% static 'lobby/js/lobby.js' %}"></script>
 
-     <!-- AR화면 -->
+    <!-- AR화면 -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
@@ -17,102 +21,161 @@
     <link rel="stylesheet" href="{% static 'lobby/css/lobby.css' %}" />
     <script src="{% static 'lobby/js/AR.js' %}"></script>
     <script src="{% static 'lobby/js/record.js' %}"></script>
-
-</head>
-<body>
+  </head>
+  <body>
     <div>
-        <h1 id="title">PLATYVERSE 사전설정</h1>
-        <div class="user-notification">{{ full_name }}님이 접속했습니다.</div>
-        <div class="profile-container">
-            <img src="{% if profile_picture %}{{ profile_picture.url }}{% else %}{% static 'lobby/img/default_profile.png' %}{% endif %}" alt="{{ username }}의 프로필 사진" class="profile-pic" id="userProfilePic">
-            <input type="file" id="imageUpload" style="display: none;">
-        </div>
+      <h1 id="title">PLATYVERSE 사전설정</h1>
+      <div class="user-notification">{{ full_name }}님이 접속했습니다.</div>
+      <div class="profile-container">
+        <img
+          src="{% if profile_picture %}{{ profile_picture.url }}{% else %}{% static 'lobby/img/default_profile.png' %}{% endif %}"
+          alt="{{ username }}의 프로필 사진"
+          class="profile-pic"
+          id="userProfilePic"
+        />
+        <input type="file" id="imageUpload" style="display: none" />
+      </div>
     </div>
     <div class="subscriber-list">
-        <h3>구독 목록</h3>
-        <div class="scrollable-content"> 
-            {% for subscription in user.subscriptions.all %}
-                <div class="subscriber-item">
-                    {{ subscription.subscribed_to.full_name }} 
-                </div>
-            {% empty %}
-                <div>구독 목록이 없습니다.</div>
-            {% endfor %}
+      <h3>구독 목록</h3>
+      <div class="scrollable-content">
+        {% for subscription in user.subscriptions.all %}
+        <div class="subscriber-item">
+          {{ subscription.subscribed_to.full_name }}
         </div>
+        {% empty %}
+        <div>구독 목록이 없습니다.</div>
+        {% endfor %}
+      </div>
     </div>
-    <div id="notificationSection" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+    <div
+      id="notificationSection"
+      style="position: fixed; top: 20px; right: 20px; z-index: 1000"
+    >
       <button id="notificationIcon">🔔</button>
-      <ul id="notificationList" style="display:none; position: absolute; top: 30px; right: 0; background-color: #fff; border: 1px solid #ccc; padding: 10px; z-index: 1000;">
+      <ul
+        id="notificationList"
+        style="
+          display: none;
+          position: absolute;
+          top: 30px;
+          right: 0;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          padding: 10px;
+          z-index: 1000;
+        "
+      >
         {% for notification in notifications %}
         <li class="notificationElementClass" data-id="{{ notification.id }}">
-            {{ notification.message }}
-            <button class="acceptFriendRequest" data-id="{{ notification.id }}">수락</button>
-            <button class="closeNotification" data-id="{{ notification.id }}">닫기</button>
+          {{ notification.message }}
+          <button class="acceptFriendRequest" data-id="{{ notification.id }}">
+            수락
+          </button>
+          <button class="closeNotification" data-id="{{ notification.id }}">
+            닫기
+          </button>
         </li>
         {% endfor %}
       </ul>
     </div>
     <div id="friendListSection">
       <ul id="friendNames">
-          {% for friend in friends %}
-          <li>
-              <span>{{ friend.full_name }}</span>
-              <button class="deleteFriendButton" onclick="deleteFriend('{{ friend.username }}')">삭제</button>
-              <button class="chatFriendButton" onclick="chatWithFriend('{{ friend.username }}')">채팅</button>
-          </li>
-          {% endfor %}
+        {% for friend in friends %}
+        <li>
+          <span>{{ friend.full_name }}</span>
+          <button
+            class="deleteFriendButton"
+            onclick="deleteFriend('{{ friend.username }}')"
+          >
+            삭제
+          </button>
+          <button
+            class="chatFriendButton"
+            onclick="chatWithFriend('{{ friend.username }}')"
+          >
+            채팅
+          </button>
+        </li>
+        {% endfor %}
       </ul>
       <div id="friendAddSection">
-          <input type="text" id="newFriendName" placeholder="친구 아이디 입력">
-          <button id="addFriendButton">친구 추가</button>
+        <input type="text" id="newFriendName" placeholder="친구 아이디 입력" />
+        <button id="addFriendButton">친구 추가</button>
       </div>
     </div>
 
     <!-- 로딩 스크린 -->
-    <div id="loadingScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center;">
-        <div class="loader"></div>
+    <div
+      id="loadingScreen"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <div class="loader"></div>
     </div>
-    <a-scene physics="debug: true" light="defaultLightsEnabled:false">
-        <a-light type="ambient" color="#888"></a-light>
-        <a-light
-          type="directional"
-          color="#FFF"
-          intensity="1"
-          position="2 4 -3"
-        ></a-light>
+    <a-scene
+      physics="debug: true"
+      light="defaultLightsEnabled:false"
+      data-font-json="{% static 'lobby/font/NanumGothic-Regular.js' %}"
+      data-font-png="{% static 'lobby/font/NanumGothic-Regular.png' %}"
+      auto-font
+    >
+      <a-light type="ambient" color="#888"></a-light>
+      <a-light
+        type="directional"
+        color="#FFF"
+        intensity="1"
+        position="2 4 -3"
+      ></a-light>
+      <a-entity
+        id="leftHand"
+        hand-tracking-controls="hand: left;"
+        hand-tracking-extras
+        ><a-entity
+          finger-cursor
+          raycaster="objects: .clickable; far: 0.04"
+        ></a-entity
+      ></a-entity>
+      <a-entity
+        id="rightHand"
+        hand-tracking-controls="hand: right;"
+        hand-tracking-extras
+      >
         <a-entity
-          id="leftHand"
-          hand-tracking-controls="hand: left;"
-          hand-tracking-extras
-          ><a-entity
-            finger-cursor
-            raycaster="objects: .clickable; far: 0.04"
-          ></a-entity
+          finger-cursor
+          raycaster="objects: .clickable; far: 0.04"
         ></a-entity>
-        <a-entity
-          id="rightHand"
-          hand-tracking-controls="hand: right;"
-          hand-tracking-extras
-        >
-          <a-entity
-            finger-cursor
-            raycaster="objects: .clickable; far: 0.04"
-          ></a-entity>
+      </a-entity>
+      <a-camera id="camera">
+        <a-entity id="Text" position="-0.18 -0.1 -0.4" visible="false">
+          <a-text
+            id="sttText"
+            position="0 0 0"
+            value="PLATYVERSE"
+            color="#FFFFFF"
+            shader="msdf"
+            width="0.6"
+            font="https://raw.githubusercontent.com/myso-kr/aframe-fonts-korean/master/fonts/ofl/nanumgothic/NanumGothic-Regular.json"
+          ></a-text>
         </a-entity>
-        <a-camera id="camera"
-          >
-          <a-entity id="Text"  position="-0.18 -0.1 -0.4" visible="false">
-            <a-text id="sttText" position="0 0 0" value="PLATYVERSE" color="#FFFFFF" shader="msdf" width="0.6"  font="https://raw.githubusercontent.com/myso-kr/aframe-fonts-korean/master/fonts/ofl/nanumgothic/NanumGothic-Regular.json"></a-text>
-          </a-entity>
-          <a-entity id="hideUIButton" position="0 -0.2 -0.4" visible="false">
-            <a-cylinder
-              geometry="radius: 0.03; height: 0.02; segmentsRadial: 32"
-              material="color: green"
-              rotation="90 0 0"
-              class="clickable"
-            ></a-cylinder>
-          </a-entity>
-          <a-entity
+        <a-entity id="hideUIButton" position="0 -0.2 -0.4" visible="false">
+          <a-cylinder
+            geometry="radius: 0.03; height: 0.02; segmentsRadial: 32"
+            material="color: green"
+            rotation="90 0 0"
+            class="clickable"
+          ></a-cylinder>
+        </a-entity>
+        <a-entity
           id="ui"
           geometry="primitive: plane; width: 0.4; height: 0.55"
           material="opacity: 0.5; transparent: true; color: white"
@@ -194,80 +257,120 @@
             </a-entity>
           </a-entity>
         </a-entity>
-          <!-- Left Control Buttons -->
-          <a-entity position="0.05 -0.3 -0.4" id="xypad" visible="false">
-            <a-box
-              position="0 0.06 0"
-              width="0.06"
-              height="0.06"
-              depth="0.02"
-              color="blue"
-              class="clickable"
-              id="up"
-            ></a-box>
-            <a-box
-              position="0 -0.06 0"
-              width="0.06"
-              height="0.06"
-              depth="0.02"
-              color="blue"
-              class="clickable"
-              id="down"
-            ></a-box>
-            <a-box
-              position="-0.06 0 0"
-              width="0.06"
-              height="0.06"
-              depth="0.02"
-              color="blue"
-              class="clickable"
-              id="left"
-            ></a-box>
-            <a-box
-              position="0.06 0 0"
-              width="0.06"
-              height="0.06"
-              depth="0.02"
-              color="blue"
-              class="clickable"
-              id="right"
-            ></a-box>
-          </a-entity>
-          <a-entity position="0.2 -0.2 -0.4" id="zpad" visible="false">
-            <a-cylinder
-              position="0 -0.1 0"
-              radius="0.02"
-              height="0.02"
-              color="red"
-              rotation="90 0 0"
-              class="clickable"
-              id="forward"
-            ></a-cylinder>
-            <a-cylinder
-              position="0 -0.15 0"
-              radius="0.02"
-              height="0.02"
-              color="red"
-              rotation="90 0 0"
-              class="clickable"
-              id="backward"
-            ></a-cylinder>
-          </a-entity>
-          <a-entity position="-0.1 -0.25 -0.4"  id="talkpad" visible="false">
-            <a-box position="0 0 0" width="0.06" height="0.06" depth="0.02" color="yellow" class="clickable" id="recordButton">
-              <a-text value="not recording" align="center" position="0 0 0.011" scale="0.06 0.06 0.06" id="recordText"></a-text>
-            </a-box>
-          </a-entity>
-          <!--텍스트 입력 및 지우기 버튼으로 사용함-->
-          <a-entity position="-0.1 -0.28 -0.4"  id="p-pad" visible="false">   
-            <a-box position="0 -0.05 0" width="0.04" height="0.04" depth="0.02" color="green" class="clickable" id="input-button">
-              <a-text value="INPUT" align="center" position="0 0 0.011" scale="0.06 0.06 0.06"></a-text>
-            </a-box>
-            <a-box position="0 -0.1 0" width="0.04" height="0.04" depth="0.02" color="red" class="clickable" id="eraser-button">
-              <a-text value="DEL" align="center" position="0 0 0.011" scale="0.06 0.06 0.06"></a-text>
-            </a-box>
-          </a-entity>
-        </a-camera>
-      </a-scene>
+        <!-- Left Control Buttons -->
+        <a-entity position="0.05 -0.3 -0.4" id="xypad" visible="false">
+          <a-box
+            position="0 0.06 0"
+            width="0.06"
+            height="0.06"
+            depth="0.02"
+            color="blue"
+            class="clickable"
+            id="up"
+          ></a-box>
+          <a-box
+            position="0 -0.06 0"
+            width="0.06"
+            height="0.06"
+            depth="0.02"
+            color="blue"
+            class="clickable"
+            id="down"
+          ></a-box>
+          <a-box
+            position="-0.06 0 0"
+            width="0.06"
+            height="0.06"
+            depth="0.02"
+            color="blue"
+            class="clickable"
+            id="left"
+          ></a-box>
+          <a-box
+            position="0.06 0 0"
+            width="0.06"
+            height="0.06"
+            depth="0.02"
+            color="blue"
+            class="clickable"
+            id="right"
+          ></a-box>
+        </a-entity>
+        <a-entity position="0.2 -0.2 -0.4" id="zpad" visible="false">
+          <a-cylinder
+            position="0 -0.1 0"
+            radius="0.02"
+            height="0.02"
+            color="red"
+            rotation="90 0 0"
+            class="clickable"
+            id="forward"
+          ></a-cylinder>
+          <a-cylinder
+            position="0 -0.15 0"
+            radius="0.02"
+            height="0.02"
+            color="red"
+            rotation="90 0 0"
+            class="clickable"
+            id="backward"
+          ></a-cylinder>
+        </a-entity>
+        <a-entity position="-0.1 -0.25 -0.4" id="talkpad" visible="false">
+          <a-box
+            position="0 0 0"
+            width="0.06"
+            height="0.06"
+            depth="0.02"
+            color="yellow"
+            class="clickable"
+            id="recordButton"
+          >
+            <a-text
+              value="not recording"
+              align="center"
+              position="0 0 0.011"
+              scale="0.06 0.06 0.06"
+              id="recordText"
+            ></a-text>
+          </a-box>
+        </a-entity>
+        <!--텍스트 입력 및 지우기 버튼으로 사용함-->
+        <a-entity position="-0.1 -0.28 -0.4" id="p-pad" visible="false">
+          <a-box
+            position="0 -0.05 0"
+            width="0.04"
+            height="0.04"
+            depth="0.02"
+            color="green"
+            class="clickable"
+            id="input-button"
+          >
+            <a-text
+              value="INPUT"
+              align="center"
+              position="0 0 0.011"
+              scale="0.06 0.06 0.06"
+            ></a-text>
+          </a-box>
+          <a-box
+            position="0 -0.1 0"
+            width="0.04"
+            height="0.04"
+            depth="0.02"
+            color="red"
+            class="clickable"
+            id="eraser-button"
+          >
+            <a-text
+              value="DEL"
+              align="center"
+              position="0 0 0.011"
+              scale="0.06 0.06 0.06"
+            ></a-text>
+          </a-box>
+        </a-entity>
+      </a-camera>
+    </a-scene>
   </body>
 </html>

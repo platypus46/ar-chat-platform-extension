@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   //scene,UI 객체화
   let scene = document.querySelector("a-scene");
   let ui = document.getElementById("ui");
@@ -6,14 +6,14 @@ document.addEventListener("DOMContentLoaded", function() {
   let chatbutton = document.querySelector("#chatbutton");
   let button2 = document.querySelector("#button2");
   let button3 = document.querySelector("#button3");
- 
+
   let friend = document.querySelector("#friend");
   let profile = document.querySelector("#profile");
 
   let Text = document.querySelector("#Text");
   let talkpad = document.querySelector("#talkpad");
-  
-    //초기 UI 위치 설정
+
+  //초기 UI 위치 설정
   let initialUIPosition = { x: 0.2, y: 0.13, z: -0.5 };
   let currentUIPosition = {
     x: 0.2, // 초기 x 좌표
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
   //채팅,UI 시각화 관련 변수 전역화
   let isUIVisible = true;
   let isChatVisible = false;
-    
+
   scene.addEventListener("enter-vr", function () {
     ui.setAttribute("visible", "true");
   });
@@ -101,7 +101,19 @@ document.addEventListener("DOMContentLoaded", function() {
   }
   function disableUIButtons() {
     //UI 이동버튼 무력화
-    const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText","input-button",'eraser-button'];
+    const buttons = [
+      "up",
+      "down",
+      "left",
+      "right",
+      "forward",
+      "backward",
+      "recordButton",
+      "sttText",
+      "recordText",
+      "input-button",
+      "eraser-button",
+    ];
     buttons.forEach((buttonId) => {
       const button = document.getElementById(buttonId);
       button.setAttribute("visible", "false");
@@ -109,7 +121,19 @@ document.addEventListener("DOMContentLoaded", function() {
   }
   function enableUIButtons() {
     //UI 이동버튼 활성화
-    const buttons = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText","input-button","eraser-button"];
+    const buttons = [
+      "up",
+      "down",
+      "left",
+      "right",
+      "forward",
+      "backward",
+      "recordButton",
+      "sttText",
+      "recordText",
+      "input-button",
+      "eraser-button",
+    ];
     buttons.forEach((buttonId) => {
       const button = document.getElementById(buttonId);
       button.setAttribute("visible", "true");
@@ -119,7 +143,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function enableChatButtons() {
     //채팅 버튼으로 변환
-    const buttonIds = ["up", "down", "left", "right", "forward", "backward","recordButton","sttText","recordText","input-button","eraser-button"];
+    const buttonIds = [
+      "up",
+      "down",
+      "left",
+      "right",
+      "forward",
+      "backward",
+      "recordButton",
+      "sttText",
+      "recordText",
+      "input-button",
+      "eraser-button",
+    ];
     buttonIds.forEach((buttonId) => {
       const button = document.getElementById(buttonId);
       button.removeEventListener("click", moveUI);
@@ -134,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (selectedIndex > 0) {
           selectedIndex--;
           displayFriends();
-         }
+        }
         break;
       case "down":
         if (selectedIndex < itemsPerPage - 1) {
@@ -168,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function() {
         break;
     }
   }
-    
+
   function moveUI(event) {
     //3차원 좌표부터 변경(실제 UI 움직이기 전)
     const direction = event.target.id;
@@ -208,7 +244,7 @@ document.addEventListener("DOMContentLoaded", function() {
     { name: "giraff", conversation: "giraffs neck is long " },
     { name: "bear", conversation: "bear likes honey" },
   ];
-  
+
   let currentPage = 0;
   let selectedIndex = 0;
   const itemsPerPage = 5;
@@ -262,50 +298,95 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.getElementById("friendList").setAttribute("visible", "false");
   }
-    window.addEventListener("DOMContentLoaded", function () {
-      var arButton = document.querySelector(".a-enter-ar-button");
-      if (arButton) {
-        arButton.disabled = true;
-      }
-    });
-    scene.addEventListener("loaded", function () {
-      // 로딩 스크린 숨기기
-      var loadingScreen = document.getElementById("loadingScreen");
-      if (loadingScreen) {
-        loadingScreen.style.display = "none";
-      }
-      var vrButton = document.querySelector(".a-enter-vr-button");
-      if (vrButton) {
-        vrButton.style.display = "none";
-      }
-      var arButton = document.querySelector(".a-enter-ar-button");
-      if (arButton) {
-        arButton.style.width = "150px";
-        arButton.style.height = "50px";
-        arButton.disabled = false; // 버튼 활성화
-        arButton.addEventListener("click", function () {
-          ui.setAttribute("visible", "true");
-          hideUI.setAttribute("visible", "true");
-          xypad.setAttribute("visible", "true");
-          zpad.setAttribute("visible", "true");
-          talkpad.setAttribute("visible", "true");
-          Text.setAttribute("visible", "true");
-          p_pad.setAttribute("visible", "true");
-          hideUI.setAttribute("visible", "false");
-        });
-      }
-      chatbutton.addEventListener("click", toggleChat);
-      hideUI.addEventListener("click", toggleUIVisibility);
-      enableUIButtons();
-    });
-
-    // 여기서부터 명령어 관련 코드라고 생각하면 됨.
-    let sttText = document.querySelector("#sttText");
-    let inputButton = document.querySelector("#input-button");
-
-    inputButton.addEventListener("click", function() {
-    if(sttText.getAttribute("value") === "초기화") {
-        toggleUIVisibility(); 
+  window.addEventListener("DOMContentLoaded", function () {
+    var arButton = document.querySelector(".a-enter-ar-button");
+    if (arButton) {
+      arButton.disabled = true;
     }
+  });
+  scene.addEventListener("loaded", function () {
+    // 로딩 스크린 숨기기
+    var loadingScreen = document.getElementById("loadingScreen");
+    if (loadingScreen) {
+      loadingScreen.style.display = "none";
+    }
+    var vrButton = document.querySelector(".a-enter-vr-button");
+    if (vrButton) {
+      vrButton.style.display = "none";
+    }
+    var arButton = document.querySelector(".a-enter-ar-button");
+    if (arButton) {
+      arButton.style.width = "150px";
+      arButton.style.height = "50px";
+      arButton.disabled = false; // 버튼 활성화
+      arButton.addEventListener("click", function () {
+        ui.setAttribute("visible", "true");
+        hideUI.setAttribute("visible", "true");
+        xypad.setAttribute("visible", "true");
+        zpad.setAttribute("visible", "true");
+        talkpad.setAttribute("visible", "true");
+        Text.setAttribute("visible", "true");
+        p_pad.setAttribute("visible", "true");
+        hideUI.setAttribute("visible", "false");
+      });
+    }
+    chatbutton.addEventListener("click", toggleChat);
+    hideUI.addEventListener("click", toggleUIVisibility);
+    enableUIButtons();
+  });
+
+  // 여기서부터 명령어 관련 코드라고 생각하면 됨.
+  let sttText = document.querySelector("#sttText");
+  let inputButton = document.querySelector("#input-button");
+
+  inputButton.addEventListener("click", function () {
+    if (sttText.getAttribute("value") === "초기화") {
+      toggleUIVisibility();
+    }
+  });
+  /** 한글 폰트 지정 */
+  AFRAME.registerComponent("auto-font", {
+    schema: {
+      font: { type: "string", default: "" },
+      fontImage: { type: "string", default: "" },
+    },
+
+    init: function () {
+      const scene = document.querySelector("a-scene");
+
+      this.data.font = this.data.font || scene.getAttribute("data-font-json");
+      this.data.fontImage =
+        this.data.fontImage || scene.getAttribute("data-font-png");
+
+      // 초기 엔터티에 폰트 적용
+      this.applyFontToEntities(this.el.querySelectorAll("[text]"));
+
+      // 새로 추가되는 엔터티에 대한 이벤트 리스너
+      this.el.sceneEl.addEventListener(
+        "child-attached",
+        this.childAttached.bind(this)
+      );
+    },
+
+    pause: function () {
+      this.el.sceneEl.removeEventListener(
+        "child-attached",
+        this.childAttached.bind(this)
+      );
+    },
+
+    childAttached: function (evt) {
+      if (evt.detail.el.hasAttribute("text")) {
+        this.applyFontToEntities([evt.detail.el]);
+      }
+    },
+
+    applyFontToEntities: function (entities) {
+      entities.forEach((textEl) => {
+        textEl.setAttribute("text", "font", this.data.font);
+        textEl.setAttribute("text", "fontImage", this.data.fontImage);
+        textEl.setAttribute("text", "shader", "msdf"); // MSDF 쉐이더 적용
+      });
+    },
   });
 });

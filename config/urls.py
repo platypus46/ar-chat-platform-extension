@@ -30,6 +30,7 @@ urlpatterns = [
     path('register_login/', views.register, name='register'),
     path('update_profile/', views.update_profile, name='update_profile'),
     path('transcribe/', views.transcribe, name='transcribe'),
+    path('save_gpt_api_key/', views.save_gpt_api_key, name='save_gpt_api_key'),
 ]
 
 if settings.DEBUG:  # 개발 모드에서만

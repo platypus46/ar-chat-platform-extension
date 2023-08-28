@@ -26,6 +26,7 @@ def profile_pic_directory_path(instance, filename):
 class CustomUser(AbstractUser):
     full_name = models.CharField(max_length=100, default='')
     profile_picture = models.ImageField(upload_to=profile_pic_directory_path, null=True, blank=True)
+    gpt_api_key=models.CharField(max_length=100, default='')
     is_online = models.BooleanField(default=False)  
 
 

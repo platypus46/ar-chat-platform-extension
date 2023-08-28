@@ -10,6 +10,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'lobby/js/profile.js' %}"></script>
     <script src="{% static 'lobby/js/lobby.js' %}"></script>
+    <script src="{% static 'lobby/js/gpt_api_key.js' %}"></script>
 
     <!-- AR화면 -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
@@ -36,6 +37,26 @@
         <input type="file" id="imageUpload" style="display: none" />
       </div>
     </div>
+    {% block content %}
+    <div class="container">
+      <div class="gpt-api-key-section">
+        <h2>GPT API Key</h2>
+        <form id="gptApiKeyForm" method="post">
+          {% csrf_token %}
+          <div class="input-group">
+            <input
+              type="text"
+              id="gptApiKey"
+              name="gptApiKey"
+              placeholder="여기에 gpt api 키를 입력하세요."
+              value="{{ gpt_api_key }}"
+            />
+            <button type="submit" id="saveApiKeyBtn">저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    {% endblock %}
     <div class="subscriber-list">
       <h3>구독 목록</h3>
       <div class="scrollable-content">

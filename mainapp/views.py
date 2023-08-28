@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 import speech_recognition as sr
 import subprocess
 import logging
+import json
 import os
 
 logger = logging.getLogger(__name__)
@@ -37,6 +38,7 @@ def lobby_view(request, username):
     if user.is_authenticated:
         context['username'] = user.username
         context['full_name'] = user.full_name
+        context['gpt_api_key'] =user.gpt_api_key
         context['profile_picture'] = user.profile_picture if user.profile_picture else None
         context['subscriptions'] = user.subscriptions.all()
         context['friends'] = [friendship.friend for friendship in user.friendships.all()]
@@ -143,6 +145,19 @@ def transcribe(request):
                 os.remove(wav_audio_path)
 
     return JsonResponse({'error': '잘못된 요청 방식입니다.'})
+
+def save_gpt_api_key(request):
+    if request.method == 'POST':
+        user = request.user
+        data = json.loads(request.body)
+        gpt_api_key = data.get('gptApiKey')
+        
+        if user.is_authenticated:
+            user.gpt_api_key = gpt_api_key
+            user.save()
+            return JsonResponse({"status": "success"})
+        else:
+            return JsonResponse({"status": "failure"})
 
 #코드 테스트 용 함수
 def test_view(request):

@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 친구 관련 의사코드
   let friends = [
-    { name: "dog", conversation: "dog bark bark" },
+    { name: "개", conversation: "개 멍 멍" },
     { name: "cat", conversation: "cat meow" },
     { name: "bird", conversation: "bird singing" },
     { name: "lion", conversation: "lion growls" },

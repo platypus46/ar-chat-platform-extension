@@ -35,6 +35,17 @@ document.addEventListener("DOMContentLoaded", function () {
   let isUIVisible = true;
   let isChatVisible = false;
 
+  function initializeFriends() {
+    // Ajax를 이용해 서버에서 친구 목록과 대화를 가져옴
+    fetch('/get_friends_and_conversations/')
+      .then(response => response.json())
+      .then(data => {
+        friends = data.friends;
+        displayFriends();  // 친구 목록을 화면에 표시
+      });
+  }
+
+
   scene.addEventListener("enter-vr", function () {
     ui.setAttribute("visible", "true");
   });
@@ -234,17 +245,6 @@ document.addEventListener("DOMContentLoaded", function () {
     ui.setAttribute("position", positionToString(currentUIPosition));
   }
 
-  // 친구 관련 의사코드
-  let friends = [
-    { name: "개", conversation: "개 멍 멍" },
-    { name: "cat", conversation: "cat meow" },
-    { name: "bird", conversation: "bird singing" },
-    { name: "lion", conversation: "lion growls" },
-    { name: "elephant", conversation: "elephant nose is long" },
-    { name: "giraff", conversation: "giraffs neck is long " },
-    { name: "bear", conversation: "bear likes honey" },
-  ];
-
   let currentPage = 0;
   let selectedIndex = 0;
   const itemsPerPage = 5;
@@ -302,6 +302,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var arButton = document.querySelector(".a-enter-ar-button");
     if (arButton) {
       arButton.disabled = true;
+      fetchFriendsAndConversations(); 
     }
   });
   scene.addEventListener("loaded", function () {
@@ -330,7 +331,10 @@ document.addEventListener("DOMContentLoaded", function () {
         hideUI.setAttribute("visible", "false");
       });
     }
-    chatbutton.addEventListener("click", toggleChat);
+    chatbutton.addEventListener("click", function() {
+      initializeFriends();  // 친구 목록 초기화
+      toggleChat();
+    });
     hideUI.addEventListener("click", toggleUIVisibility);
     enableUIButtons();
   });

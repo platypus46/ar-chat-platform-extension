@@ -146,6 +146,34 @@ def transcribe(request):
 
     return JsonResponse({'error': '잘못된 요청 방식입니다.'})
 
+@login_required
+def get_friends_and_conversations(request):
+    user = request.user
+    friendships = user.friendships.all()  # 모든 친구 찾기
+    friends_list = []
+    
+    for friendship in friendships:
+        friend = friendship.friend
+        chat_room, created = ChatRoom.objects.get_or_create(
+            participant1=user, participant2=friend
+        )
+        messages = ChatMessage.objects.filter(
+            chat_room=chat_room
+        ).order_by('-timestamp')[:50]  # 최근 50개의 메시지만 가져옴
+
+        # conversation 문자열을 만드는 부분을 수정
+        conversation = '\n'.join([
+            f"{msg.sender.full_name}: {msg.message}" for msg in messages
+        ])
+        
+        
+        friends_list.append({
+            'name': friend.full_name,
+            'conversation': conversation,
+        })
+    
+    return JsonResponse({'friends': friends_list})
+
 def save_gpt_api_key(request):
     if request.method == 'POST':
         user = request.user

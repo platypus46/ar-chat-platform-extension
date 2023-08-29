@@ -1,13 +1,29 @@
-from django.core.exceptions import ObjectDoesNotExist
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
-from asgiref.sync import sync_to_async
 from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoom, ChatMessage
 from channels.exceptions import DenyConnection
 
-User = get_user_model()
+ustomUser = get_user_model()
+
+@database_sync_to_async
+def get_or_create_chatroom(participant1, participant2):
+    participant1_obj = CustomUser.objects.get(username=participant1)
+    participant2_obj = CustomUser.objects.get(username=participant2)
+
+    room_name = f"{participant1}_{participant2}" if participant1 < participant2 else f"{participant2}_{participant1}"
+    room, created = ChatRoom.objects.get_or_create(
+        name=room_name, 
+        participant1=participant1_obj, 
+        participant2=participant2_obj
+    )
+    return room
+
+@database_sync_to_async  # 이 데코레이터 추가
+def check_user_in_room(scope_user, room):
+    allowed_users = [str(room.participant1.username), str(room.participant2.username), 'admin']
+    return str(scope_user.username) in allowed_users
 
 class LobbyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -187,27 +203,6 @@ class LobbyConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print(f"An error occurred: {e}")
 
-
-CustomUser = get_user_model()
-
-
-@database_sync_to_async
-def get_or_create_chatroom(participant1, participant2):
-    participant1_obj = CustomUser.objects.get(username=participant1)
-    participant2_obj = CustomUser.objects.get(username=participant2)
-
-    room_name = f"{participant1}_{participant2}" if participant1 < participant2 else f"{participant2}_{participant1}"
-    room, created = ChatRoom.objects.get_or_create(
-        name=room_name, 
-        participant1=participant1_obj, 
-        participant2=participant2_obj
-    )
-    return room
-
-@database_sync_to_async  # 이 데코레이터 추가
-def check_user_in_room(scope_user, room):
-    allowed_users = [str(room.participant1.username), str(room.participant2.username), 'admin']
-    return str(scope_user.username) in allowed_users
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):

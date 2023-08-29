@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoom, ChatMessage
 from channels.exceptions import DenyConnection
 
-ustomUser = get_user_model()
+CustomUser = get_user_model()
 
 @database_sync_to_async
 def get_or_create_chatroom(participant1, participant2):

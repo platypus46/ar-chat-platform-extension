@@ -229,6 +229,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print(f"Connecting to room {self.room_name}")  # 로그를 찍어서 확인
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
+            await self.fetch_past_messages() 
         except Exception as e:
             print(f"An error occurred: {e}")
             raise DenyConnection(str(e))
@@ -282,3 +283,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if msg.sender.username in [room.participant1.username, room.participant2.username]
         ]
     
+    async def fetch_past_messages(self):
+        last_50_messages = await self.get_last_50_messages(self.room_name)
+        await self.send(text_data=json.dumps({
+            'message_type': 'load_messages',
+            'messages': last_50_messages
+        }))

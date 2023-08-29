@@ -18,13 +18,15 @@ function chatWithFriend(friendUsername) {
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        if (data.message_type === 'load_messages') {
-            data.messages.forEach(msg => {
-                displayMessage(msg.sender, msg.message);
-            });
-        } else if (data.message_type === 'new_message') {
-            displayMessage(data.sender, data.message);
-        }
+    if (data.message_type === 'load_messages') {
+        // Load past messages
+        data.messages.forEach(msg => {
+            displayMessage(msg.sender, msg.message);
+        });
+    } else if (data.message_type === 'new_message') {
+        // Display new message
+        displayMessage(data.sender, data.message);
+    }
     };
 
     chatSocket.onclose = function(e) {

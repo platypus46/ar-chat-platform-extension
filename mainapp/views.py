@@ -6,10 +6,12 @@ from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoo
 from django.views.decorators.csrf import csrf_exempt
 from .forms import ProfilePictureForm
 import speech_recognition as sr
+import openai
 import subprocess
 import logging
 import json
 import os
+
 
 logger = logging.getLogger(__name__)
 
@@ -185,12 +187,38 @@ def save_gpt_api_key(request):
             return JsonResponse({"status": "success"})
         else:
             return JsonResponse({"status": "failure"})
+        
+def get_gpt_answer_ajax(request):
+    if request.method == "POST":
+        question = request.POST.get("question")
+        answer = get_gpt_answer(question)
+        return JsonResponse({"answer": answer})      
+
+def get_gpt_answer(question):
+    api_key = "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" 
+    openai.api_key = api_key
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": f"{question}"},
+        {"role": "assistant", "content": ""}
+    ]
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo", 
+        messages=messages,
+        max_tokens=200  
+    )
+    return response['choices'][0]['message']['content'].strip()
+
+
+def test1_view(request):
+    answer = ""
+    if request.method == "POST":
+        question = request.POST.get("question")
+        answer = get_gpt_answer(question)
+    return render(request, "test1.html", {"answer": answer})
 
 #코드 테스트 용 함수
 def test_view(request):
     context={}
     return render(request, 'test.html',context=context)
 
-def test1_view(request):
-    context={}
-    return render(request, 'test1.html')

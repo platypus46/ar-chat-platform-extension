@@ -2,61 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>음성 인식</title>
+    <title>Ask Question</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#ask-button").click(function() {
+                var question = $("#question").val();
+                $.ajax({
+                    url: "/get_gpt_answer/",
+                    type: "POST",
+                    data: {
+                        question: question,
+                        csrfmiddlewaretoken: "{{ csrf_token }}"
+                    },
+                    success: function(response) {
+                        $("#answer").text(response.answer);
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 <body>
-    {% csrf_token %}
-    <button onclick="recordAudio()">녹음 시작</button>
-    <div id="transcriptionResult"></div> <!-- 여기에 변환된 텍스트를 표시합니다. -->
-    <script>
-        async function recordAudio() {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const mediaRecorder = new MediaRecorder(stream);
-            const audioChunks = [];
+    <label for="question">Your Question:</label>
+    <input type="text" id="question" name="question">
+    <button type="button" id="ask-button">Ask</button>
 
-            mediaRecorder.ondataavailable = event => {
-                audioChunks.push(event.data);
-            };
-
-            mediaRecorder.onstop = async () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                const formData = new FormData();
-                formData.append("audio", audioBlob);
-
-                const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-
-                const response = await fetch('/transcribe/', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: formData
-                });
-
-                if(response.ok) {
-                    const data = await response.json();
-                    document.getElementById("transcriptionResult").innerText = data.transcription;
-                } else {
-                    console.error('Server responded with an error:', await response.text());
-                }
-            };
-
-            mediaRecorder.start();
-            setTimeout(() => {
-                mediaRecorder.stop();
-            }, 5000);  // 5초 동안 녹음
-        }
-    </script>
+    <div>
+        <h3>Answer:</h3>
+        <p id="answer"></p>
+    </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-

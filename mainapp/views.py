@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoom, ChatMessage
 from django.views.decorators.csrf import csrf_exempt
 from .forms import ProfilePictureForm
-from django.shortcuts import redirect
 import speech_recognition as sr
 import subprocess
 import logging

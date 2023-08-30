@@ -59,7 +59,7 @@
     <div class="subscriber-list">
       <h3>구독 목록</h3>
       <div class="scrollable-content">
-        {% for subscription in user.subscriptions.all %}
+        {% for subscription in subscriptions %}
         <div class="subscriber-item">
           {{ subscription.subscribed_to.full_name }}
         </div>

@@ -28,6 +28,7 @@ class CustomUser(AbstractUser):
     profile_picture = models.ImageField(upload_to=profile_pic_directory_path, null=True, blank=True)
     gpt_api_key=models.CharField(max_length=100, default='')
     is_online = models.BooleanField(default=False)  
+    is_system_user = models.BooleanField(default=False)
 
 
 class Subscription(models.Model):
@@ -56,7 +57,6 @@ class ChatRoom(models.Model):
 
 class ChatMessage(models.Model):
     chat_room = models.ForeignKey(ChatRoom, related_name='messages', on_delete=models.CASCADE, null=True)
-    room_name = models.CharField(max_length=255)  # Add this line
     sender = models.ForeignKey(CustomUser, related_name='sent_messages', on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)

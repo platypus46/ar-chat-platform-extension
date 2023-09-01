@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoom, ChatMessage
@@ -155,21 +156,34 @@ def get_friends_and_conversations(request):
     
     for friendship in friendships:
         friend = friendship.friend
+        room_name = f"{min(user.username, friend.username)}_{max(user.username, friend.username)}"
+        
         chat_room, created = ChatRoom.objects.get_or_create(
-            participant1=user, participant2=friend
+            name=room_name,
+            defaults={
+                'participant1': user,
+                'participant2': friend
+            }
         )
+        
         messages = ChatMessage.objects.filter(
             chat_room=chat_room
-        ).order_by('-timestamp')[:50]  # 최근 50개의 메시지만 가져옴
+        ).order_by('-timestamp')[:5]    # 최근 5개의 메시지만 가져옴
+
+        messages = list(reversed(list(messages)))
 
         # conversation 문자열을 만드는 부분을 수정
         conversation = '\n'.join([
             f"{msg.sender.full_name}: {msg.message}" for msg in messages
         ])
-        
-        
+
+        print(f"ChatRoom Name: {chat_room.name}")  # 채팅방 이름 출력
+        print(f"Conversation with {friend.full_name}:")  # 친구 이름 출력
+        print(conversation)  # 대화 내용 출력
+
         friends_list.append({
             'name': friend.full_name,
+            'username': friend.username,
             'conversation': conversation,
         })
     
@@ -195,7 +209,7 @@ def get_gpt_answer_ajax(request):
         return JsonResponse({"answer": answer})      
 
 def get_gpt_answer(question):
-    api_key = "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" 
+    api_key = "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" 
     openai.api_key = api_key
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},

@@ -1,3 +1,14 @@
+let chatSocket; 
+let room_name;
+let selectedFriend;
+
+const urlParts = window.location.pathname.split('/');
+const username = urlParts[urlParts.length - 2];
+const ws_protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+
+let friends=[];
+
+
 document.addEventListener("DOMContentLoaded", function () {
   //scene,UI 객체화
   let scene = document.querySelector("a-scene");
@@ -202,6 +213,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         break;
       case "forward":
+        selectedFriend = friends[currentPage * itemsPerPage + selectedIndex];
         displayConversation();
         break;
       case "backward":
@@ -280,12 +292,22 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
   function displayConversation() {
-    const selectedFriend = friends[currentPage * itemsPerPage + selectedIndex];
+    if (!selectedFriend) {
+      console.error("selectedFriend is not set.");
+      return;
+    }
+    selectedFriend = friends[currentPage * itemsPerPage + selectedIndex];
     const friendsContainer = document.getElementById("friendsContainer");
+    const friendList = document.getElementById("friendList");
 
-    // Clear previous content
+     // friendList가 있는지 확인
+     if (friendList) {
+      friendList.setAttribute("visible", "false");
+    }
+
+       // 이전 내용 지우기
     while (friendsContainer.firstChild) {
-      friendsContainer.removeChild(friendsContainer.firstChild);
+        friendsContainer.removeChild(friendsContainer.firstChild);
     }
 
     const conversations = document.createElement("a-entity");
@@ -298,6 +320,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.getElementById("friendList").setAttribute("visible", "false");
   }
+
+  function updateConversation(newMessage) {
+    const friendsContainer = document.getElementById("friendsContainer");
+    const newMessageEntity = document.createElement("a-entity");
+    newMessageEntity.setAttribute(
+      "text",
+      `value: ${newMessage}; color: white; align: center;`
+    );
+    newMessageEntity.setAttribute("position", "0 0 0"); // 위치 조정
+    friendsContainer.appendChild(newMessageEntity);
+  }
+
+  
+
   window.addEventListener("DOMContentLoaded", function () {
     var arButton = document.querySelector(".a-enter-ar-button");
     if (arButton) {
@@ -344,8 +380,48 @@ document.addEventListener("DOMContentLoaded", function () {
   let inputButton = document.querySelector("#input-button");
 
   inputButton.addEventListener("click", function () {
-    if (sttText.getAttribute("value") === "초기화") {
-      toggleUIVisibility();
+    if (chatSocket) {
+        chatSocket.close();
+    }
+    if (!selectedFriend) {
+      console.error("selectedFriend이 undefined입니다.");
+      return;
+    }
+
+    room_name = selectedFriend.username < username ? `${selectedFriend.username}_${username}` : `${username}_${selectedFriend.username}`;
+    chatSocket = new WebSocket(ws_protocol + window.location.host + '/ws/chat/' + room_name + '/');
+
+    chatSocket.onmessage = function(e) {
+      const data = JSON.parse(e.data);
+      if (data.message_type === 'new_message') {
+        // 실시간으로 채팅 업데이트
+        updateConversation(data.message);
+      }
+  };
+   
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    chatSocket.onerror = function(e) {
+        console.error('Chat socket encountered an error');
+    };
+
+    chatSocket.addEventListener('open', function() {
+        const message = sttText.getAttribute("value");
+        const sender = username;
+
+        if (message) {
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'sender': sender,
+            }));
+        }
+    });
+
+    // "초기화" 메시지 처리
+    if (message === "초기화") {
+        toggleUIVisibility();
     }
   });
   /** 한글 폰트 지정 */

@@ -1,8 +1,3 @@
-let chatSocket;  // 전역 변수로 선언
-const urlParts = window.location.pathname.split('/');
-const username = urlParts[urlParts.length - 2];
-const ws_protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
-
 function chatWithFriend(friendUsername) {
     if (chatSocket) {
         chatSocket.close();
@@ -12,7 +7,7 @@ function chatWithFriend(friendUsername) {
     document.querySelector('#sendChatMessage').onclick = null;
 
       // 새로운 WebSocket을 열고 전역 변수를 업데이트
-    const room_name = friendUsername < username ? `${friendUsername}_${username}` : `${username}_${friendUsername}`;
+    room_name = friendUsername < username ? `${friendUsername}_${username}` : `${username}_${friendUsername}`;
     chatSocket = new WebSocket(ws_protocol + window.location.host + '/ws/chat/' + room_name + '/');
 
 

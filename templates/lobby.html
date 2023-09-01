@@ -71,7 +71,16 @@
       </div>
     </div>
 
-    <div id="chatOverlay" style="display:none; z-index: 1000; position: fixed; top: 30%; right: 10px;">
+    <div
+      id="chatOverlay"
+      style="
+        display: none;
+        z-index: 1000;
+        position: fixed;
+        top: 30%;
+        right: 10px;
+      "
+    >
       <div id="chatHeader">
         <span id="chatFriendName"></span>
         <button id="closeChat">닫기</button>
@@ -122,7 +131,7 @@
           <span>{{ friend.full_name }}</span>
           <button
             class="deleteFriendButton"
-            data-username="{{ friend.username }}" 
+            data-username="{{ friend.username }}"
             onclick="deleteFriend('{{ friend.username }}')"
           >
             삭제
@@ -246,6 +255,20 @@
             >
             </a-entity>
           </a-entity>
+          <a-entity
+            id="Misc"
+            geometry="primitive: plane; width:0.4; height: 0.4"
+            material="color:green"
+            position="0 0 -0.01"
+            visible="false"
+          >
+            <a-entity
+              id="MiscContainer"
+              position="0 -0.025 0"
+              width="0.4"
+              height="0.35"
+            ></a-entity>
+          </a-entity>
           <a-entity id="uibuttons">
             <a-entity
               id="chatbutton"
@@ -278,7 +301,7 @@
               ></a-text>
             </a-entity>
             <a-entity
-              id="button3"
+              id="Miscbutton"
               geometry="primitive: circle; radius: 0.05"
               material="color: white"
               position="0.1 -0.1 0.05"

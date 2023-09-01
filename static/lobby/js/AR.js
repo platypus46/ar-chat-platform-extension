@@ -321,15 +321,22 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("friendList").setAttribute("visible", "false");
   }
 
-  function updateConversation(newMessage) {
+  function updateConversation(conversation) {
     const friendsContainer = document.getElementById("friendsContainer");
-    const newMessageEntity = document.createElement("a-entity");
-    newMessageEntity.setAttribute(
-      "text",
-      `value: ${newMessage}; color: white; align: center;`
-    );
-    newMessageEntity.setAttribute("position", "0 0 0"); // 위치 조정
-    friendsContainer.appendChild(newMessageEntity);
+    while (friendsContainer.firstChild) {
+      friendsContainer.removeChild(friendsContainer.firstChild);
+    }
+    
+    const messages = conversation.split('\n').slice(-5);  // 마지막 5개의 메시지만 가져옴
+    messages.forEach((message, index) => {
+      const newMessageEntity = document.createElement("a-entity");
+      newMessageEntity.setAttribute(
+        "text",
+        `value: ${message}; color: white; align: center;`
+      );
+      newMessageEntity.setAttribute("position", `0 ${0.07 * (2 - index)} 0`); // 위치 조정
+      friendsContainer.appendChild(newMessageEntity);
+    });
   }
 
   
@@ -395,7 +402,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const data = JSON.parse(e.data);
       if (data.message_type === 'new_message') {
         // 실시간으로 채팅 업데이트
-        updateConversation(data.message);
+        selectedFriend.conversation += `\n${data.sender}: ${data.message}`;
+        updateConversation(selectedFriend.conversation);
       }
   };
    
@@ -417,6 +425,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 'sender': sender,
             }));
         }
+        selectedFriend.conversation += `\n${data.sender}: ${data.message}`;
+        updateConversation(selectedFriend.conversation);
     });
 
     // "초기화" 메시지 처리

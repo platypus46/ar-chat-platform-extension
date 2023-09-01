@@ -174,7 +174,7 @@ def get_friends_and_conversations(request):
 
         # conversation 문자열을 만드는 부분을 수정
         conversation = '\n'.join([
-            f"{msg.sender.full_name}: {msg.message}" for msg in messages
+            f"{msg.sender.username}: {msg.message}" for msg in messages
         ])
 
         print(f"ChatRoom Name: {chat_room.name}")  # 채팅방 이름 출력

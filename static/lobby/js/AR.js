@@ -490,11 +490,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const maxCharsPerLine = 20; // 예: 각 줄에 20자까지만 표시
     // 임의의 장문 질문
-    const longQuestion =
+    let longQuestion =
       "왜 우주는 존재하는 것일까요? 우주의 시작과 끝, 그리고 그 안에 존재하는 모든 것들은 어떻게 형성되었을까요? 우리는 왜 여기에 있는 것일까요? 인간의 존재의 의미는 무엇일까요?";
 
     // 임의의 장문 대답
-    const longAnswer =
+    let longAnswer =
       "우주의 존재와 시작에 대한 질문은 과학자들 사이에서도 아직 확실한 답을 찾지 못한 미스터리 중 하나입니다. 빅뱅 이론은 우주의 시작을 설명하는 가장 널리 받아들여진 이론 중 하나입니다. 인간의 존재와 그 의미에 대해서는 철학, 종교, 과학 등 다양한 분야에서 다양한 해석이 있습니다. 인간의 존재의 의미를 찾는 것은 개인의 여정이며, 각자의 경험과 신념에 따라 다를 수 있습니다.";
 
     // 텍스트를 여러 페이지로 분할하는 함수
@@ -693,57 +693,60 @@ document.addEventListener("DOMContentLoaded", function () {
   let inputButton = document.querySelector("#input-button");
 
   inputButton.addEventListener("click", function () {
-    if (chatSocket) {
-      chatSocket.close();
-    }
-    if (!selectedFriend) {
-      console.error("selectedFriend이 undefined입니다.");
-      return;
-    }
-
-    room_name =
-      selectedFriend.username < username
-        ? `${selectedFriend.username}_${username}`
-        : `${username}_${selectedFriend.username}`;
-    chatSocket = new WebSocket(
-      ws_protocol + window.location.host + "/ws/chat/" + room_name + "/"
-    );
-
-    chatSocket.onmessage = function (e) {
-      const data = JSON.parse(e.data);
-      if (data.message_type === "new_message") {
-        // 실시간으로 채팅 업데이트
+    const message = sttText.getAttribute("value");
+    // Only run the following logic when the chat page is visible
+    if (isChatVisible) {
+      if (chatSocket) {
+        chatSocket.close();
+      }
+      if (!selectedFriend) {
+        console.error("selectedFriend is undefined.");
+        return;
+      }
+  
+      room_name =
+        selectedFriend.username < username
+          ? `${selectedFriend.username}_${username}`
+          : `${username}_${selectedFriend.username}`;
+      chatSocket = new WebSocket(
+        ws_protocol + window.location.host + "/ws/chat/" + room_name + "/"
+      );
+  
+      chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        if (data.message_type === "new_message") {
+          // Update the chat in real-time
+          selectedFriend.conversation += `\n${data.sender}: ${data.message}`;
+          updateConversation(selectedFriend.conversation);
+        }
+      };
+  
+      chatSocket.onclose = function (e) {
+        console.error("Chat socket closed unexpectedly");
+      };
+  
+      chatSocket.onerror = function (e) {
+        console.error("Chat socket encountered an error");
+      };
+  
+      chatSocket.addEventListener("open", function () {
+        const sender = username;
+  
+        if (message) {
+          chatSocket.send(
+            JSON.stringify({
+              message: message,
+              sender: sender,
+            })
+          );
+        }
         selectedFriend.conversation += `\n${data.sender}: ${data.message}`;
         updateConversation(selectedFriend.conversation);
-      }
-    };
-
-    chatSocket.onclose = function (e) {
-      console.error("Chat socket closed unexpectedly");
-    };
-
-    chatSocket.onerror = function (e) {
-      console.error("Chat socket encountered an error");
-    };
-
-    chatSocket.addEventListener("open", function () {
-      const message = sttText.getAttribute("value");
-      const sender = username;
-
-      if (message) {
-        chatSocket.send(
-          JSON.stringify({
-            message: message,
-            sender: sender,
-          })
-        );
-      }
-      selectedFriend.conversation += `\n${data.sender}: ${data.message}`;
-      updateConversation(selectedFriend.conversation);
-    });
+      });
+    }
 
     // "초기화" 메시지 처리
-    if (message === "초기화") {
+    else if (message === "초기화") {
       toggleUIVisibility();
     }
   });

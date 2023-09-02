@@ -202,14 +202,17 @@ def save_gpt_api_key(request):
         else:
             return JsonResponse({"status": "failure"})
         
+
+@csrf_exempt
 def get_gpt_answer_ajax(request):
     if request.method == "POST":
-        question = request.POST.get("question")
+        data = json.loads(request.body)  # 수정
+        question = data.get("question")  # 수정
         answer = get_gpt_answer(question)
-        return JsonResponse({"answer": answer})      
+        return JsonResponse({"answer": answer})
 
 def get_gpt_answer(question):
-    api_key = "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" 
+    api_key = "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" 
     openai.api_key = api_key
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
@@ -221,6 +224,7 @@ def get_gpt_answer(question):
         messages=messages,
         max_tokens=200  
     )
+    print(f"GPT-3 API Response: {response}")  # 추가
     return response['choices'][0]['message']['content'].strip()
 
 

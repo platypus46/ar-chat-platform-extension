@@ -8,6 +8,7 @@ const ws_protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 
 let friends = [];
 
+
 document.addEventListener("DOMContentLoaded", function () {
   //scene,UI 객체화
   let scene = document.querySelector("a-scene");
@@ -486,16 +487,64 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentAnswerPage = 0;
 
   function GPTQuestion() {
+    let gptsttText = document.querySelector("#sttText");
+    let gptinputButton = document.querySelector("#input-button");
+
     const miscContainer = document.getElementById("MiscContainer");
 
     const maxCharsPerLine = 20; // 예: 각 줄에 20자까지만 표시
     // 임의의 장문 질문
-    let longQuestion =
-      "왜 우주는 존재하는 것일까요? 우주의 시작과 끝, 그리고 그 안에 존재하는 모든 것들은 어떻게 형성되었을까요? 우리는 왜 여기에 있는 것일까요? 인간의 존재의 의미는 무엇일까요?";
+    let longQuestion = gptsttText.getAttribute("value") || "질문";
+
+    setInterval(function() {
+      const newQuestion = gptsttText.getAttribute("value");
+      if (longQuestion !== newQuestion) {
+        longQuestion = newQuestion;
+        const questionPages = paginateText(longQuestion, maxCharsPerLine, 2);
+        updateQuestionPage(questionPages);
+      }
+    }, 500); 
+    
+
+    gptinputButton.addEventListener("click", function () {
+      fetch('/get_gpt_answer/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') // Django CSRF token
+        },
+        body: JSON.stringify({ question: longQuestion })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Received data from server:", data);  // 추가
+        longAnswer = data.answer;
+        const answerPages = paginateText(longAnswer, maxCharsPerLine, 5);
+        updateAnswerPage(answerPages);
+    })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    });
+    
+    // Django의 CSRF 토큰을 가져오는 함수
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
 
     // 임의의 장문 대답
-    let longAnswer =
-      "우주의 존재와 시작에 대한 질문은 과학자들 사이에서도 아직 확실한 답을 찾지 못한 미스터리 중 하나입니다. 빅뱅 이론은 우주의 시작을 설명하는 가장 널리 받아들여진 이론 중 하나입니다. 인간의 존재와 그 의미에 대해서는 철학, 종교, 과학 등 다양한 분야에서 다양한 해석이 있습니다. 인간의 존재의 의미를 찾는 것은 개인의 여정이며, 각자의 경험과 신념에 따라 다를 수 있습니다.";
+    let longAnswer ="대답";
 
     // 텍스트를 여러 페이지로 분할하는 함수
     function paginateText(text, charsPerLine, linesPerPage) {
@@ -623,24 +672,22 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     );
     answerEntity.appendChild(answerNextButton);
-    //페이지 업데이트
-    function updateQuestionPage() {
+    // 페이지 업데이트 함수 수정
+    function updateQuestionPage(questionPages) {
       const questionEntity = document.getElementById("question-text");
       if (questionEntity) {
-        questionEntity.setAttribute(
-          "text",
-          `value: ${questionPages[currentQuestionPage]}; color: white; align: center; width: 0.35;`
-        );
+        const textComponent = questionEntity.getAttribute("text");
+        textComponent.value = questionPages[currentQuestionPage];
+        questionEntity.setAttribute("text", textComponent);
       }
     }
 
-    function updateAnswerPage() {
+    function updateAnswerPage(answerPages) {
       const answerEntity = document.getElementById("answer");
       if (answerEntity) {
-        answerEntity.setAttribute(
-          "text",
-          `value: Answer: ${answerPages[currentAnswerPage]}; color: white; align: center; width: 0.35;`
-        );
+        const textComponent = answerEntity.getAttribute("text");
+        textComponent.value = "Answer: " + answerPages[currentAnswerPage];
+        answerEntity.setAttribute("text", textComponent);
       }
     }
   }

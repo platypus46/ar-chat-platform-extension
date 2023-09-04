@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="{% static 'lobby/css/lobby.css' %}" />
     <script src="{% static 'lobby/js/AR.js' %}"></script>
     <script src="{% static 'lobby/js/record.js' %}"></script>
+    <script src="{% static 'lobby/js/shop.js' %}"></script>
   </head>
   <body>
     <div>
@@ -38,6 +39,22 @@
         <input type="file" id="imageUpload" style="display: none" />
       </div>
     </div>
+    <!-- 임시 상점 버튼 -->
+    <div id="icon-button-container">
+      <img id="icon-button" src="{% static 'lobby/icon/shop_test_icon.png' %}" alt="Shop Icon">
+    </div>
+
+    <!-- JavaScript 부분 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const username = "{{ user.username }}";  // Django template에서 현재 로그인된 사용자의 username을 가져옴
+          const iconButton = document.getElementById('icon-button');
+
+          iconButton.addEventListener('click', function() {
+              window.location.href = `/shop/${username}`;  // URL로 이동
+          });
+      });
+    </script>
     {% block content %}
     <div class="container">
       <div class="gpt-api-key-section">
@@ -150,7 +167,7 @@
         <button id="addFriendButton">친구 추가</button>
       </div>
     </div>
-
+    
     <!-- 로딩 스크린 -->
     <div
       id="loadingScreen"

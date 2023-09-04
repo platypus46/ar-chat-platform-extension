@@ -33,6 +33,7 @@ urlpatterns = [
     path('save_gpt_api_key/', views.save_gpt_api_key, name='save_gpt_api_key'),
     path('get_friends_and_conversations/', views.get_friends_and_conversations, name='get_friends_and_conversations'),
     path('get_gpt_answer/', views.get_gpt_answer_ajax, name='get_gpt_answer_ajax'),
+    path('shop/<str:username>',views.subscription_shop, name= 'shop'),
 ]
 
 if settings.DEBUG:  # 개발 모드에서만

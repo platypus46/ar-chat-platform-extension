@@ -1,0 +1,25 @@
+<div id="back-to-lobby-button-container">
+    <button id="back-to-lobby-button">Back to Lobby</button>
+  </div>
+  
+  <!-- 구독 목록 나열 -->
+  <div id="subscription-list">
+    <h2>Subscriptions:</h2>
+    <ul>
+      {% for user in subscribed_users %}
+        <li>{{ user.full_name }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const username = "{{ user.username }}";  
+      const backToLobbyButton = document.getElementById('back-to-lobby-button');
+  
+      backToLobbyButton.addEventListener('click', function() {
+        window.location.href = `/lobby/${username}`; 
+      });
+    });
+  </script>
+  

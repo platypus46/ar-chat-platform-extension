@@ -1,9 +1,9 @@
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoom, ChatMessage
+from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoom, ChatMessage, Subscription
 from django.views.decorators.csrf import csrf_exempt
 from .forms import ProfilePictureForm
 import speech_recognition as sr
@@ -200,20 +200,27 @@ def save_gpt_api_key(request):
             user.save()
             return JsonResponse({"status": "success"})
         else:
-            return JsonResponse({"status": "failure"})
-        
+            return JsonResponse({"status": "failure"})  
 
 @csrf_exempt
 def get_gpt_answer_ajax(request):
     if request.method == "POST":
-        data = json.loads(request.body)  # 수정
-        question = data.get("question")  # 수정
-        answer = get_gpt_answer(question)
+        user = request.user  
+        if not user.is_authenticated:  
+            return JsonResponse({"status": "error", "message": "User not authenticated"})
+
+        data = json.loads(request.body)
+        question = data.get("question")
+        user_api_key = user.gpt_api_key  
+
+        if not user_api_key:  
+            return JsonResponse({"status": "error", "message": "No GPT API Key found for the user"})
+
+        answer = get_gpt_answer(question, user_api_key)
         return JsonResponse({"answer": answer})
 
-def get_gpt_answer(question):
-    api_key = "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" 
-    openai.api_key = api_key
+def get_gpt_answer(question, api_key):
+    openai.api_key = api_key  # API 키를 파라미터로 받아 사용
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": f"{question}"},
@@ -224,9 +231,33 @@ def get_gpt_answer(question):
         messages=messages,
         max_tokens=200  
     )
-    print(f"GPT-3 API Response: {response}")  # 추가
+    print(f"GPT-3 API Response: {response}")  
     return response['choices'][0]['message']['content'].strip()
 
+
+def subscription_shop(request, username):
+    try:
+        # username에 해당하는 사용자 정보 가져오기
+        target_user = CustomUser.objects.get(username=username)
+    except CustomUser.DoesNotExist:
+        return redirect('/login')  # 또는 다른 에러 처리 로직
+
+    # 현재 로그인한 사용자 정보 가져오기
+    current_user = request.user
+
+    # 해당 사용자가 구독한 사용자들의 목록을 가져옴
+    subscriptions = Subscription.objects.filter(user=target_user)
+    subscribed_users = [subscription.subscribed_to for subscription in subscriptions]
+
+    # 컨텍스트에 필요한 정보 저장
+    context = {
+        'current_user': current_user,
+        'target_user': target_user,
+        'subscriptions': subscriptions,
+        'subscribed_users': subscribed_users,
+    }
+
+    return render(request, 'subscription_shop.html', context)
 
 def test1_view(request):
     answer = ""
@@ -239,4 +270,3 @@ def test1_view(request):
 def test_view(request):
     context={}
     return render(request, 'test.html',context=context)
-

@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let friend = document.querySelector("#friend");
   let profile = document.querySelector("#profile");
+  let misc = document.querySelector("#Misc");
 
   let Text = document.querySelector("#Text");
   let talkpad = document.querySelector("#talkpad");
@@ -82,8 +83,12 @@ document.addEventListener("DOMContentLoaded", function () {
     profile.setAttribute("visible", isChatVisible);
     if (isChatVisible == false) {
       enableChatButtons();
+      sttText.setAttribute("value", "Chat mode");
+      playall(friend);
     } else {
       enableUIButtons();
+      sttText.setAttribute("value", "No mode");
+      pauseall(friend);
     }
     isChatVisible = !isChatVisible;
     if (isChatVisible) {
@@ -114,8 +119,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (isMiscVisible == false) {
       enableMiscButtons();
+      sttText.setAttribute("value", "Misc mode");
+      playall(misc);
     } else {
       enableUIButtons();
+      sttText.setAttribute("value", "No mode");
+      pauseall(misc);
     }
 
     isMiscVisible = !isMiscVisible;
@@ -126,19 +135,24 @@ document.addEventListener("DOMContentLoaded", function () {
     selectedIndex = 0;
   }
   function pauseall(entity) {
-    // 엔티티와 그 자식들을 일시 중지
-    entity.pause();
+    if (entity.pause) {
+      entity.pause();
+    }
+
     let children = entity.children;
     for (let i = 0; i < children.length; i++) {
-      children[i].pause();
+      pauseall(children[i]); // 재귀적 호출
     }
   }
+
   function playall(entity) {
-    // 엔티티와 그 자식들을 재개
-    entity.play();
+    if (entity.play) {
+      entity.play();
+    }
+
     let children = entity.children;
     for (let i = 0; i < children.length; i++) {
-      children[i].play();
+      playall(children[i]); // 재귀적 호출
     }
   }
   function positionToString(position) {
@@ -497,7 +511,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function GPTQuestion() {
     let gptsttText = document.querySelector("#sttText");
     let gptinputButton = document.querySelector("#input-button");
-
+    gptsttText.setAttribute("value", "질문하기");
     const miscContainer = document.getElementById("MiscContainer");
 
     const maxCharsPerLine = 20; // 예: 각 줄에 20자까지만 표시
@@ -734,6 +748,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Text.setAttribute("visible", "true");
         p_pad.setAttribute("visible", "true");
         hideUI.setAttribute("visible", "false");
+        pauseall(friend);
+        pauseall(misc);
       });
     }
     chatbutton.addEventListener("click", function () {

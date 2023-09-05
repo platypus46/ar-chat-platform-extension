@@ -8,9 +8,6 @@ const ws_protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 
 let friends = [];
 
-
-
-
 document.addEventListener("DOMContentLoaded", function () {
   //scene,UI 객체화
   let scene = document.querySelector("a-scene");
@@ -53,7 +50,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentPage = 0;
   let selectedIndex = 0;
   const itemsPerPage = 5;
-
 
   function initializeFriends() {
     // Ajax를 이용해 서버에서 친구 목록과 대화를 가져옴
@@ -488,11 +484,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (selectedFeature.name === "GPT") {
       GPTQuestion();
       return; // 추가된 부분: GPTQuestion 함수를 실행한 후 함수를 종료
-    }else if(selectedFeature.name === "길이측정"){
+    } else if (selectedFeature.name === "길이측정") {
       lengthMeasurement();
       return;
     }
-
 
     // 다른 항목들에 대한 처리 (예: 친구 목록 표시 등)
   }
@@ -509,45 +504,44 @@ document.addEventListener("DOMContentLoaded", function () {
     // 임의의 장문 질문
     let longQuestion = gptsttText.getAttribute("value") || "질문";
 
-    setInterval(function() {
+    setInterval(function () {
       const newQuestion = gptsttText.getAttribute("value");
       if (longQuestion !== newQuestion) {
         longQuestion = newQuestion;
         const questionPages = paginateText(longQuestion, maxCharsPerLine, 2);
         updateQuestionPage(questionPages);
       }
-    }, 500); 
-    
+    }, 500);
 
     gptinputButton.addEventListener("click", function () {
-      fetch('/get_gpt_answer/', {
-        method: 'POST',
+      fetch("/get_gpt_answer/", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken') // Django CSRF token
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"), // Django CSRF token
         },
-        body: JSON.stringify({ question: longQuestion })
+        body: JSON.stringify({ question: longQuestion }),
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log("Received data from server:", data);  // 추가
-        longAnswer = data.answer;
-        const answerPages = paginateText(longAnswer, maxCharsPerLine, 5);
-        updateAnswerPage(answerPages);
-    })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Received data from server:", data); // 추가
+          longAnswer = data.answer;
+          const answerPages = paginateText(longAnswer, maxCharsPerLine, 5);
+          updateAnswerPage(answerPages);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     });
-    
+
     // Django의 CSRF 토큰을 가져오는 함수
     function getCookie(name) {
       let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
+      if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
         for (let i = 0; i < cookies.length; i++) {
           const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          if (cookie.substring(0, name.length + 1) === name + "=") {
             cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
             break;
           }
@@ -557,7 +551,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 임의의 장문 대답
-    let longAnswer ="대답";
+    let longAnswer = "대답";
 
     // 텍스트를 여러 페이지로 분할하는 함수
     function paginateText(text, charsPerLine, linesPerPage) {
@@ -705,11 +699,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  function lengthMeasurement(){
-    console.log("길이측정 활성화")
+  function lengthMeasurement() {
+    console.log("길이측정 활성화");
   }
 
-   
   window.addEventListener("DOMContentLoaded", function () {
     var arButton = document.querySelector(".a-enter-ar-button");
     if (arButton) {
@@ -769,7 +762,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("selectedFriend is undefined.");
         return;
       }
-  
+
       room_name =
         selectedFriend.username < username
           ? `${selectedFriend.username}_${username}`
@@ -777,7 +770,7 @@ document.addEventListener("DOMContentLoaded", function () {
       chatSocket = new WebSocket(
         ws_protocol + window.location.host + "/ws/chat/" + room_name + "/"
       );
-  
+
       chatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
         if (data.message_type === "new_message") {
@@ -786,18 +779,18 @@ document.addEventListener("DOMContentLoaded", function () {
           updateConversation(selectedFriend.conversation);
         }
       };
-  
+
       chatSocket.onclose = function (e) {
         console.error("Chat socket closed unexpectedly");
       };
-  
+
       chatSocket.onerror = function (e) {
         console.error("Chat socket encountered an error");
       };
-  
+
       chatSocket.addEventListener("open", function () {
         const sender = username;
-  
+
         if (message) {
           chatSocket.send(
             JSON.stringify({

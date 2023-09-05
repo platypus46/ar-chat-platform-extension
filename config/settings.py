@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-^2i)m2w9n_)_+*8$pjh@!bj-7c=iy_%iti)z8_pkar*y7@n@r2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'c7f8-121-154-36-185.ngrok-free.app']
+ALLOWED_HOSTS = ['localhost', 'd6ef-121-186-121-196.ngrok-free.app']
 
 
 # Application definition
@@ -83,11 +83,11 @@ ROOT_URLCONF = 'config.urls'
 # CORS 설정
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
-    'https://c7f8-121-154-36-185.ngrok-free.app',  # 신뢰할 수 있는 출처 추가
+    'https://d6ef-121-186-121-196.ngrok-free.app',  # 신뢰할 수 있는 출처 추가
 ]
 
 # Security
-CSRF_TRUSTED_ORIGINS = ['https://c7f8-121-154-36-185.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://d6ef-121-186-121-196.ngrok-free.app']
 
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'platyverse.routing.application'

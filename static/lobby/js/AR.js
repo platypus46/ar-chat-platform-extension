@@ -9,6 +9,8 @@ const ws_protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 let friends = [];
 
 
+
+
 document.addEventListener("DOMContentLoaded", function () {
   //scene,UI 객체화
   let scene = document.querySelector("a-scene");
@@ -46,6 +48,13 @@ document.addEventListener("DOMContentLoaded", function () {
   let isUIVisible = true;
   let isChatVisible = false;
   let isMiscVisible = false;
+
+  //페이지 내부 인덱스
+  let currentPage = 0;
+  let selectedIndex = 0;
+  const itemsPerPage = 5;
+
+
   function initializeFriends() {
     // Ajax를 이용해 서버에서 친구 목록과 대화를 가져옴
     fetch("/get_friends_and_conversations/")
@@ -118,6 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isMiscVisible) {
       displayMisc();
     }
+    selectedIndex = 0;
   }
   function pauseall(entity) {
     // 엔티티와 그 자식들을 일시 중지
@@ -340,9 +350,6 @@ document.addEventListener("DOMContentLoaded", function () {
         break;
     }
   }
-  let currentPage = 0;
-  let selectedIndex = 0;
-  const itemsPerPage = 5;
 
   function displayFriends() {
     selectedIndex = 0;
@@ -427,13 +434,15 @@ document.addEventListener("DOMContentLoaded", function () {
     {
       name: "GPT",
     },
+    {
+      name: "길이측정",
+    },
     // ... 다른 항목들 ...
   ];
   let currentFeaturePage = 0;
   let totalFeaturePages = 0;
 
   function displayMisc() {
-    selectedIndex = 0;
     const start = currentFeaturePage * itemsPerPage;
     const end = start + itemsPerPage;
     const currentdisplayMisc = displayMiscFeatures.slice(start, end); // 수정된 부분
@@ -479,7 +488,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (selectedFeature.name === "GPT") {
       GPTQuestion();
       return; // 추가된 부분: GPTQuestion 함수를 실행한 후 함수를 종료
+    }else if(selectedFeature.name === "길이측정"){
+      lengthMeasurement();
+      return;
     }
+
 
     // 다른 항목들에 대한 처리 (예: 친구 목록 표시 등)
   }
@@ -691,6 +704,12 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   }
+
+  function lengthMeasurement(){
+    console.log("길이측정 활성화")
+  }
+
+   
   window.addEventListener("DOMContentLoaded", function () {
     var arButton = document.querySelector(".a-enter-ar-button");
     if (arButton) {

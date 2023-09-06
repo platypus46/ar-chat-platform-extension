@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   function toggleMisc() {
     // Misc 화면 띄우기 및 감추기
-    Misc.setAttribute("visible", !isMiscVisible);
+    misc.setAttribute("visible", !isMiscVisible);
     button2.setAttribute("visible", isMiscVisible);
     chatbutton.setAttribute("visible", isMiscVisible);
     profile.setAttribute("visible", isMiscVisible);
@@ -355,6 +355,10 @@ document.addEventListener("DOMContentLoaded", function () {
           miscContainer.removeChild(miscContainer.firstChild);
         }
         displayMisc();
+        ui.setAttribute("visible", "true");
+        talkpad.setAttribute("visible", "true");
+        Text.setAttribute("visible", "true");
+        xypad.setAttribute("visible", "true");
         break;
       default:
         break;
@@ -714,6 +718,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function lengthMeasurement() {
+    ui.setAttribute("visible", "false");
+    talkpad.setAttribute("visible", "false");
+    Text.setAttribute("visible", "false");
+    xypad.setAttribute("visible", "false");
     console.log("길이측정 활성화");
   }
 
@@ -741,7 +749,6 @@ document.addEventListener("DOMContentLoaded", function () {
       arButton.disabled = false; // 버튼 활성화
       arButton.addEventListener("click", function () {
         ui.setAttribute("visible", "true");
-        hideUI.setAttribute("visible", "true");
         xypad.setAttribute("visible", "true");
         zpad.setAttribute("visible", "true");
         talkpad.setAttribute("visible", "true");

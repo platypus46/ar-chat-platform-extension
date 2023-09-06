@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login
+import re
 from django.shortcuts import render,redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
@@ -86,7 +87,12 @@ def validate_step(request, step):
     if request.method == 'POST':
         if step == 1:
             username = request.POST.get('username')
-            return JsonResponse({'status': 'success'})
+            if CustomUser.objects.filter(username=username).exists():
+                return JsonResponse({'status': 'error', 'errors': 'Username already exists'})
+            elif re.search(r'\W', username):  # \W는 모든 특수 문자를 의미
+                return JsonResponse({'status': 'error', 'errors': 'Username contains invalid characters'})
+            else:
+                return JsonResponse({'status': 'success'})
         elif step == 2:
             full_name = request.POST.get('full_name')
             return JsonResponse({'status': 'success'})

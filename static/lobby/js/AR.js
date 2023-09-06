@@ -8,6 +8,46 @@ const ws_protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 
 let friends = [];
 
+let dotEntity = null;
+let lineEntity = null;
+let lineMaterial = null;
+let isFirstMeasurement = true;
+
+let measureEventListener;
+let eraserEventListener;
+
+function createDot(scene, position) {
+  dotEntity = document.createElement('a-sphere');
+  dotEntity.setAttribute('radius', 0.01);
+  dotEntity.setAttribute('color', 'black');
+  dotEntity.setAttribute('position', position);
+  scene.appendChild(dotEntity);
+}
+
+function createLine(scene, start, end) {
+  lineEntity = document.createElement('a-entity');
+  lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  const points = [];
+  points.push(new THREE.Vector3(start.x, start.y, start.z));
+  points.push(new THREE.Vector3(end.x, end.y, end.z));
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const line = new THREE.Line(geometry, lineMaterial);
+  lineEntity.setObject3D('mesh', line);
+  scene.appendChild(lineEntity);
+}
+
+function updateLine(start, end) {
+  const points = [];
+  points.push(new THREE.Vector3(start.x, start.y, start.z));
+  points.push(new THREE.Vector3(end.x, end.y, end.z));
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  lineEntity.getObject3D('mesh').geometry = geometry;
+}
+
+function calculateDistance(start, end) {
+  return start.distanceTo(end) * 100; 
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   //scene,UI 객체화
   let scene = document.querySelector("a-scene");
@@ -359,6 +399,7 @@ document.addEventListener("DOMContentLoaded", function () {
         talkpad.setAttribute("visible", "true");
         Text.setAttribute("visible", "true");
         xypad.setAttribute("visible", "true");
+        onBackwardButtonClick()
         break;
       default:
         break;
@@ -720,9 +761,79 @@ document.addEventListener("DOMContentLoaded", function () {
   function lengthMeasurement() {
     ui.setAttribute("visible", "false");
     talkpad.setAttribute("visible", "false");
-    Text.setAttribute("visible", "false");
     xypad.setAttribute("visible", "false");
     console.log("길이측정 활성화");
+
+    let measurementText = document.querySelector("#sttText");
+    measurementText.setAttribute("value", "현재 길이: 계산 중...");
+
+    let measureButton = document.querySelector("#input-button");
+    let eraserButton = document.querySelector("#eraser-button");
+
+    const scene = document.querySelector('a-scene');
+
+    measureButton.addEventListener('click', () => {
+      const rightHandEntity = document.querySelector('#rightHand');
+      if (rightHandEntity) {
+        const handTrackingExtras = rightHandEntity.components['hand-tracking-extras'];
+        if (handTrackingExtras && handTrackingExtras.getJoints) {
+          const joints = handTrackingExtras.getJoints();
+          if (joints && joints.getIndexTip) {
+            const indexTip = joints.getIndexTip();
+            const position = new THREE.Vector3();
+            indexTip.getPosition(position);
+
+            if (isFirstMeasurement) {
+              createDot(scene, position);
+              isFirstMeasurement = false;
+            } else {
+              if (dotEntity && !lineEntity) {
+                createLine(scene, dotEntity.getAttribute('position'), position);
+              }
+              if (lineEntity) {
+                updateLine(dotEntity.getAttribute('position'), position);
+                const length = calculateDistance(new THREE.Vector3(dotEntity.getAttribute('position').x, dotEntity.getAttribute('position').y, dotEntity.getAttribute('position').z), position);
+                measurementText.setAttribute("value", `현재 길이: ${length.toFixed(2)} cm`);
+              }
+            }
+          }
+        }
+      }
+    });
+
+    eraserButton.addEventListener('click', () => {
+      if (dotEntity) {
+        scene.removeChild(dotEntity);
+        scene.removeChild(lineEntity);
+        dotEntity = null;
+        lineEntity = null;
+        isFirstMeasurement = true; // Reset the flag
+        measurementText.setAttribute("value", "현재 길이: 초기화됨");
+      }
+    });
+
+    measureButton.addEventListener('click', measureEventListener);
+    eraserButton.addEventListener('click', eraserEventListener);
+  }
+
+  function onBackwardButtonClick() {
+    // 이벤트 리스너 제거
+    if (measureEventListener && eraserEventListener) {
+      measureButton.removeEventListener('click', measureEventListener);
+      eraserButton.removeEventListener('click', eraserEventListener);
+    }
+  
+    const scene = document.querySelector('a-scene');
+    if (dotEntity) {
+      scene.removeChild(dotEntity);
+      dotEntity = null;
+    }
+    if (lineEntity) {
+      scene.removeChild(lineEntity);
+      lineEntity = null;
+    }
+  
+    isFirstMeasurement = true;
   }
 
   window.addEventListener("DOMContentLoaded", function () {

@@ -197,6 +197,7 @@
       data-font-json="{% static 'lobby/font/NanumGothic-Bold.json' %}"
       data-font-png="{% static 'lobby/font/NanumGothic-Bold.png' %}"
       auto-font
+      scene-debounced-click
     >
       <a-light type="ambient" color="#888"></a-light>
       <a-light
@@ -236,7 +237,7 @@
             font="https://raw.githubusercontent.com/myso-kr/aframe-fonts-korean/master/fonts/ofl/nanumgothic/NanumGothic-Bold.json"
           ></a-text>
         </a-entity>
-        <a-entity id="hideUIButton" position="0 -0.2 -0.4" visible="false">
+        <a-entity id="hideUIButton" position="0 -0.1 -0.3" visible="false">
           <a-cylinder
             geometry="radius: 0.03; height: 0.02; segmentsRadial: 32"
             material="color: green"
@@ -248,7 +249,7 @@
           id="ui"
           geometry="primitive: plane; width: 0.4; height: 0.55"
           material="opacity: 0.5; transparent: true; color: white"
-          position="0.2 0.13 -0.5"
+          position="0.2 0.25 -0.4"
           visible="false"
         >
           <a-entity
@@ -281,7 +282,7 @@
           <a-entity
             id="Misc"
             geometry="primitive: plane; width:0.4; height: 0.4"
-            material="color:green"
+            material="color:purple"
             position="0 0 -0.01"
             visible="false"
           >
@@ -341,7 +342,7 @@
           </a-entity>
         </a-entity>
         <!-- Left Control Buttons -->
-        <a-entity position="0.05 -0.3 -0.4" id="xypad" visible="false">
+        <a-entity position="0.05 -0.2 -0.3" id="xypad" visible="false">
           <a-box
             position="0 0.06 0"
             width="0.06"
@@ -379,7 +380,7 @@
             id="right"
           ></a-box>
         </a-entity>
-        <a-entity position="0.2 -0.2 -0.4" id="zpad" visible="false">
+        <a-entity position="0.2 -0.1 -0.3" id="zpad" visible="false">
           <a-cylinder
             position="0 -0.1 0"
             radius="0.02"
@@ -399,7 +400,7 @@
             id="backward"
           ></a-cylinder>
         </a-entity>
-        <a-entity position="-0.1 -0.25 -0.4" id="talkpad" visible="false">
+        <a-entity position="-0.1 -0.15 -0.3" id="talkpad" visible="false">
           <a-box
             position="0 0 0"
             width="0.06"
@@ -419,7 +420,7 @@
           </a-box>
         </a-entity>
         <!--텍스트 입력 및 지우기 버튼으로 사용함-->
-        <a-entity position="-0.1 -0.28 -0.4" id="p-pad" visible="false">
+        <a-entity position="-0.1 -0.2 -0.3" id="p-pad" visible="false">
           <a-box
             position="0 -0.05 0"
             width="0.04"

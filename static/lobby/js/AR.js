@@ -17,22 +17,22 @@ let measureEventListener;
 let eraserEventListener;
 
 function createDot(scene, position) {
-  dotEntity = document.createElement('a-sphere');
-  dotEntity.setAttribute('radius', 0.01);
-  dotEntity.setAttribute('color', 'black');
-  dotEntity.setAttribute('position', position);
+  dotEntity = document.createElement("a-sphere");
+  dotEntity.setAttribute("radius", 0.01);
+  dotEntity.setAttribute("color", "black");
+  dotEntity.setAttribute("position", position);
   scene.appendChild(dotEntity);
 }
 
 function createLine(scene, start, end) {
-  lineEntity = document.createElement('a-entity');
+  lineEntity = document.createElement("a-entity");
   lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
   const points = [];
   points.push(new THREE.Vector3(start.x, start.y, start.z));
   points.push(new THREE.Vector3(end.x, end.y, end.z));
   const geometry = new THREE.BufferGeometry().setFromPoints(points);
   const line = new THREE.Line(geometry, lineMaterial);
-  lineEntity.setObject3D('mesh', line);
+  lineEntity.setObject3D("mesh", line);
   scene.appendChild(lineEntity);
 }
 
@@ -41,11 +41,11 @@ function updateLine(start, end) {
   points.push(new THREE.Vector3(start.x, start.y, start.z));
   points.push(new THREE.Vector3(end.x, end.y, end.z));
   const geometry = new THREE.BufferGeometry().setFromPoints(points);
-  lineEntity.getObject3D('mesh').geometry = geometry;
+  lineEntity.getObject3D("mesh").geometry = geometry;
 }
 
 function calculateDistance(start, end) {
-  return start.distanceTo(end) * 100; 
+  return start.distanceTo(end) * 100;
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -65,11 +65,11 @@ document.addEventListener("DOMContentLoaded", function () {
   let talkpad = document.querySelector("#talkpad");
 
   //초기 UI 위치 설정
-  let initialUIPosition = { x: 0.2, y: 0.13, z: -0.5 };
+  let initialUIPosition = { x: 0.2, y: 0.25, z: -0.4 };
   let currentUIPosition = {
     x: 0.2, // 초기 x 좌표
-    y: 0.13, // 초기 y 좌표
-    z: -0.5, // 초기 z 좌표
+    y: 0.25, // 초기 y 좌표
+    z: -0.4, // 초기 z 좌표
   };
   //움직임 숫자 지정
   const moveAmount = 0.1;
@@ -121,11 +121,11 @@ document.addEventListener("DOMContentLoaded", function () {
     button2.setAttribute("visible", isChatVisible);
     Miscbutton.setAttribute("visible", isChatVisible);
     profile.setAttribute("visible", isChatVisible);
-    if (isChatVisible == false) {
+    if (isChatVisible === false && isMiscVisible === false) {
       enableChatButtons();
       sttText.setAttribute("value", "Chat mode");
       playall(friend);
-    } else {
+    } else if (isChatVisible == true) {
       enableUIButtons();
       sttText.setAttribute("value", "No mode");
       pauseall(friend);
@@ -157,11 +157,11 @@ document.addEventListener("DOMContentLoaded", function () {
     chatbutton.setAttribute("visible", isMiscVisible);
     profile.setAttribute("visible", isMiscVisible);
 
-    if (isMiscVisible == false) {
+    if (isMiscVisible === false && isChatVisible === false) {
       enableMiscButtons();
       sttText.setAttribute("value", "Misc mode");
       playall(misc);
-    } else {
+    } else if (isMiscVisible == true) {
       enableUIButtons();
       sttText.setAttribute("value", "No mode");
       pauseall(misc);
@@ -237,6 +237,8 @@ document.addEventListener("DOMContentLoaded", function () {
     buttons.forEach((buttonId) => {
       const button = document.getElementById(buttonId);
       button.setAttribute("visible", "true");
+      button.removeEventListener("click", movechat);
+      button.removeEventListener("click", moveFeature);
       button.addEventListener("click", moveUI);
     });
   }
@@ -399,7 +401,7 @@ document.addEventListener("DOMContentLoaded", function () {
         talkpad.setAttribute("visible", "true");
         Text.setAttribute("visible", "true");
         xypad.setAttribute("visible", "true");
-        onBackwardButtonClick()
+        onBackwardButtonClick();
         break;
       default:
         break;
@@ -501,7 +503,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const start = currentFeaturePage * itemsPerPage;
     const end = start + itemsPerPage;
     const currentdisplayMisc = displayMiscFeatures.slice(start, end); // 수정된 부분
-
+    sttText.setAttribute("value", "misc mode");
     const miscContainer = document.getElementById("MiscContainer");
     while (miscContainer.firstChild) {
       miscContainer.removeChild(miscContainer.firstChild);
@@ -556,7 +558,6 @@ document.addEventListener("DOMContentLoaded", function () {
   function GPTQuestion() {
     let gptsttText = document.querySelector("#sttText");
     let gptinputButton = document.querySelector("#input-button");
-    gptsttText.setAttribute("value", "질문하기");
     const miscContainer = document.getElementById("MiscContainer");
 
     const maxCharsPerLine = 20; // 예: 각 줄에 20자까지만 표시
@@ -770,12 +771,13 @@ document.addEventListener("DOMContentLoaded", function () {
     let measureButton = document.querySelector("#input-button");
     let eraserButton = document.querySelector("#eraser-button");
 
-    const scene = document.querySelector('a-scene');
+    const scene = document.querySelector("a-scene");
 
-    measureButton.addEventListener('click', () => {
-      const rightHandEntity = document.querySelector('#rightHand');
+    measureButton.addEventListener("click", () => {
+      const rightHandEntity = document.querySelector("#rightHand");
       if (rightHandEntity) {
-        const handTrackingExtras = rightHandEntity.components['hand-tracking-extras'];
+        const handTrackingExtras =
+          rightHandEntity.components["hand-tracking-extras"];
         if (handTrackingExtras && handTrackingExtras.getJoints) {
           const joints = handTrackingExtras.getJoints();
           if (joints && joints.getIndexTip) {
@@ -788,12 +790,22 @@ document.addEventListener("DOMContentLoaded", function () {
               isFirstMeasurement = false;
             } else {
               if (dotEntity && !lineEntity) {
-                createLine(scene, dotEntity.getAttribute('position'), position);
+                createLine(scene, dotEntity.getAttribute("position"), position);
               }
               if (lineEntity) {
-                updateLine(dotEntity.getAttribute('position'), position);
-                const length = calculateDistance(new THREE.Vector3(dotEntity.getAttribute('position').x, dotEntity.getAttribute('position').y, dotEntity.getAttribute('position').z), position);
-                measurementText.setAttribute("value", `현재 길이: ${length.toFixed(2)} cm`);
+                updateLine(dotEntity.getAttribute("position"), position);
+                const length = calculateDistance(
+                  new THREE.Vector3(
+                    dotEntity.getAttribute("position").x,
+                    dotEntity.getAttribute("position").y,
+                    dotEntity.getAttribute("position").z
+                  ),
+                  position
+                );
+                measurementText.setAttribute(
+                  "value",
+                  `현재 길이: ${length.toFixed(2)} cm`
+                );
               }
             }
           }
@@ -801,7 +813,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    eraserButton.addEventListener('click', () => {
+    eraserButton.addEventListener("click", () => {
       if (dotEntity) {
         scene.removeChild(dotEntity);
         scene.removeChild(lineEntity);
@@ -812,18 +824,18 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    measureButton.addEventListener('click', measureEventListener);
-    eraserButton.addEventListener('click', eraserEventListener);
+    measureButton.addEventListener("click", measureEventListener);
+    eraserButton.addEventListener("click", eraserEventListener);
   }
 
   function onBackwardButtonClick() {
     // 이벤트 리스너 제거
     if (measureEventListener && eraserEventListener) {
-      measureButton.removeEventListener('click', measureEventListener);
-      eraserButton.removeEventListener('click', eraserEventListener);
+      measureButton.removeEventListener("click", measureEventListener);
+      eraserButton.removeEventListener("click", eraserEventListener);
     }
-  
-    const scene = document.querySelector('a-scene');
+
+    const scene = document.querySelector("a-scene");
     if (dotEntity) {
       scene.removeChild(dotEntity);
       dotEntity = null;
@@ -832,7 +844,7 @@ document.addEventListener("DOMContentLoaded", function () {
       scene.removeChild(lineEntity);
       lineEntity = null;
     }
-  
+
     isFirstMeasurement = true;
   }
 
@@ -988,4 +1000,26 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     },
   });
+});
+AFRAME.registerComponent("scene-debounced-click", {
+  // 클릭 이벤트 중복 방지 코드
+  init: function () {
+    this.lastClickTime = 0;
+    this.debounceDuration = 500; // 500ms
+
+    // 씬에 클릭 이벤트 리스너 추가
+    this.el.addEventListener("click", this.handleClick.bind(this));
+  },
+
+  handleClick: function (evt) {
+    const currentTime = new Date().getTime();
+
+    if (currentTime - this.lastClickTime < this.debounceDuration) {
+      // 이전 클릭 이후로 충분한 시간이 지나지 않았으므로 이벤트를 무시합니다.
+      evt.stopPropagation(); // 추가 이벤트 처리를 중지
+      return;
+    }
+
+    this.lastClickTime = currentTime;
+  },
 });

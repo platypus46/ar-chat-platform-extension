@@ -65,14 +65,16 @@ document.addEventListener("DOMContentLoaded", function () {
   let talkpad = document.querySelector("#talkpad");
 
   //초기 UI 위치 설정
-  let initialUIPosition = { x: 0.2, y: 0.25, z: -0.4 };
+  let initialUIPosition = { x: 0.2, y: 0.15, z: -0.45 };
   let currentUIPosition = {
     x: 0.2, // 초기 x 좌표
-    y: 0.25, // 초기 y 좌표
-    z: -0.4, // 초기 z 좌표
+    y: 0.15, // 초기 y 좌표
+    z: -0.45, // 초기 z 좌표
   };
+
   //움직임 숫자 지정
   const moveAmount = 0.1;
+
   //HiduUI객체화
   let hideUI = document.querySelector("#hideUIButton");
   //동작패드
@@ -91,6 +93,11 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentPage = 0;
   let selectedIndex = 0;
   const itemsPerPage = 5;
+
+  let measureButton;
+  let eraserButton;
+  let measureEventListener;
+  let eraserEventListener;
 
   function initializeFriends() {
     // Ajax를 이용해 서버에서 친구 목록과 대화를 가져옴
@@ -768,12 +775,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let measurementText = document.querySelector("#sttText");
     measurementText.setAttribute("value", "현재 길이: 계산 중...");
 
-    let measureButton = document.querySelector("#input-button");
-    let eraserButton = document.querySelector("#eraser-button");
+    measureButton = document.querySelector("#input-button");
+    eraserButton = document.querySelector("#eraser-button");
 
     const scene = document.querySelector("a-scene");
 
-    measureButton.addEventListener("click", () => {
+    measureEventListener = () => {
       const rightHandEntity = document.querySelector("#rightHand");
       if (rightHandEntity) {
         const handTrackingExtras =
@@ -811,9 +818,9 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         }
       }
-    });
+    };
 
-    eraserButton.addEventListener("click", () => {
+    eraserEventListener = () =>  {
       if (dotEntity) {
         scene.removeChild(dotEntity);
         scene.removeChild(lineEntity);
@@ -822,7 +829,7 @@ document.addEventListener("DOMContentLoaded", function () {
         isFirstMeasurement = true; // Reset the flag
         measurementText.setAttribute("value", "현재 길이: 초기화됨");
       }
-    });
+    };
 
     measureButton.addEventListener("click", measureEventListener);
     eraserButton.addEventListener("click", eraserEventListener);
@@ -830,8 +837,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function onBackwardButtonClick() {
     // 이벤트 리스너 제거
-    if (measureEventListener && eraserEventListener) {
+    if (measureButton && measureEventListener) {
       measureButton.removeEventListener("click", measureEventListener);
+    }
+    if (eraserButton && eraserEventListener) {
       eraserButton.removeEventListener("click", eraserEventListener);
     }
 

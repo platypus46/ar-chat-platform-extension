@@ -1,19 +1,20 @@
 let isRecording = false;
 let mediaRecorder;
 let audioChunks = [];
-let sttText = document.querySelector("#sttText");
-
-
-function eraseText() {
-  let sttText = document.querySelector("#sttText");
-  sttText.setAttribute("value", "");
-  sttText.setAttribute("width", "0.7");
-}
-
+let sttText;
+let recordButton;
+let recordText;
+let eraserButton;
 
 async function initRecorder() {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   mediaRecorder = new MediaRecorder(stream);
+  
+  // Initialization of global variables after ensuring mediaRecorder is set up
+  sttText = document.querySelector("#sttText");
+  recordButton = document.getElementById("recordButton");
+  recordText = document.getElementById("recordText");
+  eraserButton = document.getElementById("eraser-button");
 
   mediaRecorder.ondataavailable = event => {
     audioChunks.push(event.data);
@@ -32,31 +33,34 @@ async function initRecorder() {
     const data = await response.json();
     
     if (data.transcription) {
-      const sttText = document.querySelector("#sttText");
       sttText.setAttribute("value", data.transcription);
       sttText.setAttribute("width", "0.7");
     }
     audioChunks = [];
   };
-}
-
-window.addEventListener("DOMContentLoaded", (event) => {
-  initRecorder();
-
-  const recordButton = document.getElementById("recordButton");
-  const recordText = document.getElementById("recordText");
-  const eraserButton = document.getElementById("eraser-button");
 
   recordButton.addEventListener("click", () => {
     if (isRecording) {
       mediaRecorder.stop();
       recordText.setAttribute("value", "not recording");
       isRecording = false;
+      recordButton.setAttribute("gltf-model", recordButtonModel);
     } else {
       mediaRecorder.start();
       recordText.setAttribute("value", "recording...");
       isRecording = true;
+      recordButton.setAttribute("gltf-model", recordStopButtonModel);
     }
   });
+
   eraserButton.addEventListener("click", eraseText);
+}
+
+function eraseText() {
+  sttText.setAttribute("value", "");
+  sttText.setAttribute("width", "0.7");
+}
+
+window.addEventListener("DOMContentLoaded", (event) => {
+  initRecorder().catch(err => console.error('Initialization failed:', err));
 });

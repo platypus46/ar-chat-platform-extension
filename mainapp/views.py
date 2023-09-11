@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login
 import re
+from datetime import datetime
 from django.shortcuts import render,redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
@@ -42,10 +43,14 @@ def lobby_view(request, username):
         context['username'] = user.username
         context['full_name'] = user.full_name
         context['gpt_api_key'] =user.gpt_api_key
-        context['profile_picture'] = user.profile_picture if user.profile_picture else None
         context['subscriptions'] = user.subscriptions.all()
         context['friends'] = [friendship.friend for friendship in user.friendships.all()]
         context['notifications'] = Notification.objects.filter(user=user, is_read=False)
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        if user.profile_picture:
+            context['profile_picture_url'] = f"{user.profile_picture.url}?ver={timestamp}"
+        else:
+            context['profile_picture_url'] = f"/static/lobby/img/default_profile.png?ver={timestamp}"
 
     return render(request, 'lobby.html', context)
 

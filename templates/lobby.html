@@ -14,6 +14,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'lobby/js/profile.js' %}"></script>
     <script src="{% static 'lobby/js/gpt_api_key.js' %}"></script>
+    <script type="text/javascript">
+      var recordButtonModel = "{% static 'lobby/img_model/record_button.glb' %}";
+      var recordStopButtonModel = "{% static 'lobby/img_model/record_stop_button.glb' %}";
+    </script>
+    
 
     <!-- AR화면 -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
@@ -33,13 +38,14 @@
       <div class="user-notification">{{ full_name }}님이 접속했습니다.</div>
       <div class="profile-container">
         <img
-          src="{% if profile_picture %}{{ profile_picture.url }}{% else %}{% static 'lobby/img/default_profile.png' %}{% endif %}"
+          src="{{ profile_picture_url }}"
           alt="{{ username }}의 프로필 사진"
           class="profile-pic"
           id="userProfilePic"
         />
         <input type="file" id="imageUpload" style="display: none" />
-      </div>
+        <button id="refreshProfile">프로필 적용</button> 
+    </div>
     </div>
     <!-- 임시 상점 버튼 -->
     <div id="icon-button-container">
@@ -212,7 +218,7 @@
         hand-tracking-extras
         ><a-entity
           finger-cursor
-          raycaster="objects: .clickable; far: 0.04"
+          raycaster="objects: .clickable; far: 0.03"
         ></a-entity
       ></a-entity>
       <a-entity
@@ -222,7 +228,7 @@
       >
         <a-entity
           finger-cursor
-          raycaster="objects: .clickable; far: 0.04"
+          raycaster="objects: .clickable; far: 0.03"
         ></a-entity>
       </a-entity>
       <a-camera id="camera">
@@ -249,15 +255,15 @@
           id="ui"
           geometry="primitive: plane; width: 0.4; height: 0.55"
           material="opacity: 0.5; transparent: true; color: white"
-          position="0.2 0.15 -0.45"
+          position="0.1 0 -0.5"
           visible="false"
         >
-          <a-entity
-            id="profile"
-            geometry="primitive: plane; width: 0.25; height: 0.25"
-            material="color: blue; opacity: 0.5"
-            position="0 0.13 0.01"
-          ></a-entity>
+        <a-entity
+          id="profile"
+          geometry="primitive: plane; width: 0.25; height: 0.25"
+          material="src: {{ profile_picture_url }};"
+          position="0 0.13 0.01"
+        ></a-entity>
           <a-entity
             id="friend"
             geometry="primitive: plane; width:0.4; height: 0.4"
@@ -342,45 +348,45 @@
           </a-entity>
         </a-entity>
         <!-- Left Control Buttons -->
-        <a-entity position="0.05 -0.2 -0.4" id="xypad" visible="false">
+        <a-entity position="0.04 -0.27 -0.4" id="xypad" visible="false">
           <a-box
-            position="0 0.06 0"
-            width="0.06"
-            height="0.06"
+            position="0 0.04 0"
+            width="0.04"
+            height="0.04"
             depth="0.02"
-            color="blue"
+            color="gray"
             class="clickable"
             id="up"
           ></a-box>
           <a-box
-            position="0 -0.06 0"
-            width="0.06"
-            height="0.06"
+            position="0 -0.04 0"
+            width="0.04"
+            height="0.04"
             depth="0.02"
-            color="blue"
+            color="gray"
             class="clickable"
             id="down"
           ></a-box>
           <a-box
-            position="-0.06 0 0"
-            width="0.06"
-            height="0.06"
+            position="-0.04 0 0"
+            width="0.04"
+            height="0.04"
             depth="0.02"
-            color="blue"
+            color="gray"
             class="clickable"
             id="left"
           ></a-box>
           <a-box
-            position="0.06 0 0"
-            width="0.06"
-            height="0.06"
+            position="0.04 0 0"
+            width="0.04"
+            height="0.04"
             depth="0.02"
-            color="blue"
+            color="gray"
             class="clickable"
             id="right"
           ></a-box>
         </a-entity>
-        <a-entity position="0.2 -0.1 -0.4" id="zpad" visible="false">
+        <a-entity position="0.18 -0.16 -0.4" id="zpad" visible="false">
           <a-cylinder
             position="0 -0.1 0"
             radius="0.02"
@@ -401,14 +407,12 @@
           ></a-cylinder>
         </a-entity>
         <a-entity position="-0.1 -0.15 -0.4" id="talkpad" visible="false">
-          <a-box
+          <a-entity
             position="0 0 0"
-            width="0.06"
-            height="0.06"
-            depth="0.02"
-            color="yellow"
-            class="clickable"
+            scale="0.02 0.02 0.02"
             id="recordButton"
+            class="clickable"
+            gltf-model="{% static 'lobby/img_model/record_button.glb' %}"
           >
             <a-text
               value="not recording"
@@ -417,7 +421,7 @@
               scale="0.06 0.06 0.06"
               id="recordText"
             ></a-text>
-          </a-box>
+          </a-entity>
         </a-entity>
         <!--텍스트 입력 및 지우기 버튼으로 사용함-->
         <a-entity position="-0.1 -0.2 -0.4" id="p-pad" visible="false">
@@ -457,5 +461,10 @@
       </a-camera>
     </a-scene>
   </body>
+  <script>
+    document.getElementById('refreshProfile').addEventListener('click', function() {
+      location.reload();  // 페이지 새로고침
+    });
+  </script>
   <script src="{% static 'lobby/js/lobby.js' %}"></script>
 </html>

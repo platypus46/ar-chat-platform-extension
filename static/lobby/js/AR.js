@@ -65,11 +65,11 @@ document.addEventListener("DOMContentLoaded", function () {
   let talkpad = document.querySelector("#talkpad");
 
   //초기 UI 위치 설정
-  let initialUIPosition = { x: 0.2, y: 0.15, z: -0.45 };
+  let initialUIPosition = { x: 0.1, y: 0, z: -0.5 };
   let currentUIPosition = {
-    x: 0.2, // 초기 x 좌표
-    y: 0.15, // 초기 y 좌표
-    z: -0.45, // 초기 z 좌표
+    x: 0.1, // 초기 x 좌표
+    y: 0, // 초기 y 좌표
+    z: -0.5, // 초기 z 좌표
   };
 
   //움직임 숫자 지정

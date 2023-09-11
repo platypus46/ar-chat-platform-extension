@@ -5,7 +5,8 @@ from django.conf import settings
 
 
 def profile_pic_directory_path(instance, filename):
-    extension = filename.split('.')[-1]
+    # 확장자를 항상 'jpg'로 설정
+    extension = 'jpg'
     
     filename_1 = f"profile/{instance.username}_1.{extension}"
     filename_2 = f"profile/{instance.username}_2.{extension}"

@@ -34,7 +34,6 @@ async function initRecorder() {
     
     if (data.transcription) {
       sttText.setAttribute("value", data.transcription);
-      sttText.setAttribute("width", "0.7");
     }
     audioChunks = [];
   };
@@ -58,7 +57,6 @@ async function initRecorder() {
 
 function eraseText() {
   sttText.setAttribute("value", "");
-  sttText.setAttribute("width", "0.7");
 }
 
 window.addEventListener("DOMContentLoaded", (event) => {

@@ -181,16 +181,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const deleteButton = document.createElement('button');
             deleteButton.innerText = '삭제';
             deleteButton.className = 'deleteFriendButton';
-            deleteButton.setAttribute('data-username', newFriendName);
+            deleteButton.setAttribute('data-username', newFriendUsername);
 
             // 여기서 이벤트 리스너를 할당합니다.
             deleteButton.addEventListener('click', function() {
                 socket.send(JSON.stringify({
                     'message': 'delete_friend',
                     'from_user': username,
-                    'friend_user': newFriendName
+                    'friend_user': newFriendUsername
                 }));
-                newFriendElement.remove();
             });
 
             newFriendElement.appendChild(deleteButton);

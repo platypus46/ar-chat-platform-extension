@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const message = data['message'];
         const fromFullName = data['from_full_name'];
         const notificationId = data['notification_id'];
-
+        
         if (message === 'friend_request' || message === 'friend_request_accepted') {
             const notificationElement = document.createElement('li');
             if (message === 'friend_request') {
@@ -170,6 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const newFriendName = data['new_friend_name'];
             const friendList = document.getElementById('friendNames');
             const newFriendElement = document.createElement('li');
+            const newFriendUsername = data['new_friend_username'];
         
             // 친구 이름 표시
             const friendNameSpan = document.createElement('span');
@@ -199,7 +200,8 @@ document.addEventListener('DOMContentLoaded', function() {
             chatButton.innerText = '채팅';
             chatButton.addEventListener('click', function() {
                 // 채팅 로직을 여기에 작성
-                console.log(`${newFriendName}과(와) 채팅을 시작합니다.`);
+                chatWithFriend(newFriendUsername);
+                console.log(`${newFriendUsername}과(와) 채팅을 시작합니다.`);
             });
             newFriendElement.appendChild(chatButton);
         

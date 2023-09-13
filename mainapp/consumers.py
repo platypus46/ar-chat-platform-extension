@@ -98,10 +98,12 @@ class LobbyConsumer(AsyncWebsocketConsumer):
         return notification, from_user_object  
 
     async def update_friend_list(self, event):
-        new_friend_name = event['new_friend_name']
+        new_friend_name = event.get('new_friend_name', '')
+        new_friend_username = event.get('new_friend_username', '')  # Use get to avoid KeyError
         await self.send(text_data=json.dumps({
             'message': 'new_friend_added',
-            'new_friend_name': new_friend_name
+            'new_friend_name': new_friend_name,
+            'new_friend_username': new_friend_username  
         }))
 
     # consumers.py
@@ -133,8 +135,8 @@ class LobbyConsumer(AsyncWebsocketConsumer):
             self.room_name,
             {
                'type': 'update_friend_list',
-               'new_friend_name': friend_request.from_user.full_name
-               
+               'new_friend_name': friend_request.from_user.full_name,
+               'new_friend_username': friend_request.from_user.username
             }
         )
         
@@ -143,7 +145,8 @@ class LobbyConsumer(AsyncWebsocketConsumer):
             friend_request.from_user.username,
             {
                 'type': 'update_friend_list',
-                'new_friend_name': friend_request.to_user.full_name
+                'new_friend_name': friend_request.to_user.full_name,
+                'new_friend_username': friend_request.to_user.username
             }
         )
 
@@ -153,7 +156,8 @@ class LobbyConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'send_notification',
                 'message': 'friend_request_accepted', 
-                'from_full_name': friend_request.to_user.full_name
+                'from_full_name': friend_request.to_user.full_name,
+                'new_friend_username': friend_request.to_user.username
             }
         )
 

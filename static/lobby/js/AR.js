@@ -509,6 +509,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // "GPT" 항목이 선택된 경우
     if (selectedFeature.name === "GPT") {
+      sttText.setAttribute('value','질문하기')
       GPTQuestion();
       return; // 추가된 부분: GPTQuestion 함수를 실행한 후 함수를 종료
     } else if (selectedFeature.name === "길이측정") {

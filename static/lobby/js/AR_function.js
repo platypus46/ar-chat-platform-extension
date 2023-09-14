@@ -9,6 +9,7 @@ let measureEventListener;
 let eraserEventListener;
 
 let gptClickListener;
+let loadingInterval; 
 
 function createDot(scene, position) {
   dotEntity = document.createElement("a-sphere");
@@ -110,29 +111,6 @@ function lengthMeasurement() {
     eraserButton.addEventListener("click", eraserEventListener);
 }
 
-function onBackwardButtonClick() {
-    // 이벤트 리스너 제거
-    if (inputButton) {
-      if (measureEventListener) {
-        inputButton.removeEventListener("click", measureEventListener);
-      }
-      if (gptClickListener) {
-        inputButton.removeEventListener("click", gptClickListener);
-      }
-    }
-
-    const scene = document.querySelector("a-scene");
-    if (dotEntity) {
-      scene.removeChild(dotEntity);
-      dotEntity = null;
-    }
-    if (lineEntity) {
-      scene.removeChild(lineEntity);
-      lineEntity = null;
-    }
-    isFirstMeasurement = true;
-}
-
 function GPTQuestion() {
   let gptsttText = document.querySelector("#sttText");
   const miscContainer = document.getElementById("MiscContainer");
@@ -148,6 +126,8 @@ function GPTQuestion() {
   }, 500);
 
   gptClickListener = function () {
+    startLoadingAnimation();
+
     fetch("/get_gpt_answer/", {
       method: "POST",
       headers: {
@@ -160,9 +140,11 @@ function GPTQuestion() {
     .then((data) => {
       console.log("Received data from server:", data);
       const longAnswer = data.answer;
+      stopLoadingAnimation();
       updateAnswer(longAnswer);
     })
     .catch((error) => {
+      stopLoadingAnimation();
       console.error("Error:", error);
     });
   };
@@ -188,11 +170,11 @@ function GPTQuestion() {
   questionEntity.setAttribute("id", "question-text");
   questionEntity.setAttribute(
     "text",
-    `value: ${longQuestion}; color: white; align: center; width: 0.35;`
+    `value: ${longQuestion}; color: white; align: center; ;`
   );
   questionEntity.setAttribute(
     "geometry",
-    "primitive: plane; width: 0.18; height: 0.1"
+    "primitive: plane; width: 0.28; height: 0.1"
   );
   questionEntity.setAttribute("position", `0 0.1 0.01`);
   miscContainer.appendChild(questionEntity);
@@ -201,11 +183,11 @@ function GPTQuestion() {
   answerEntity.setAttribute("id", "answer");
   answerEntity.setAttribute(
     "text",
-    `value: Answer:; color: white; align: center; width: 0.35;`
+    `value: ; color: white; align: center; `
   );
   answerEntity.setAttribute(
     "geometry",
-    "primitive: plane; width: 0.18; height: 0.17"
+    "primitive: plane; width: 0.28; height: 0.17"
   );
   answerEntity.setAttribute("position", `0 -0.08 0.01`);
   miscContainer.appendChild(answerEntity);
@@ -214,7 +196,7 @@ function GPTQuestion() {
     const answerEntity = document.getElementById("answer");
     if (answerEntity) {
       const textComponent = answerEntity.getAttribute("text");
-      textComponent.value = "Answer: " + answer;
+      textComponent.value = answer;
       answerEntity.setAttribute("text", textComponent);
     }
   }
@@ -227,4 +209,56 @@ function GPTQuestion() {
       questionEntity.setAttribute("text", textComponent);
     }
   }
+
+  function startLoadingAnimation() {
+    let loadingText = '';
+    const fullText = 'Loading...';
+    let index = 0;
+  
+    // 이미 진행 중인 애니메이션을 정지
+    if (loadingInterval) {
+      clearInterval(loadingInterval);
+    }
+  
+    loadingInterval = setInterval(() => {
+      if (index < fullText.length) {
+        loadingText += fullText[index];
+        updateAnswer(loadingText);
+        index++;
+      } else {
+        loadingText = '';
+        index = 0;
+      }
+    }, 300);  // 300ms 마다 업데이트
+  }
+  
+  function stopLoadingAnimation() {
+    if (loadingInterval) {
+      clearInterval(loadingInterval);
+    }
+  }
+}
+
+
+function onBackwardButtonClick() {
+  // 이벤트 리스너 제거
+  if (inputButton) {
+    if (measureEventListener) {
+      inputButton.removeEventListener("click", measureEventListener);
+    }
+    if (gptClickListener) {
+      inputButton.removeEventListener("click", gptClickListener);
+    }
+  }
+
+  const scene = document.querySelector("a-scene");
+  if (dotEntity) {
+    scene.removeChild(dotEntity);
+    dotEntity = null;
+  }
+  if (lineEntity) {
+    scene.removeChild(lineEntity);
+    lineEntity = null;
+  }
+  isFirstMeasurement = true;
 }

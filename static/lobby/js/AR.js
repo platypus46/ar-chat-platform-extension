@@ -321,6 +321,8 @@ document.addEventListener("DOMContentLoaded", function () {
     ui.setAttribute("position", positionToString(currentUIPosition));
   }
   function moveFeature(event) {
+    const upbutton = document.getElementById("up");
+    const downbutton = document.getElementById("down");
     //부가기능 움직이기
     switch (event.target.id) {
       case "up":
@@ -352,10 +354,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         break;
       case "forward":
+        downbutton.removeEventListener("click", moveFeature);
+        upbutton.removeEventListener("click", moveFeature);
         displayMiscdetail();
         break;
       case "backward":
         const miscContainer = document.getElementById("MiscContainer"); // 수정된 부분
+        downbutton.addEventListener("click", moveFeature);
+        upbutton.addEventListener("click", moveFeature);
         while (miscContainer.firstChild) {
           miscContainer.removeChild(miscContainer.firstChild);
         }

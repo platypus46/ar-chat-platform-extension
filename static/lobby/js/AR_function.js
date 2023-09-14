@@ -3,13 +3,17 @@ let lineEntity = null;
 let lineMaterial = null;
 let isFirstMeasurement = true;
 
-let inputButton = document.querySelector("#input-button"); 
+let input_Button = document.querySelector("#input-button"); 
 
 let measureEventListener;
 let eraserEventListener;
 
+let longAnswer = "";  
 let gptClickListener;
 let loadingInterval; 
+
+const pageUpbutton = document.getElementById("up"); //답변 이전페이지로 넘기기
+const pageDownbutton = document.getElementById("down");//답변 다음페이지로 넘기기
 
 function createDot(scene, position) {
   dotEntity = document.createElement("a-sphere");
@@ -107,11 +111,15 @@ function lengthMeasurement() {
       }
     };
 
-    inputButton.addEventListener("click", measureEventListener);
+    input_Button.addEventListener("click", measureEventListener);
     eraserButton.addEventListener("click", eraserEventListener);
 }
 
 function GPTQuestion() {
+  // 페이지네이션을 위한 변수 선언
+  let currentPage = 0;
+  let totalPages = 0;
+  let pageLength = 200;  
   let gptsttText = document.querySelector("#sttText");
   const miscContainer = document.getElementById("MiscContainer");
 
@@ -139,7 +147,7 @@ function GPTQuestion() {
     .then((response) => response.json())
     .then((data) => {
       console.log("Received data from server:", data);
-      const longAnswer = data.answer;
+      longAnswer = data.answer;  // 원본 답변 업데이트
       stopLoadingAnimation();
       updateAnswer(longAnswer);
     })
@@ -149,7 +157,7 @@ function GPTQuestion() {
     });
   };
 
-  inputButton.addEventListener("click", gptClickListener);
+  input_Button.addEventListener("click", gptClickListener);
 
   function getCookie(name) {
     let cookieValue = null;
@@ -192,12 +200,41 @@ function GPTQuestion() {
   answerEntity.setAttribute("position", `0 -0.08 0.01`);
   miscContainer.appendChild(answerEntity);
 
+  // 페이지네이션 함수
+  function paginateAnswer(answer, page) {
+    const start = page * pageLength;
+    const end = start + pageLength;
+    return answer.slice(start, end);
+  } 
+ // 페이지네이션 이벤트 리스너
+  function onUpButtonClick() {
+    if (currentPage > 0) {
+      currentPage--;
+      updateAnswer(longAnswer);  
+    }
+  }
+
+  function onDownButtonClick() {
+    if (currentPage < totalPages - 1) {
+      currentPage++;
+      updateAnswer(longAnswer);  
+    }
+  }
+
+  // 이벤트 리스너 등록
+  pageUpbutton.addEventListener("click", onUpButtonClick);
+  pageDownbutton.addEventListener("click", onDownButtonClick);
+
+  // 기존 updateAnswer() 함수 수정
   function updateAnswer(answer) {
     const answerEntity = document.getElementById("answer");
     if (answerEntity) {
       const textComponent = answerEntity.getAttribute("text");
-      textComponent.value = answer;
+      textComponent.value = paginateAnswer(answer, currentPage);  // 페이지네이션 적용
       answerEntity.setAttribute("text", textComponent);
+
+      // 전체 페이지 수 계산
+      totalPages = Math.ceil(answer.length / pageLength);
     }
   }
 
@@ -242,12 +279,12 @@ function GPTQuestion() {
 
 function onBackwardButtonClick() {
   // 이벤트 리스너 제거
-  if (inputButton) {
+  if (input_Button) {
     if (measureEventListener) {
-      inputButton.removeEventListener("click", measureEventListener);
+      input_Button.removeEventListener("click", measureEventListener);
     }
     if (gptClickListener) {
-      inputButton.removeEventListener("click", gptClickListener);
+      input_Button.removeEventListener("click", gptClickListener);
     }
   }
 
@@ -261,4 +298,12 @@ function onBackwardButtonClick() {
     lineEntity = null;
   }
   isFirstMeasurement = true;
+
+  // 페이지네이션 이벤트 리스너 제거
+  if(onUpButtonClick){
+    pageUpbutton.removeEventListener("click", onUpButtonClick);
+  }
+  if(onDownButtonClick){
+    pageDownbutton.removeEventListener("click", onDownButtonClick);
+  }
 }

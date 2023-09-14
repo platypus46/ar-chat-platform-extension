@@ -240,7 +240,7 @@ def get_gpt_answer(question, api_key):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", 
         messages=messages,
-        max_tokens=200  
+        max_tokens=600 
     )
     print(f"GPT-3 API Response: {response}")  
     return response['choices'][0]['message']['content'].strip()

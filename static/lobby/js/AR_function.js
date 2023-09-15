@@ -180,6 +180,7 @@ function GPTQuestion() {
   pageEntity.setAttribute("text", `value: 1/1; color: white; align: center;`);
   pageEntity.setAttribute("geometry", "primitive: plane; width: 0.08; height: 0.04");
   pageEntity.setAttribute("position", `0 -0.2 0.02`);
+  pageEntity.setAttribute("material", "color: #0000FF"); 
   miscContainer.appendChild(pageEntity);
 
   const questionEntity = document.createElement("a-entity");
@@ -193,6 +194,7 @@ function GPTQuestion() {
     "primitive: plane; width: 0.28; height: 0.1"
   );
   questionEntity.setAttribute("position", `0 0.1 0.01`);
+  questionEntity.setAttribute("material", "color: #9bc2cf"); 
   miscContainer.appendChild(questionEntity);
 
   const answerEntity = document.createElement("a-entity");
@@ -206,6 +208,7 @@ function GPTQuestion() {
     "primitive: plane; width: 0.28; height: 0.17"
   );
   answerEntity.setAttribute("position", `0 -0.08 0.01`);
+  answerEntity.setAttribute("material", "color: #9bc2cf"); 
   miscContainer.appendChild(answerEntity);
 
   // 페이지네이션 함수

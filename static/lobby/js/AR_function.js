@@ -174,6 +174,14 @@ function GPTQuestion() {
     return cookieValue;
   }
 
+  // 페이지 번호를 표시할 a-entity 요소 생성
+  const pageEntity = document.createElement("a-entity");
+  pageEntity.setAttribute("id", "page-number");
+  pageEntity.setAttribute("text", `value: 1/1; color: white; align: center;`);
+  pageEntity.setAttribute("geometry", "primitive: plane; width: 0.08; height: 0.04");
+  pageEntity.setAttribute("position", `0 -0.2 0.02`);
+  miscContainer.appendChild(pageEntity);
+
   const questionEntity = document.createElement("a-entity");
   questionEntity.setAttribute("id", "question-text");
   questionEntity.setAttribute(
@@ -225,16 +233,22 @@ function GPTQuestion() {
   pageUpbutton.addEventListener("click", onUpButtonClick);
   pageDownbutton.addEventListener("click", onDownButtonClick);
 
-  // 기존 updateAnswer() 함수 수정
+  // 기존 updateAnswer 함수 수정
   function updateAnswer(answer) {
     const answerEntity = document.getElementById("answer");
     if (answerEntity) {
       const textComponent = answerEntity.getAttribute("text");
-      textComponent.value = paginateAnswer(answer, currentPage);  // 페이지네이션 적용
+      textComponent.value = paginateAnswer(answer, currentPage);
       answerEntity.setAttribute("text", textComponent);
 
-      // 전체 페이지 수 계산
+      // 전체 페이지 수 계산 및 페이지 번호 업데이트
       totalPages = Math.ceil(answer.length / pageLength);
+      const pageNumberEntity = document.getElementById("page-number");
+      if (pageNumberEntity) {
+        const pageNumberTextComponent = pageNumberEntity.getAttribute("text");
+        pageNumberTextComponent.value = `${currentPage + 1}/${totalPages}`;
+        pageNumberEntity.setAttribute("text", pageNumberTextComponent);
+      }
     }
   }
 
@@ -306,4 +320,10 @@ function onBackwardButtonClick() {
   if(onDownButtonClick){
     pageDownbutton.removeEventListener("click", onDownButtonClick);
   }
+
+   // pageEntity를 찾아서 제거
+   const pageEntity = document.getElementById("page-number");
+   if (pageEntity) {
+     scene.removeChild(pageEntity);
+   }
 }

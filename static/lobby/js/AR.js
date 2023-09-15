@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
   //페이지 내부 인덱스
   let currentPage = 0;
   let selectedIndex = 0;
-  const itemsPerPage = 5;
+  const itemsPerPage = 7;
 
   function initializeFriends() {
     // Ajax를 이용해 서버에서 친구 목록과 대화를 가져옴
@@ -395,7 +395,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "text",
         `value: ${friend.name}; color: white; align: center;`
       );
-      entity.setAttribute("position", `0 ${0.03 * (4 - index)} 0`); // 위치 조절
+      entity.setAttribute("position", `0 ${0.03 * (5 - index)} 0`); // 위치 조절
       if (index === selectedIndex) {
         entity.setAttribute("text", `color: yellow`); // 선택된 친구
         const animation = document.createElement("a-animation");
@@ -406,6 +406,21 @@ document.addEventListener("DOMContentLoaded", function () {
         animation.setAttribute("repeat", "indefinite"); // 무한 반복
         animation.setAttribute("direction", "alternate"); // 애니메이션 방향 전환 (어두워졌다 밝아짐)
       }
+      // 프로필 사진 추가
+      if (friend.profile_picture) {
+        const imgEntity = document.createElement("a-image");
+        imgEntity.setAttribute("src", friend.profile_picture);
+        imgEntity.setAttribute("width", "0.1");
+        imgEntity.setAttribute("height", "0.1");
+        imgEntity.setAttribute("position", "0.08 0.02 0.015");  // 위치를 조절해야 할 수도 있습니다.
+
+        if (index !== selectedIndex) {
+          imgEntity.setAttribute("visible", "false");
+        
+        }
+        entity.appendChild(imgEntity);
+      }
+
       friendsContainer.appendChild(entity);
     });
   }
@@ -434,7 +449,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "text",
       `value: ${selectedFriend.conversation}; color: white; align: center;`
     );
-    conversations.setAttribute("position", "0 0.19 0"); //중앙에 텍스트 배치
+    conversations.setAttribute("position", "0 0.1 0"); //중앙에 텍스트 배치
     friendsContainer.appendChild(conversations);
 
     document.getElementById("friendList").setAttribute("visible", "false");

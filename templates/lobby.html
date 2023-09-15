@@ -157,6 +157,10 @@
       <ul id="friendNames">
         {% for friend in friends %}
         <li>
+          <!-- 프로필 사진 추가 -->
+          {% if friend.profile_picture %}
+            <img src="{{ friend.profile_picture.url }}" alt="{{ friend.full_name }}'s profile picture" width="50" height="50">
+          {% endif %}
           <span>{{ friend.full_name }}</span>
           <button
             class="deleteFriendButton"
@@ -266,7 +270,7 @@
         ></a-entity>
           <a-entity
             id="friend"
-            geometry="primitive: plane; width:0.2; height: 0.2"
+            geometry="primitive: plane; width:0.2; height: 0.23"
             material="color:green"
             position="0 0.1 -0.01"
             visible="false"

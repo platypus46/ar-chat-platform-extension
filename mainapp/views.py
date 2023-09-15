@@ -193,10 +193,11 @@ def get_friends_and_conversations(request):
         print(conversation)  # 대화 내용 출력
 
         friends_list.append({
-            'name': friend.full_name,
-            'username': friend.username,
-            'conversation': conversation,
-        })
+        'name': friend.full_name,
+        'username': friend.username,
+        'conversation': conversation,
+        'profile_picture': friend.profile_picture.url if friend.profile_picture else None  # 프로필 사진 추가
+    })
     
     return JsonResponse({'friends': friends_list})
 

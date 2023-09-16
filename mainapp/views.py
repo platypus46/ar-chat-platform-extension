@@ -272,11 +272,7 @@ def subscription_shop(request, username):
     return render(request, 'subscription_shop.html', context)
 
 def test1_view(request):
-    answer = ""
-    if request.method == "POST":
-        question = request.POST.get("question")
-        answer = get_gpt_answer(question)
-    return render(request, "test1.html", {"answer": answer})
+    return render(request, "test1.html")
 
 #코드 테스트 용 함수
 def test_view(request):

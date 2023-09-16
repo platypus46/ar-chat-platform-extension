@@ -1,6 +1,7 @@
 {% load static %}
 <html>
   <head>
+    <meta charset="UTF-8">
     <script src="//cdn.jsdelivr.net/npm/eruda"></script>
     <script>
       eruda.init();
@@ -351,6 +352,23 @@
             </a-entity>
           </a-entity>
         </a-entity>
+
+        <a-entity id="colorSelectorGroup" position="0.03 0 0" visible="false">
+          <!-- 선택된 색깔을 보여줄 구 -->
+          <a-sphere id="selectedColorSphere" position="0 -0.25 -0.55" radius="0.03" color="#888888"></a-sphere>
+
+          <!-- 팔레트 그룹 -->
+          <a-entity id="palette" position="0 0 -0.5">
+            <a-box id="redBox" position="-0.09 -0.3 0" scale="0.03 0.03 0.03" color="#FF0000" data-color="#FF0000" class="clickable"></a-box> <!-- 빨강 -->
+            <a-box id="orangeBox" position="-0.06 -0.3 0" scale="0.03 0.03 0.03" color="#FFA500" data-color="#FFA500" class="clickable"></a-box> <!-- 주황 -->
+            <a-box id="yellowBox" position="-0.03 -0.3 0" scale="0.03 0.03 0.03" color="#FFFF00" data-color="#FFFF00" class="clickable"></a-box> <!-- 노랑 -->
+            <a-box id="greenBox" position="0 -0.3 0"   scale="0.03 0.03 0.03" color="#008000" data-color="#008000" class="clickable"></a-box>  <!-- 초록 -->
+            <a-box id="blueBox" position="0.03 -0.3 0" scale="0.03 0.03 0.03" color="#0000FF" data-color="#0000FF" class="clickable"></a-box>  <!-- 파랑 -->
+            <a-box id="violetBox" position="0.06 -0.3 0" scale="0.03 0.03 0.03" color="#4B0082" data-color="#4B0082" class="clickable"></a-box> <!-- 남색 -->
+            <a-box id="purpleBox" position="0.09 -0.3 0" scale="0.03 0.03 0.03" color="#800080" data-color="#800080" class="clickable"></a-box> <!-- 보라 -->
+          </a-entity>
+        </a-entity>
+        
         <!-- Left Control Buttons -->
         <a-entity position="0.04 -0.27 -0.4" id="xypad" visible="false">
           <a-box

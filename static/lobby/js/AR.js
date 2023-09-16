@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
     sttText.setAttribute("visible", "false");
     talkpad.setAttribute("visible", "false");
     p_pad.setAttribute("visible", "false");
+    colorSelectorGroup.setAttribute('visible', "false");
   });
 
   function toggleChat() {
@@ -540,6 +541,7 @@ document.addEventListener("DOMContentLoaded", function () {
       lengthMeasurement();
       return;
     } else if(selectedFeature.name === "포스트잇"){
+      postIt();
       return;
     }
 

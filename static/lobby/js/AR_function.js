@@ -15,6 +15,10 @@ let loadingInterval;
 const pageUpbutton = document.getElementById("up"); //답변 이전페이지로 넘기기
 const pageDownbutton = document.getElementById("down");//답변 다음페이지로 넘기기
 
+let postItcheck = false;
+let selectedColor; 
+let postItEvnetListner;
+
 function createDot(scene, position) {
   dotEntity = document.createElement("a-sphere");
   dotEntity.setAttribute("radius", 0.01);
@@ -293,6 +297,118 @@ function GPTQuestion() {
   }
 }
 
+function colorEvent() {
+  const colorBox = ["redBox", "orangeBox", "yellowBox", "greenBox", "blueBox", "violetBox", "purpleBox"];
+  
+  if (postItcheck) {
+    colorBox.forEach((colorId) => {
+      const color = document.getElementById(colorId);
+      color.addEventListener("click", moveColor);
+    });
+  } else {
+    colorBox.forEach((colorId) => {
+      const color = document.getElementById(colorId);
+      color.removeEventListener("click", moveColor);
+    });
+    ui.setAttribute("visible", "true");
+    xypad.setAttribute("visible", "true");
+    colorSelectorGroup.setAttribute('visible', "false");
+  }
+}
+
+function moveColor(event) {
+  selectedColor = event.target.getAttribute("data-color");
+  const sphere = document.getElementById("selectedColorSphere");
+  sphere.setAttribute("color", selectedColor);
+}
+
+function postIt() {
+  const colorSelectorGroup = document.querySelector('#colorSelectorGroup');
+  ui.setAttribute("visible", "false");
+  xypad.setAttribute("visible", "false");
+  colorSelectorGroup.setAttribute('visible', "true");
+  postItcheck = true;
+  colorEvent();
+
+  postItEventListener = ()=> {
+    const rightHandEntity = document.querySelector("#rightHand");
+    if (rightHandEntity) {
+      const handTrackingExtras = rightHandEntity.components["hand-tracking-extras"];
+      if (handTrackingExtras && handTrackingExtras.getJoints) {
+        const joints = handTrackingExtras.getJoints();
+        if (joints && joints.getIndexTip) {
+          const indexTip = joints.getIndexTip();
+          const position = new THREE.Vector3();
+          indexTip.getPosition(position);
+
+          // 포스트잇 생성
+          createPostIt(position, selectedColor);
+        }
+      }
+    }
+  };
+
+  // null 체크를 추가합니다.
+  if (input_Button) {
+    input_Button.addEventListener("click", postItEventListener);
+  } else {
+    console.error("input_Button is null");
+  }
+}
+
+function createPostIt(position, color) {
+  const scene = document.querySelector("a-scene");
+  const cameraEl = document.querySelector("a-camera");  // 카메라 엔터티 참조
+  let zvalue=0.02;
+
+  const postIt = document.createElement("a-box");
+  postIt.setAttribute("position", position);
+  postIt.setAttribute("color", color);
+  postIt.setAttribute("width", "0.1");
+  postIt.setAttribute("height", "0.1");
+  postIt.setAttribute("depth", "0.01");
+  
+
+  let rotationString = "0 0 0";  // 기본 회전 값
+
+  if (cameraEl) {
+    const cameraPosition = cameraEl.getAttribute("position");
+    const directionVec3 = {
+      x: cameraPosition.x - position.x,
+      z: cameraPosition.z - position.z
+    };
+
+    // y-축 회전을 계산합니다.
+    let angleRad = Math.atan2(directionVec3.x, directionVec3.z);
+    let angleDeg = THREE.MathUtils.radToDeg(angleRad);
+
+    const dotProduct = directionVec3.x * 0 + directionVec3.z * 1;  // 벡터의 내적 계산
+    if (dotProduct < 0) {
+      zvalue=-0.04;
+    }
+
+    rotationString = `0 ${angleDeg} 0`;
+  }
+
+  postIt.setAttribute("rotation", rotationString);  // 포스트잇의 회전을 설정합니다.
+  console.log(sttText.getAttribute("value")); 
+  // 텍스트 엔터티 생성 및 속성 설정
+  const textEntity = document.createElement("a-text");
+  textEntity.setAttribute("value", sttText.getAttribute("value"));
+  textEntity.setAttribute("align", "center");
+  textEntity.setAttribute("position", `${position.x} ${position.y} ${position.z+zvalue}`);
+  textEntity.setAttribute("width", 0.4);
+  textEntity.setAttribute("rotation", rotationString);  // 텍스트 엔터티도 동일한 회전을 가지도록 설정
+
+  // 한글 폰트 설정
+  textEntity.setAttribute("text", "font", "/static/lobby/font/NanumGothic-Bold.json");
+  textEntity.setAttribute("text", "fontImage", "/static/lobby/font/NanumGothic-Bold.png");
+  textEntity.setAttribute("text", "shader", "msdf");  
+
+  scene.appendChild(postIt);  // 포스트잇을 씬에 추가합니다.
+  scene.appendChild(textEntity);  // 텍스트 엔터티도 씬에 추가합니다.
+}
+
 
 function onBackwardButtonClick() {
   // 이벤트 리스너 제거
@@ -302,6 +418,9 @@ function onBackwardButtonClick() {
     }
     if (gptClickListener) {
       input_Button.removeEventListener("click", gptClickListener);
+    }
+    if (postItEventListener){
+      input_Button.removeEventListener("click", postItEventListener);
     }
   }
 
@@ -315,6 +434,8 @@ function onBackwardButtonClick() {
     lineEntity = null;
   }
   isFirstMeasurement = true;
+  colorEvent()
+  postItcheck=false;
 
   // 페이지네이션 이벤트 리스너 제거
   if(onUpButtonClick){
@@ -324,6 +445,7 @@ function onBackwardButtonClick() {
     pageDownbutton.removeEventListener("click", onDownButtonClick);
   }
 
+  
    // pageEntity를 찾아서 제거
    const pageEntity = document.getElementById("page-number");
    if (pageEntity) {

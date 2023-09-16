@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
     Miscbutton.setAttribute("visible", isChatVisible);
     profile.setAttribute("visible", isChatVisible);
     if (isChatVisible === false) {
+      selectedIndex = 0;
       enableChatButtons();
       sttText.setAttribute("value", "Chat mode");
       playall(friend);
@@ -121,6 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
     profile.setAttribute("visible", isMiscVisible);
 
     if (isMiscVisible === false) {
+      selectedIndex = 0;
       enableMiscButtons();
       sttText.setAttribute("value", "Misc mode");
       playall(misc);
@@ -128,7 +130,6 @@ document.addEventListener("DOMContentLoaded", function () {
       isChatVisible = false;
       enableUIButtons();
       sttText.setAttribute("value", "No mode");
-      onBackwardButtonClick();
       pauseall(misc);
     }
 

@@ -19,6 +19,11 @@ let postItcheck = false;
 let selectedColor; 
 let postItEvnetListner;
 
+//포스트잇이 담겨질 배열
+let createdPostIts = [];
+let createdTextEntities = [];
+let areElementsHidden = false; 
+
 function createDot(scene, position) {
   dotEntity = document.createElement("a-sphere");
   dotEntity.setAttribute("radius", 0.01);
@@ -297,6 +302,25 @@ function GPTQuestion() {
   }
 }
 
+// 가시성을 토글하는 함수
+function toggleVisibility() {
+  areElementsHidden = !areElementsHidden; // 상태 토글
+
+  const elementsToToggle = [
+    document.querySelector("#palette"),
+    document.querySelector("#p-pad"),
+    document.querySelector("#zpad"),
+    document.querySelector("#recordButton"),
+    document.querySelector("#Text"),
+  ];
+
+  elementsToToggle.forEach((el) => {
+    if (el) {
+      el.setAttribute("visible", !areElementsHidden); // 가시성 설정
+    }
+  });
+}
+
 function colorEvent() {
   const colorBox = ["redBox", "orangeBox", "yellowBox", "greenBox", "blueBox", "violetBox", "purpleBox"];
   
@@ -328,6 +352,7 @@ function postIt() {
   xypad.setAttribute("visible", "false");
   colorSelectorGroup.setAttribute('visible', "true");
   postItcheck = true;
+  document.getElementById("selectedColorSphere").addEventListener("click", toggleVisibility);
   colorEvent();
 
   postItEventListener = ()=> {
@@ -382,7 +407,7 @@ function createPostIt(position, color) {
     let angleRad = Math.atan2(directionVec3.x, directionVec3.z);
     let angleDeg = THREE.MathUtils.radToDeg(angleRad);
 
-    const dotProduct = directionVec3.x * 0 + directionVec3.z * 1;  // 벡터의 내적 계산
+    const dotProduct = directionVec3.x * 0 + directionVec3.z * 1;  
     if (dotProduct < 0) {
       zvalue=-0.04;
     }
@@ -390,7 +415,7 @@ function createPostIt(position, color) {
     rotationString = `0 ${angleDeg} 0`;
   }
 
-  postIt.setAttribute("rotation", rotationString);  // 포스트잇의 회전을 설정합니다.
+  postIt.setAttribute("rotation", rotationString);  // 포스트잇 회전 설정
   console.log(sttText.getAttribute("value")); 
   // 텍스트 엔터티 생성 및 속성 설정
   const textEntity = document.createElement("a-text");
@@ -405,12 +430,16 @@ function createPostIt(position, color) {
   textEntity.setAttribute("text", "fontImage", "/static/lobby/font/NanumGothic-Bold.png");
   textEntity.setAttribute("text", "shader", "msdf");  
 
-  scene.appendChild(postIt);  // 포스트잇을 씬에 추가합니다.
-  scene.appendChild(textEntity);  // 텍스트 엔터티도 씬에 추가합니다.
+  scene.appendChild(postIt);  
+  scene.appendChild(textEntity);  
+
+  createdPostIts.push(postIt);
+  createdTextEntities.push(textEntity);
 }
 
 
 function onBackwardButtonClick() {
+  const scene = document.querySelector("a-scene");
   // 이벤트 리스너 제거
   if (input_Button) {
     if (measureEventListener) {
@@ -423,8 +452,22 @@ function onBackwardButtonClick() {
       input_Button.removeEventListener("click", postItEventListener);
     }
   }
+  if(toggleVisibility){
+    document.getElementById("selectedColorSphere").removeEventListener("click", toggleVisibility);
+  }
 
-  const scene = document.querySelector("a-scene");
+  createdPostIts.forEach((postIt) => {
+    scene.removeChild(postIt);
+  });
+  
+  createdTextEntities.forEach((text) => {
+    scene.removeChild(text);
+  });
+  document.getElementById("colorSelectorGroup").setAttribute("visible", false);
+  
+  createdPostIts = [];
+  createdTextEntities = [];
+
   if (dotEntity) {
     scene.removeChild(dotEntity);
     dotEntity = null;

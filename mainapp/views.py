@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login
 import re
+from django.conf import settings  
 from datetime import datetime
 from django.shortcuts import render,redirect
 from django.core.exceptions import ObjectDoesNotExist
@@ -10,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import ProfilePictureForm
 import speech_recognition as sr
 import openai
+import base64
 import subprocess
 import logging
 import json
@@ -245,6 +247,31 @@ def get_gpt_answer(question, api_key):
     )
     print(f"GPT-3 API Response: {response}")  
     return response['choices'][0]['message']['content'].strip()
+
+#스크린샷 테스트용
+def save_screenshot(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        image_data = data.get('image', None)
+        
+        if image_data:
+            image_data = image_data.split(',')[1]
+
+            image_data = base64.b64decode(image_data)
+
+            directory = os.path.join(settings.STATIC_ROOT, 'lobby/test')
+            file_path = os.path.join(directory, 'screenshot.jpg')
+
+            # 디렉터리가 존재하지 않으면 생성
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
+            with open(file_path, 'wb') as f:
+                f.write(image_data)
+            
+            return JsonResponse({'status': 'success'})
+        else:
+            return JsonResponse({'status': 'no image data'})
 
 
 def subscription_shop(request, username):

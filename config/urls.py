@@ -34,6 +34,7 @@ urlpatterns = [
     path('get_friends_and_conversations/', views.get_friends_and_conversations, name='get_friends_and_conversations'),
     path('get_gpt_answer/', views.get_gpt_answer_ajax, name='get_gpt_answer_ajax'),
     path('shop/<str:username>',views.subscription_shop, name= 'shop'),
+    path('save_screenshot/', views.save_screenshot, name='save_screenshot'),
 ]
 
 if settings.DEBUG:  # 개발 모드에서만

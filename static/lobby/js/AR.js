@@ -653,5 +653,27 @@ document.addEventListener("DOMContentLoaded", function () {
     else if (message === "초기화") {
       toggleUIVisibility();
     }
+
+    else if (message ==="스크린샷"){
+      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      const canvas = scene.components.screenshot.getCanvas('perspective');
+      const imageDataURL = canvas.toDataURL('image/jpeg', 0.8);
+      
+      fetch('/save_screenshot/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken 
+        },
+        body: JSON.stringify({ image: imageDataURL })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
   });
 });

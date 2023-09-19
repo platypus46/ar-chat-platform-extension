@@ -353,6 +353,27 @@
               ></a-text>
             </a-entity>
           </a-entity>
+          <a-entity id="pagenation">
+            <a-triangle
+              id="left_pagenation"
+              vertex-a="0.017 0.017 0"
+              vertex-b="-0.017 0.017 0"
+              vertex-c="0 -0.017 0"
+              material="color: #D7DF01"
+              position="-0.04 -0.17 0"
+              rotation="0 0 -90">
+            </a-triangle>
+            <a-entity id="pageInfo" position="0.15 -0.17 0" text="value: 1/1; color: white;"></a-entity>
+            <a-triangle
+              id="right_pagenation"
+              vertex-a="0.017 0.017 0"
+              vertex-b="-0.017 0.017 0"
+              vertex-c="0 -0.017 0"
+              material="color: #D7DF01"
+              position="0.06 -0.17 0"
+              rotation="0 0 90">
+            </a-triangle>
+          </a-entity>
         </a-entity>
 
         <a-entity id="colorSelectorGroup" position="0.03 0 0" visible="false">

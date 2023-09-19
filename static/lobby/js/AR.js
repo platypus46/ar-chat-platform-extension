@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
   //페이지 내부 인덱스
   let currentPage = 0;
   let selectedIndex = 0;
-  const itemsPerPage = 7;
+  const itemsPerPage = 5;
 
   function initializeFriends() {
     // Ajax를 이용해 서버에서 친구 목록과 대화를 가져옴
@@ -79,6 +79,10 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function toggleChat() {
+    if (isMiscVisible) {
+      return;
+    }
+
     //채팅창 띄우기 및 감추기
     friend.setAttribute("visible", !isChatVisible);
     button2.setAttribute("visible", isChatVisible);
@@ -116,6 +120,10 @@ document.addEventListener("DOMContentLoaded", function () {
     isUIVisible = !isUIVisible;
   }
   function toggleMisc() {
+    if (isChatVisible) {
+      return;
+    }
+
     // Misc 화면 띄우기 및 감추기
     misc.setAttribute("visible", !isMiscVisible);
     button2.setAttribute("visible", isMiscVisible);
@@ -386,6 +394,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const end = start + itemsPerPage;
     const currentFriends = friends.slice(start, end);
 
+    const totalPages = Math.ceil(friends.length / itemsPerPage);
+    document.getElementById("pageInfo").setAttribute("text", `value: ${currentPage + 1}/${totalPages}; color: white;`);
+
     const friendsContainer = document.getElementById("friendsContainer");
     while (friendsContainer.firstChild) {
       friendsContainer.removeChild(friendsContainer.firstChild);
@@ -488,13 +499,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // ... 다른 항목들 ...
   ];
   let currentFeaturePage = 0;
-  let totalFeaturePages = 0;
+
 
   function displayMisc() {
     const start = currentFeaturePage * itemsPerPage;
     const end = start + itemsPerPage;
     const currentdisplayMisc = displayMiscFeatures.slice(start, end); // 수정된 부분
     sttText.setAttribute("value", "misc mode");
+
+    const totalPages = Math.ceil(displayMiscFeatures.length / itemsPerPage);
+    document.getElementById("pageInfo").setAttribute("text", `value: ${currentFeaturePage + 1}/${totalPages}; color: white;`);
+
     const miscContainer = document.getElementById("MiscContainer");
     while (miscContainer.firstChild) {
       miscContainer.removeChild(miscContainer.firstChild);

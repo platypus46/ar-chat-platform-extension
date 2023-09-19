@@ -44,6 +44,8 @@ document.addEventListener("DOMContentLoaded", function () {
   //텍스트 입력 및 지우기 버튼
   let p_pad = document.querySelector("#p-pad");
 
+  let pagenation = document.querySelector("#pagenation")
+
   //채팅,UI 시각화 관련 변수 전역화
   let isUIVisible = true;
   let isChatVisible = false;
@@ -76,6 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
     talkpad.setAttribute("visible", "false");
     p_pad.setAttribute("visible", "false");
     colorSelectorGroup.setAttribute('visible', "false");
+    pagenation.setAttribute("visible","false");
   });
 
   function toggleChat() {
@@ -92,11 +95,13 @@ document.addEventListener("DOMContentLoaded", function () {
       selectedIndex = 0;
       enableChatButtons();
       sttText.setAttribute("value", "Chat mode");
+      pagenation.setAttribute("visible","true");
       playall(friend);
     } else{
       isMiscVisible=false;
       enableUIButtons();
       sttText.setAttribute("value", "No mode");
+      pagenation.setAttribute("visible","false");
       pauseall(friend);
     }
     isChatVisible = !isChatVisible;
@@ -135,10 +140,12 @@ document.addEventListener("DOMContentLoaded", function () {
       enableMiscButtons();
       sttText.setAttribute("value", "Misc mode");
       playall(misc);
+      pagenation.setAttribute("visible","true");
     } else{
       isChatVisible = false;
       enableUIButtons();
       sttText.setAttribute("value", "No mode");
+      pagenation.setAttribute("visible","false");
       pauseall(misc);
     }
 
@@ -290,6 +297,7 @@ document.addEventListener("DOMContentLoaded", function () {
         break;
       case "forward":
         selectedFriend = friends[currentPage * itemsPerPage + selectedIndex];
+        pagenation.setAttribute("visible","false");
         displayConversation();
         break;
       case "backward":
@@ -297,6 +305,7 @@ document.addEventListener("DOMContentLoaded", function () {
         while (friendsContainer.firstChild) {
           friendsContainer.removeChild(friendsContainer.firstChild);
         }
+        pagenation.setAttribute("visible","true");
         displayFriends();
         break;
       default:
@@ -369,6 +378,7 @@ document.addEventListener("DOMContentLoaded", function () {
         downbutton.removeEventListener("click", moveFeature);
         upbutton.removeEventListener("click", moveFeature);
         displayMiscdetail();
+        pagenation.setAttribute("visible","false");
         break;
       case "backward":
         const miscContainer = document.getElementById("MiscContainer"); // 수정된 부분
@@ -382,6 +392,7 @@ document.addEventListener("DOMContentLoaded", function () {
         talkpad.setAttribute("visible", "true");
         Text.setAttribute("visible", "true");
         xypad.setAttribute("visible", "true");
+        pagenation.setAttribute("visible","true");
         onBackwardButtonClick();
         break;
       default:
@@ -593,6 +604,7 @@ document.addEventListener("DOMContentLoaded", function () {
         Text.setAttribute("visible", "true");
         p_pad.setAttribute("visible", "true");
         hideUI.setAttribute("visible", "false");
+        pagenation.setAttribute("visible","false");
         pauseall(friend);
         pauseall(misc);
       });

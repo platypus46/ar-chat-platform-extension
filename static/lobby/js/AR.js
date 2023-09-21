@@ -506,7 +506,10 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     {
       name: "포스트잇",
-    }
+    },
+    {
+      name: "캘린더",
+    },
     // ... 다른 항목들 ...
   ];
   let currentFeaturePage = 0;

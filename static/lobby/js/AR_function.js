@@ -13,7 +13,7 @@ let gptClickListener;
 let loadingInterval; 
 
 const pageUpbutton = document.getElementById("left"); //답변 이전페이지로 넘기기
-const pageDownbutton = document.getElementById("right");//답변 다음페이지로 넘기기
+const pageDownbutton = document.getElementById("right"); //답변 다음페이지로 넘기기
 
 let postItcheck = false;
 let selectedColor; 

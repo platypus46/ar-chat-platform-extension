@@ -219,6 +219,12 @@
         intensity="1"
         position="2 4 -3"
       ></a-light>
+
+      <!-- 왼손 컨트롤러 -->
+      <a-entity laser-controls="hand: left" raycaster="objects: .clickable"></a-entity>
+
+      <!-- 오른손 컨트롤러 -->
+      <a-entity laser-controls="hand: right" raycaster="objects: .clickable"></a-entity>
       <a-entity
         id="leftHand"
         hand-tracking-controls="hand: left;"

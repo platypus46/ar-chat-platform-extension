@@ -448,12 +448,75 @@ document.addEventListener("DOMContentLoaded", function () {
       friendsContainer.appendChild(entity);
     });
   }
-  
+
+  THREE.RoundedBoxGeometry = function(width, height, depth, radius){
+    var shape = new THREE.Shape();
+
+    shape.moveTo(-width/2 + radius, -height/2);
+    shape.lineTo(width/2 - radius, -height/2);
+    shape.quadraticCurveTo(width/2, -height/2, width/2, -height/2 + radius);
+    shape.lineTo(width/2, height/2 - radius);
+    shape.quadraticCurveTo(width/2, height/2, width/2 - radius, height/2);
+    shape.lineTo(-width/2 + radius, height/2);
+    shape.quadraticCurveTo(-width/2, height/2, -width/2, height/2 - radius);
+    shape.lineTo(-width/2, -height/2 + radius);
+    shape.quadraticCurveTo(-width/2, -height/2, -width/2 + radius, -height/2);
+
+    var extrudeSettings = {
+        depth: depth,
+        bevelEnabled: false
+    };
+
+    return new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  };
+
+  function displayChatMessage(message, sender, positionY) {
+    const friendsContainer = document.getElementById("friendsContainer");
+
+    let content = message.substring(message.indexOf(':') + 1).trim();
+
+    // 12글자마다 줄바꿈 추가
+    const chunkedContent = [];
+    for(let i = 0; i < content.length; i += 12) {
+      chunkedContent.push(content.substring(i, i + 12));
+    }
+    content = chunkedContent.join('\n');
+
+    // 줄바꿈 횟수에 따라 말풍선 높이 조정
+    const numberOfLines = chunkedContent.length;
+    const height = 0.017 * numberOfLines;
+
+    // 가장 긴 줄의 길이를 기준으로 말풍선의 폭을 결정
+    const maxLength = Math.max(...chunkedContent.map(line => line.length));
+    const width = 0.01 * maxLength + 0.01;  // 한 글자당 약 0.007 단위 폭을 가정하고 약간의 여유 공간을 추가
+
+    const color = sender === username ? 'blue' : 'yellow';
+
+    const balloonEntity = document.createElement('a-entity');
+    const meshMaterial = new THREE.MeshBasicMaterial({ color: color });
+    const roundedBoxGeom = new THREE.RoundedBoxGeometry(width, height, 0.01, 0.01, 5); 
+    const balloonMesh = new THREE.Mesh(roundedBoxGeom, meshMaterial);
+
+    balloonEntity.setObject3D('mesh', balloonMesh);
+    const positionStr = sender === username ? `0.03 ${positionY} 0` : `-0.05 ${positionY} 0`;
+    balloonEntity.setAttribute('position', positionStr);
+
+    friendsContainer.appendChild(balloonEntity);
+
+    const textEntity = document.createElement("a-entity");
+    textEntity.setAttribute("text", `value: ${content}; color: white; align: center; width: ${width - 0.02};`);  // 텍스트의 폭을 말풍선 폭에 맞춤
+    textEntity.setAttribute("position", "0 0 0.01");
+
+    balloonEntity.appendChild(textEntity);
+}
+
+
+  // displayConversation 함수 수정
   function displayConversation() {
     if (!selectedFriend) {
       console.error("selectedFriend is not set.");
       return;
-    }
+   }
     selectedFriend = friends[currentPage * itemsPerPage + selectedIndex];
     const friendsContainer = document.getElementById("friendsContainer");
     const friendList = document.getElementById("friendList");
@@ -468,17 +531,18 @@ document.addEventListener("DOMContentLoaded", function () {
       friendsContainer.removeChild(friendsContainer.firstChild);
     }
 
-    const conversations = document.createElement("a-entity");
-    conversations.setAttribute(
-      "text",
-      `value: ${selectedFriend.conversation}; color: white; align: center;`
-    );
-    conversations.setAttribute("position", "0 0.1 0"); //중앙에 텍스트 배치
-    friendsContainer.appendChild(conversations);
+    const messages = selectedFriend.conversation.split("\n").slice(-5);
+    messages.forEach((message, index) => {
+        // 발신자 이름 추출
+        const sender = message.substring(0, message.indexOf(':'));
+        displayChatMessage(message, sender, 0.03 * (4 - index));
+    });
+
 
     document.getElementById("friendList").setAttribute("visible", "false");
-  }
+  } 
 
+  // 현재대화내역 업데이트 함수 수정
   function updateConversation(conversation) {
     const friendsContainer = document.getElementById("friendsContainer");
     while (friendsContainer.firstChild) {
@@ -487,13 +551,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const messages = conversation.split("\n").slice(-5); // 마지막 5개의 메시지만 가져옴
     messages.forEach((message, index) => {
-      const newMessageEntity = document.createElement("a-entity");
-      newMessageEntity.setAttribute(
-        "text",
-        `value: ${message}; color: white; align: center;`
-      );
-      newMessageEntity.setAttribute("position", `0 ${0.03 * (4 - index)} 0`); // 위치 조정
-      friendsContainer.appendChild(newMessageEntity);
+       // 발신자 이름 추출
+       const sender = message.substring(0, message.indexOf(':'));
+       displayChatMessage(message, sender, 0.03 * (4 - index));
     });
   }
 

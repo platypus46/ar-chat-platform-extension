@@ -98,4 +98,3 @@ AFRAME.registerComponent('rounded-box', {
       this.el.removeObject3D('mesh');
     }
 });
-  

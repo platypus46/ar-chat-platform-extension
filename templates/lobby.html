@@ -19,9 +19,9 @@
       var recordButtonModel = "{% static 'lobby/img_model/record_button.glb' %}";
       var recordStopButtonModel = "{% static 'lobby/img_model/record_stop_button.glb' %}";
     </script>
-    
 
     <!-- AR화면 -->
+    <script src="https://threejs.org/build/three.js"></script>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
@@ -257,6 +257,9 @@
                 font="https://raw.githubusercontent.com/myso-kr/aframe-fonts-korean/master/fonts/ofl/nanumgothic/NanumGothic-Bold.json"
               ></a-text>
             </a-entity> 
+            <a-circle radius="0.008" color="#D3D3D3" position="0.05 0.055 0.028">
+              <a-text value="☺" position="0 0 0.01" align="center" width="0.02"></a-text>
+            </a-circle>
           </a-entity>
           <a-box id="talkToolbar" position="0 0 0" rotation="0 0 0" width="0.13" height="0.02" depth="0.01" color="#888888">
             <a-cylinder
@@ -267,7 +270,7 @@
               rotation="90 0 0"
               class="clickable"
               id="chatScroll"
-          ></a-cylinder>
+            ></a-cylinder>
           </a-box>
           <a-box id="talkUIbox" position="0 -0.09 0" rotation="0 0 0" width="0.13" height="0.16" depth="0.01" color="#D3D3D3"></a-box>
         </a-entity>        

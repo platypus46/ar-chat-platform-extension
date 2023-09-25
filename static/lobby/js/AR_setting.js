@@ -98,3 +98,11 @@ AFRAME.registerComponent('rounded-box', {
       this.el.removeObject3D('mesh');
     }
 });
+
+AFRAME.registerComponent('click-handler', {
+  init: function () {
+    this.el.addEventListener('click', function (event) {
+      console.log('Object clicked!');
+    });
+  }
+});

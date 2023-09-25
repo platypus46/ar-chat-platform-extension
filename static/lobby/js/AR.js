@@ -23,6 +23,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let Text = document.querySelector("#Text");
   let talkpad = document.querySelector("#talkpad");
+  let roundBox = document.querySelector("#roundBox");
+  let talkUIbox = document.querySelector("#talkUIbox");
+  let talkToolbar = document.querySelector("#talkToolbar");
+
 
   //초기 UI 위치 설정
   let initialUIPosition = { x: 0.1, y: 0, z: -0.5 };
@@ -68,6 +72,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   scene.addEventListener("enter-vr", function () {
     ui.setAttribute("visible", "true");
+    roundBox.setAttribute("visible", "true");
+    talkToolbar.setAttribute("visible", "true");
+    talkUIbox.setAttribute("visible", "true");
   });
   scene.addEventListener("exit-vr", function () {
     ui.setAttribute("visible", "false");
@@ -75,6 +82,9 @@ document.addEventListener("DOMContentLoaded", function () {
     xypad.setAttribute("visible", "false");
     zpad.setAttribute("visible", "false");
     sttText.setAttribute("visible", "false");
+    roundBox.setAttribute("visible", "false");
+    talkToolbar.setAttribute("visible", "false");
+    talkUIbox.setAttribute("visible", "false");
     talkpad.setAttribute("visible", "false");
     p_pad.setAttribute("visible", "false");
     colorSelectorGroup.setAttribute('visible', "false");
@@ -668,6 +678,7 @@ document.addEventListener("DOMContentLoaded", function () {
         p_pad.setAttribute("visible", "true");
         hideUI.setAttribute("visible", "false");
         pagenation.setAttribute("visible","false");
+
         pauseall(friend);
         pauseall(misc);
       });

@@ -1,10 +1,12 @@
 let isRecording = false;
+let isBoxVisible = false; 
 let mediaRecorder;
 let audioChunks = [];
 let sttText;
 let recordButton;
 let recordText;
 let eraserButton;
+let chatScroll;
 
 async function initRecorder() {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -15,6 +17,7 @@ async function initRecorder() {
   recordButton = document.getElementById("recordButton");
   recordText = document.getElementById("recordText");
   eraserButton = document.getElementById("eraser-button");
+  chatScroll = document.querySelector("#chatScroll");
 
   mediaRecorder.ondataavailable = event => {
     audioChunks.push(event.data);
@@ -33,7 +36,7 @@ async function initRecorder() {
     const data = await response.json();
     
     if (data.transcription) {
-      sttText.setAttribute("value", data.transcription);
+      sttText.setAttribute("value", formatText(data.transcription));
     }
     audioChunks = [];
   };
@@ -52,12 +55,53 @@ async function initRecorder() {
     }
   });
 
+  chatScroll.addEventListener("click", () => {
+    const roundBox = document.querySelector("#roundBox");
+    let targetPositionY;
+  
+    if (isBoxVisible) {
+      // 현재 roundBox가 보이는 상태라면 회색 박스 안으로 숨기기
+      targetPositionY = "-0.08"; // 회색 박스 안으로 숨기기 위한 y 좌표값
+    } else {
+      // 현재 roundBox가 숨겨진 상태라면 위로 슬라이드하여 보이게 하기
+      targetPositionY = "0.08"; // 위로 슬라이드하기 위한 y 좌표값
+    }
+  
+    // 애니메이션 효과를 적용하기 위해 A-Frame의 animation 컴포넌트를 사용합니다.
+    roundBox.setAttribute("animation", `
+      property: position;
+      to: 0 ${targetPositionY} -0.01;
+      dur: 500; 
+      easing: easeInOutQuad;
+    `);
+  
+    isBoxVisible = !isBoxVisible; // 상태 업데이트
+  });
+
+
   eraserButton.addEventListener("click", eraseText);
 }
 
 function eraseText() {
   sttText.setAttribute("value", "");
 }
+
+function formatText(content) {
+  const maxCharsPerLine = 5; 
+  const lineHeight = 0.008; 
+
+  const chunkedContent = [];
+  for(let i = 0; i < content.length; i += maxCharsPerLine) {
+      chunkedContent.push(content.substring(i, i + maxCharsPerLine));
+  }
+
+  const lines = chunkedContent.length;
+  const newYPosition = 0.04 - (lines - 1) * lineHeight;
+  sttText.setAttribute("position", `-0.04 ${newYPosition} 0.01`);
+
+  return chunkedContent.join('\n');
+}
+
 
 window.addEventListener("DOMContentLoaded", (event) => {
   initRecorder().catch(err => console.error('Initialization failed:', err));

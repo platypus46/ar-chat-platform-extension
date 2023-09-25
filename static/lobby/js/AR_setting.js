@@ -67,3 +67,35 @@ AFRAME.registerComponent("scene-debounced-click", {
       this.lastClickTime = currentTime;
     },
   });
+
+AFRAME.registerComponent('rounded-box', {
+    schema: {
+      width: { type: 'number', default: 1 },
+      height: { type: 'number', default: 1 },
+      depth: { type: 'number', default: 0.1 },
+      radius: { type: 'number', default: 0.1 },
+      color: { type: 'color', default: '#D8BFD8' }  // Light purple color
+    },
+  
+    init: function() {
+      const data = this.data;
+  
+      const geometry = new THREE.RoundedBoxGeometry(data.width, data.height, data.depth, data.radius);
+      const material = new THREE.MeshBasicMaterial({ color: data.color });
+      this.mesh = new THREE.Mesh(geometry, material);
+  
+      this.el.setObject3D('mesh', this.mesh);
+    },
+  
+    update: function(oldData) {
+      const data = this.data;
+      if (data.color !== oldData.color) {
+        this.mesh.material.color.set(data.color);
+      }
+    },
+  
+    remove: function() {
+      this.el.removeObject3D('mesh');
+    }
+});
+  

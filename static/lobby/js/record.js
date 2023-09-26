@@ -170,7 +170,7 @@ async function initRecorder() {
     // 애니메이션 효과를 적용하기 위해 A-Frame의 animation 컴포넌트를 사용합니다.
     roundBox.setAttribute("animation", `
       property: position;
-      to: 0 ${targetPositionY} -0.01;
+      to: 0 ${targetPositionY} -0.02;
       dur: 500; 
       easing: easeInOutQuad;
     `);

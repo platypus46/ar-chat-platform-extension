@@ -23,6 +23,7 @@
     <!-- AR화면 -->
     <script src="https://threejs.org/build/three.js"></script>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-troika-text/dist/aframe-troika-text.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
     <script src="{% static 'tools/aframe-hand-tracking-controls-extras.js' %}"></script>
@@ -245,7 +246,7 @@
       </a-entity>
       <a-camera id="camera">
         <a-entity id="Text" position="-0.12 -0.1 -0.45" visible="false">
-          <a-entity id= "roundBox" rounded-box="width: 0.12; height: 0.15; depth: 0.01; radius: 0.02; color: #D8BFD8" position="0 0.08 -0.01">
+          <a-entity id= "roundBox" rounded-box="width: 0.12; height: 0.15; depth: 0.01; radius: 0.02; color: #D8BFD8" position="0 0.08 -0.02">
             <a-entity rounded-Box="width:0.09; height: 0.11; depth: 0.011; radius: 0.02; color: #800080" position="-0.009 0.013 0">
               <a-text
                 id="sttText"
@@ -258,12 +259,14 @@
               ></a-text>
             </a-entity> 
             <a-circle radius="0.008" color="#D3D3D3" position="0.05 0.055 0.011" class="clickable">
-              <a-text value="😄" position="0 0 0.01" align="center"></a-text>
+              <a-entity troika-text="value: 😊 ; fontSize: 0.008; color: white;" position="0.001 0 0.01"></a-entity>
             </a-circle>
-            <a-circle radius="0.008" color="#D3D3D3" position="0.05 0.035 0.011" class="clickable">
-              <a-text value="123" position="0 0 0.01" align="center" scale="0.5 0.5 0.5" ></a-text>
+            <a-circle id="specialCharacters" radius="0.008" color="#D3D3D3" position="0.05 0.035 0.011" class="clickable">
+              <a-text value="123" position="0.001 0 0.01" align="center" scale="0.5 0.5 0.5" ></a-text>
             </a-circle>
+            <a-entity id="charPagerToolbar" char-pager position="0 -0.06 0.01" visible="false"></a-entity>
           </a-entity>
+          <!-- Char Pager 툴바 (기본적으로 숨김) -->
           <a-box id="talkToolbar" position="0 0 0" rotation="0 0 0" width="0.13" height="0.02" depth="0.005" color="#888888">
             <a-cylinder
               position="0.05 0 0.01"

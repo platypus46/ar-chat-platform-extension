@@ -27,6 +27,16 @@ document.addEventListener("DOMContentLoaded", function () {
   let talkUIbox = document.querySelector("#talkUIbox");
   let talkToolbar = document.querySelector("#talkToolbar");
 
+  let specialCharacters = document.querySelector("#specialCharacters");
+  let charPagerToolbar = document.querySelector("#charPagerToolbar");
+
+  specialCharacters.addEventListener('click', function() {
+    if (charPagerToolbar.getAttribute('visible')) {
+      charPagerToolbar.setAttribute('visible', false);
+    } else {
+      charPagerToolbar.setAttribute('visible', true);
+    }
+  });
 
   //초기 UI 위치 설정
   let initialUIPosition = { x: 0.1, y: 0, z: -0.5 };

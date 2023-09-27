@@ -24,6 +24,10 @@ let createdPostIts = [];
 let createdTextEntities = [];
 let areElementsHidden = false; 
 
+//질문 주기 체크
+let checkQuestionInterval;
+
+
 function createDot(scene, position) {
   dotEntity = document.createElement("a-sphere");
   dotEntity.setAttribute("radius", 0.01);
@@ -134,7 +138,7 @@ function GPTQuestion() {
 
   let longQuestion = gptsttText.getAttribute("value") || "질문";
 
-  setInterval(function () {
+  checkQuestionInterval=setInterval(function () {
     const newQuestion = gptsttText.getAttribute("value");
     if (longQuestion !== newQuestion) {
       longQuestion = newQuestion;
@@ -446,6 +450,7 @@ function onBackwardButtonClick() {
       input_Button.removeEventListener("click", measureEventListener);
     }
     if (gptClickListener) {
+      clearInterval(checkQuestionInterval); 
       input_Button.removeEventListener("click", gptClickListener);
     }
     if (postItEventListener){

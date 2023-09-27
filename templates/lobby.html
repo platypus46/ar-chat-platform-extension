@@ -246,7 +246,7 @@
       </a-entity>
       <a-camera id="camera">
         <a-entity id="Text" position="-0.12 -0.1 -0.45" visible="false">
-          <a-entity id= "roundBox" rounded-box="width: 0.12; height: 0.15; depth: 0.01; radius: 0.02; color: #D8BFD8" position="0 0.08 -0.02">
+          <a-entity id= "roundBox" rounded-box="width: 0.12; height: 0.15; depth: 0.01; radius: 0.02; color: #D8BFD8" position="0 -0.08 -0.02">
             <a-entity rounded-Box="width:0.09; height: 0.11; depth: 0.011; radius: 0.02; color: #800080" position="-0.009 0.013 0">
               <a-text
                 id="sttText"
@@ -277,6 +277,9 @@
               class="clickable"
               id="chatScroll"
             ></a-cylinder>
+            <a-box position="-0.01 0 0.01" rotation="0 0 0" width="0.08" height="0.014" depth="0.002" color="white">
+              <a-text id="subTextbar" value="platyverse" color="black" position="-0.04 0 0"></a-text>
+            </a-box>
           </a-box>
           <a-box id="talkUIbox" position="0 -0.09 0" rotation="0 0 0" width="0.13" height="0.16" depth="0.01" color="#D3D3D3"></a-box>
         </a-entity>        

@@ -215,6 +215,9 @@ document.addEventListener("DOMContentLoaded", function () {
       "recordText",
       "input-button",
       "eraser-button",
+      "talkToolbar",
+      "roundBox",
+      "talkUIbox",
     ];
     buttons.forEach((buttonId) => {
       const button = document.getElementById(buttonId);
@@ -235,6 +238,9 @@ document.addEventListener("DOMContentLoaded", function () {
       "recordText",
       "input-button",
       "eraser-button",
+      "talkToolbar",
+      "roundBox",
+      "talkUIbox",
     ];
     buttons.forEach((buttonId) => {
       const button = document.getElementById(buttonId);
@@ -765,6 +771,14 @@ document.addEventListener("DOMContentLoaded", function () {
       toggleUIVisibility();
     }
 
+    else if (isValidExpression(message)) {
+      try {
+          let result = eval(message);
+          sttText.setAttribute('value', result.toString());
+      } catch (e) {
+          console.error("Error in evaluating the expression:", e);
+      }
+    }
     else if (message ==="스크린샷"){
       const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
       const canvas = scene.components.screenshot.getCanvas('perspective');
@@ -787,4 +801,8 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
   });
+
+  function isValidExpression(expr) {
+    return /^[0-9+\-*/() ]+$/.test(expr); 
+}
 });

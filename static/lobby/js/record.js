@@ -2,17 +2,19 @@ let isRecording = false;
 let isBoxVisible = false; 
 let mediaRecorder;
 let audioChunks = [];
-let sttText;
 let recordButton;
 let recordText;
 let eraserButton;
 let chatScroll;
+let sttText = document.querySelector("#sttText");
+const subTextbar = document.getElementById("subTextbar");
 
 AFRAME.registerComponent('char-pager', {
   schema: {
       chars: {default: ['0','1','2','3','4',
       '5','6','7','8','9',
-      '!', '@', '#', '$', '%', 
+      '+','-','/','%','*',
+      '!', '@', '#', '$', '=', 
       '^', '&', '*', '(', ')']},
       current: {default: 0}
   },
@@ -69,12 +71,16 @@ AFRAME.registerComponent('char-pager', {
             boxEntity.setAttribute('class', 'clickable');
         
             boxEntity.addEventListener('click', function() {
-                charEntity.setAttribute('color', 'yellow');
-                if (sttText) {
-                    let currentText = sttText.getAttribute('value');
-                    sttText.setAttribute('value', currentText + char);
-                }
-            });
+              charEntity.setAttribute('color', 'yellow');
+              if (sttText) {
+                  let currentText = sttText.getAttribute('value');
+                  sttText.setAttribute('value', currentText + char);
+              }
+              setTimeout(function() {
+                  charEntity.setAttribute('color', 'black'); // 1초 후에 색상을 검정색으로 변경
+              }, 1000); // 1초 동안 대기
+          });
+          
         
             el.appendChild(boxEntity);
             el.appendChild(charEntity);
@@ -113,7 +119,6 @@ async function initRecorder() {
   mediaRecorder = new MediaRecorder(stream);
   
   // Initialization of global variables after ensuring mediaRecorder is set up
-  sttText = document.querySelector("#sttText");
   recordButton = document.getElementById("recordButton");
   recordText = document.getElementById("recordText");
   eraserButton = document.getElementById("eraser-button");
@@ -134,9 +139,16 @@ async function initRecorder() {
     });
 
     const data = await response.json();
-    
+
     if (data.transcription) {
       sttText.setAttribute("value", formatText(data.transcription));
+
+      if (!isBoxVisible) {
+        subTextbar.setAttribute("value", formatText(data.transcription).substring(0, 10));
+      }
+      else {
+        subTextbar.setAttribute("value", "");
+      }
     }
     audioChunks = [];
   };
@@ -160,14 +172,15 @@ async function initRecorder() {
     let targetPositionY;
   
     if (isBoxVisible) {
-      // 현재 roundBox가 보이는 상태라면 회색 박스 안으로 숨기기
-      targetPositionY = "-0.08"; // 회색 박스 안으로 숨기기 위한 y 좌표값
+      targetPositionY = "-0.08"; 
+
+      subTextbar.setAttribute("value", sttText.getAttribute("value").substring(0, 10));
     } else {
-      // 현재 roundBox가 숨겨진 상태라면 위로 슬라이드하여 보이게 하기
-      targetPositionY = "0.08"; // 위로 슬라이드하기 위한 y 좌표값
+      targetPositionY = "0.08"; 
+
+      subTextbar.setAttribute("value", "");
     }
   
-    // 애니메이션 효과를 적용하기 위해 A-Frame의 animation 컴포넌트를 사용합니다.
     roundBox.setAttribute("animation", `
       property: position;
       to: 0 ${targetPositionY} -0.02;
@@ -175,8 +188,8 @@ async function initRecorder() {
       easing: easeInOutQuad;
     `);
   
-    isBoxVisible = !isBoxVisible; // 상태 업데이트
-  });
+    isBoxVisible = !isBoxVisible; 
+});
 
 
   eraserButton.addEventListener("click", eraseText);

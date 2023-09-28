@@ -293,8 +293,8 @@
         </a-entity>
         <a-entity
           id="ui"
-          geometry="primitive: plane; width: 0.3; height: 0.45"
-          material="opacity: 0.5; transparent: true; color: white"
+          rounded-box="width: 0.3; height: 0.45; depth: 0.001; radius: 0.04; color: #D8BFD8" 
+          material="opacity: 0.5; transparent: true; "
           position="0.1 0 -0.5"
           visible="false"
         >
@@ -302,7 +302,7 @@
           id="profile"
           geometry="primitive: plane; width: 0.2; height: 0.2"
           material="src: {{ profile_picture_url }};"
-          position="0 0.1 0.01"
+          position="0 0.06 0.01"
         ></a-entity>
           <a-entity
             id="friend"
@@ -344,29 +344,14 @@
               id="chatbutton"
               geometry="primitive: circle; radius: 0.03"
               material="color: white"
-              position="-0.1 -0.1 0.05"
+              position="-0.07 -0.1 0.05"
               class="clickable"
             >
               <a-text
-                value="chatbutton"
+                value="chat"
                 align="center"
                 color="black"
-                position="0 -0.01 0.01"
-                width="0.5"
-              ></a-text>
-            </a-entity>
-            <a-entity
-              id="button2"
-              geometry="primitive: circle; radius: 0.03"
-              material="color: white"
-              position="0 -0.1 0.05"
-              class="clickable"
-            >
-              <a-text
-                value="game"
-                align="center"
-                color="black"
-                position="0 -0.01 0.01"
+                position="0 0 0.001"
                 width="0.5"
               ></a-text>
             </a-entity>
@@ -374,14 +359,14 @@
               id="Miscbutton"
               geometry="primitive: circle; radius: 0.03"
               material="color: white"
-              position="0.1 -0.1 0.05"
+              position="0.06 -0.1 0.05"
               class="clickable"
             >
               <a-text
                 value="misc"
                 align="center"
                 color="black"
-                position="0 -0.01 0.01"
+                position="0 0 0.001"
                 width="0.3"
               ></a-text>
             </a-entity>
@@ -407,6 +392,20 @@
               rotation="0 0 90">
             </a-triangle>
           </a-entity>
+          <a-entity id="ui-info">
+            <a-entity
+              id="language-mode"
+              geometry="primitive: circle; radius: 0.01"
+              material="color: white"
+             position="-0.11 0.19 0.01"
+              class="clickable">
+                <a-text value="EN" position="0 0 0.001" align="center" color="black"></a-text>
+            </a-entity>
+            <a-entity rounded-box="width: 0.12; height: 0.02; depth: 0.001; radius: 0.003; color: white" position="0.07 0.19 0.001">
+              <a-text value="user: {{ username }}" position="0 0 0.002" align="center" color="black" font="size: 0.02"></a-text>
+            </a-entity>
+          </a-entity>
+         
         </a-entity>
 
         <a-entity id="colorSelectorGroup" position="0.03 0 0" visible="false">
@@ -542,6 +541,7 @@
       location.reload();  // 페이지 새로고침
     });
   </script>
+  <script src="{% static 'lobby/js/text_translation.js' %}"></script>
   <script src="{% static 'lobby/js/record.js' %}"></script>
   <script src="{% static 'lobby/js/AR_function.js' %}"></script>
   <script src="{% static 'lobby/js/AR.js' %}"></script>

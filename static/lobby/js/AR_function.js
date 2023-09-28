@@ -64,10 +64,9 @@ function lengthMeasurement() {
     ui.setAttribute("visible", "false");
     talkpad.setAttribute("visible", "false");
     xypad.setAttribute("visible", "false");
-    console.log("길이측정 활성화");
 
     let measurementText = document.querySelector("#sttText");
-    measurementText.setAttribute("value", "현재 길이: 계산 중...");
+    measurementText.setAttribute("value", getLocalizedText("Length: Calculating..."));
 
     eraserButton = document.querySelector("#eraser-button");
 
@@ -102,10 +101,7 @@ function lengthMeasurement() {
                   ),
                   position
                 );
-                measurementText.setAttribute(
-                  "value",
-                  `현재 길이: ${length.toFixed(2)} cm`
-                );
+                measurementText.setAttribute("value", getLocalizedText("Length: Value", { length: lengthValue }));
               }
             }
           }
@@ -120,7 +116,7 @@ function lengthMeasurement() {
         dotEntity = null;
         lineEntity = null;
         isFirstMeasurement = true; // Reset the flag
-        measurementText.setAttribute("value", "현재 길이: 초기화됨");
+        measurementText.setAttribute("value", getLocalizedText("Length: Calculating..."));
       }
     };
 
@@ -132,11 +128,11 @@ function GPTQuestion() {
   // 페이지네이션을 위한 변수 선언
   let currentPage = 0;
   let totalPages = 0;
-  let pageLength = 200;  
+  let pageLength = 150;  
   let gptsttText = document.querySelector("#sttText");
   const miscContainer = document.getElementById("MiscContainer");
 
-  let longQuestion = gptsttText.getAttribute("value") || "질문";
+  let longQuestion = gptsttText.getAttribute("value") || "Ask a question";
 
   checkQuestionInterval=setInterval(function () {
     const newQuestion = gptsttText.getAttribute("value");
@@ -200,11 +196,11 @@ function GPTQuestion() {
   questionEntity.setAttribute("id", "question-text");
   questionEntity.setAttribute(
     "text",
-    `value: ${longQuestion}; color: white; align: center; ;`
+    `value: ${longQuestion}; color: white; align: center; scale: 0.2`
   );
   questionEntity.setAttribute(
     "geometry",
-    "primitive: plane; width: 0.28; height: 0.1"
+    "primitive: plane; width: 0.22; height: 0.1"
   );
   questionEntity.setAttribute("position", `0 0.1 0.01`);
   questionEntity.setAttribute("material", "color: #9bc2cf"); 
@@ -214,11 +210,11 @@ function GPTQuestion() {
   answerEntity.setAttribute("id", "answer");
   answerEntity.setAttribute(
     "text",
-    `value: ; color: white; align: center; `
+    `value: ; color: white; align: center; scale: 0.2`
   );
   answerEntity.setAttribute(
     "geometry",
-    "primitive: plane; width: 0.28; height: 0.17"
+    "primitive: plane; width: 0.22; height: 0.17"
   );
   answerEntity.setAttribute("position", `0 -0.08 0.01`);
   answerEntity.setAttribute("material", "color: #9bc2cf"); 

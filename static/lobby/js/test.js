@@ -30,9 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let specialCharacters = document.querySelector("#specialCharacters");
   let charPagerToolbar = document.querySelector("#charPagerToolbar");
 
-  let chatText = document.querySelector("#chatbutton a-text");
-  let miscText = document.querySelector("#Miscbutton a-text");
-
   specialCharacters.addEventListener('click', function() {
     if (charPagerToolbar.getAttribute('visible')) {
       charPagerToolbar.setAttribute('visible', false);
@@ -42,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   language_mode.addEventListener("click", function() {
-    if (currentLanguage === "ko-kr") {
+     if (currentLanguage === "ko-kr") {
         currentLanguage = "en";
         language_text.setAttribute("value", "EN");
 
@@ -51,10 +48,6 @@ document.addEventListener("DOMContentLoaded", function () {
         displayMiscFeatures[1].name = "Length Measurement";
         displayMiscFeatures[2].name = "Post-It";
         displayMiscFeatures[3].name = "Calender";
-
-        // 버튼 텍스트를 영어로 변경
-        chatText.setAttribute("value", "chat");
-        miscText.setAttribute("value", "misc");
     } else {
         currentLanguage = "ko-kr";
         language_text.setAttribute("value", "KR");
@@ -64,10 +57,6 @@ document.addEventListener("DOMContentLoaded", function () {
         displayMiscFeatures[1].name = "길이 측정";
         displayMiscFeatures[2].name = "포스트잇";
         displayMiscFeatures[3].name = "캘린더";
-
-        // 버튼 텍스트를 한국어로 변경
-        chatText.setAttribute("value", "채팅");
-        miscText.setAttribute("value", "기타 도구");
     }
   });
 
@@ -687,18 +676,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // "GPT" 항목이 선택된 경우
-    if (selectedFeature.name === "Questions and Answers"||selectedFeature.name === "질문하기") {
-      if (currentLanguage === "en") {
-        sttText.setAttribute('value', 'Ask a question');
-      } else if (currentLanguage === "ko-kr") {
-        sttText.setAttribute('value', '질문하기');
-      }
+    if (selectedFeature.name === "Questions and Answers") {
+      sttText.setAttribute('value','Ask a question')
       GPTQuestion();
       return; // 추가된 부분: GPTQuestion 함수를 실행한 후 함수를 종료
-    } else if (selectedFeature.name === "Length Measurement"||selectedFeature.name === "길이 측정") {
+    } else if (selectedFeature.name === "Length Measurement") {
       lengthMeasurement();
       return;
-    } else if(selectedFeature.name === "Post-It"||selectedFeature.name === "포스트잇"){
+    } else if(selectedFeature.name === "Post-It"){
       postIt();
       return;
     }

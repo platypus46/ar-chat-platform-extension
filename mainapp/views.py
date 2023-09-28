@@ -119,6 +119,7 @@ def convert_to_wav(input_file, output_file):
 @csrf_exempt
 def transcribe(request):
     if request.method == 'POST':
+        lang = request.POST.get('language', 'en')
         recognizer = sr.Recognizer()
         audio_file = request.FILES['audio']
 
@@ -138,7 +139,7 @@ def transcribe(request):
             with sr.AudioFile(wav_audio_path) as source:
                 audio_data = recognizer.record(source)
                 try:
-                    text = recognizer.recognize_google(audio_data, language="ko-kr")
+                    text = recognizer.recognize_google(audio_data, language=lang)
                     print(f"Recognized Text: {text}")  # <-- 로그를 찍는 부분
                     return JsonResponse({'transcription': text})
                 except sr.UnknownValueError:

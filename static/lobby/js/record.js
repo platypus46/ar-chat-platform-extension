@@ -9,6 +9,10 @@ let chatScroll;
 let sttText = document.querySelector("#sttText");
 const subTextbar = document.getElementById("subTextbar");
 
+let currentLanguage = "en";  // 초기 언어 설정
+let language_mode = document.querySelector("#language-mode");
+let language_text = language_mode.querySelector("a-text");
+
 AFRAME.registerComponent('char-pager', {
   schema: {
       chars: {default: ['0','1','2','3','4',
@@ -132,6 +136,7 @@ async function initRecorder() {
     const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
     const formData = new FormData();
     formData.append("audio", audioBlob);
+    formData.append("language", currentLanguage);
     
     const response = await fetch("/transcribe/", {
       method: "POST",
@@ -219,3 +224,4 @@ function formatText(content) {
 window.addEventListener("DOMContentLoaded", (event) => {
   initRecorder().catch(err => console.error('Initialization failed:', err));
 });
+

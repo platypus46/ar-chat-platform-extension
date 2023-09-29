@@ -575,20 +575,28 @@ document.addEventListener("DOMContentLoaded", function () {
     const balloonEntity = document.createElement('a-entity');
     const meshMaterial = new THREE.MeshBasicMaterial({ color: color });
     const roundedBoxGeom = new THREE.RoundedBoxGeometry(width, height, 0.01, 0.01, 5); 
+    
+    if (sender === username) {
+      roundedBoxGeom.translate(-width / 2, 0, 0);
+    } else {
+      roundedBoxGeom.translate(width / 2, 0, 0);
+    }
+
     const balloonMesh = new THREE.Mesh(roundedBoxGeom, meshMaterial);
 
     balloonEntity.setObject3D('mesh', balloonMesh);
-    const positionStr = sender === username ? `0.04 ${positionY} 0` : `-0.04 ${positionY} 0`;
+    const positionStr = sender === username ? `0.08 ${positionY} 0` : `-0.08 ${positionY} 0`;
     balloonEntity.setAttribute('position', positionStr);
 
-    friendsContainer.appendChild(balloonEntity);
-
     const textEntity = document.createElement("a-entity");
-    textEntity.setAttribute("text", `value: ${content}; color: white; align: center; width: ${width - 0.02};`);  // 텍스트의 폭을 말풍선 폭에 맞춤
-    textEntity.setAttribute("position", "0 0 0.01");
+    textEntity.setAttribute("text", `value: ${content}; color: white; align: center; width: ${width-0.02};`); 
 
+    const textPositionStr = sender === username ? `-${width / 2} 0 0.01` : `${width / 2} 0 0.01`;
+    textEntity.setAttribute("position", textPositionStr);
+
+    friendsContainer.appendChild(balloonEntity);
     balloonEntity.appendChild(textEntity);
-}
+  }
 
 
   // displayConversation 함수 수정

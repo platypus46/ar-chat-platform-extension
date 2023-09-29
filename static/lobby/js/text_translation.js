@@ -4,9 +4,9 @@ function getLocalizedText(key, variables = {}) {
             "en": "Length: Calculating...",
             "ko-kr": "길이: 계산 중..."
         },
-        "Length: Initialized...": {
-            "en": "Length: Initialized...",
-            "ko-kr": "길이: 초기화..."
+        "Length: Initialized": {
+            "en": "Length: Initialized",
+            "ko-kr": "길이: 초기화"
         },
         "Length: Value": {
             "en": `Length: ${variables.length} cm`,

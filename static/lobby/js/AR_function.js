@@ -66,8 +66,16 @@ function lengthMeasurement() {
     xypad.setAttribute("visible", "false");
 
     let measurementText = document.querySelector("#sttText");
-    measurementText.setAttribute("value", getLocalizedText("Length: Calculating..."));
 
+    measurementText.setAttribute("value", formatText(getLocalizedText("Length: Calculating...")));
+
+    if (!isBoxVisible) {
+      subTextbar.setAttribute("value", getLocalizedText("Length: Calculating...").replace(/\n/g, ""));
+      subTextbar.setAttribute("scale", desiredScale);
+    }
+    else {
+      subTextbar.setAttribute("value", "");
+    }
     eraserButton = document.querySelector("#eraser-button");
 
     const scene = document.querySelector("a-scene");
@@ -101,7 +109,17 @@ function lengthMeasurement() {
                   ),
                   position
                 );
-                measurementText.setAttribute("value", getLocalizedText("Length: Value", { length: lengthValue }));
+                const roundedLength = parseFloat(length.toFixed(2));
+                measurementText.setAttribute("value", formatText(getLocalizedText("Length: Value", { length: roundedLength })));
+
+                if (!isBoxVisible) {
+                  subTextbar.setAttribute("value", getLocalizedText("Length: Value", { length: roundedLength }).replace(/\n/g, ""));
+                  subTextbar.setAttribute("scale", desiredScale);
+                }
+                else {
+                  subTextbar.setAttribute("value", "");
+                }
+                
               }
             }
           }
@@ -116,7 +134,15 @@ function lengthMeasurement() {
         dotEntity = null;
         lineEntity = null;
         isFirstMeasurement = true; // Reset the flag
-        measurementText.setAttribute("value", getLocalizedText("Length: Calculating..."));
+        measurementText.setAttribute("value", formatText(getLocalizedText("Length: Initialized")));
+
+        if (!isBoxVisible) {
+          subTextbar.setAttribute("value", getLocalizedText("Length: Initialized").replace(/\n/g, ""));
+          subTextbar.setAttribute("scale", desiredScale);
+        }
+        else {
+          subTextbar.setAttribute("value", "");
+        }
       }
     };
 
@@ -131,6 +157,8 @@ function GPTQuestion() {
   let pageLength = 150;  
   let gptsttText = document.querySelector("#sttText");
   const miscContainer = document.getElementById("MiscContainer");
+  document.getElementById("Miscbutton").setAttribute("visible", false);
+
 
   let longQuestion = gptsttText.getAttribute("value") || "Ask a question";
 
@@ -440,6 +468,7 @@ function createPostIt(position, color) {
 
 function onBackwardButtonClick() {
   const scene = document.querySelector("a-scene");
+  document.getElementById("Miscbutton").setAttribute("visible", true);
   // 이벤트 리스너 제거
   if (input_Button) {
     if (measureEventListener) {
@@ -495,4 +524,5 @@ function onBackwardButtonClick() {
    if (pageEntity) {
      scene.removeChild(pageEntity);
    }
+   document.querySelector("#sttText").setAttribute("value", "Misc Mode");
 }

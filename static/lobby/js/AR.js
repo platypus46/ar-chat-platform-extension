@@ -55,6 +55,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // 버튼 텍스트를 영어로 변경
         chatText.setAttribute("value", "chat");
         miscText.setAttribute("value", "misc");
+
+        document.querySelector("#input-button a-text").setAttribute("value", "INPUT");
+        document.querySelector("#eraser-button a-text").setAttribute("value", "DEL");
     } else {
         currentLanguage = "ko-kr";
         language_text.setAttribute("value", "KR");
@@ -68,6 +71,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // 버튼 텍스트를 한국어로 변경
         chatText.setAttribute("value", "채팅");
         miscText.setAttribute("value", "기타 도구");
+
+        document.querySelector("#input-button a-text").setAttribute("value", "입력");
+        document.querySelector("#eraser-button a-text").setAttribute("value", "삭제");
     }
   });
 
@@ -193,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isMiscVisible === false) {
       selectedIndex = 0;
       enableMiscButtons();
-      sttText.setAttribute("value", "Misc mode");
+      sttText.setAttribute("value", "Misc Mode");
       ui_info.setAttribute("visible","false");
       playall(misc);
       pagenation.setAttribute("visible","true");
@@ -458,6 +464,15 @@ document.addEventListener("DOMContentLoaded", function () {
         xypad.setAttribute("visible", "true");
         pagenation.setAttribute("visible","true");
         ui_info.setAttribute("visible","false");
+
+        if (!isBoxVisible) {
+          subTextbar.setAttribute("value","Misc Mode");
+          subTextbar.setAttribute("scale", desiredScale);
+          }
+        else {
+          subTextbar.setAttribute("value", "");
+        }
+        
         onBackwardButtonClick();
         break;
       default:
@@ -563,7 +578,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const balloonMesh = new THREE.Mesh(roundedBoxGeom, meshMaterial);
 
     balloonEntity.setObject3D('mesh', balloonMesh);
-    const positionStr = sender === username ? `0.03 ${positionY} 0` : `-0.05 ${positionY} 0`;
+    const positionStr = sender === username ? `0.04 ${positionY} 0` : `-0.04 ${positionY} 0`;
     balloonEntity.setAttribute('position', positionStr);
 
     friendsContainer.appendChild(balloonEntity);
@@ -644,7 +659,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const start = currentFeaturePage * itemsPerPage;
     const end = start + itemsPerPage;
     const currentdisplayMisc = displayMiscFeatures.slice(start, end); // 수정된 부분
-    sttText.setAttribute("value", "misc mode");
+    sttText.setAttribute("value", "Misc Mode");
 
     const totalPages = Math.ceil(displayMiscFeatures.length / itemsPerPage);
     document.getElementById("pageInfo").setAttribute("text", `value: ${currentFeaturePage + 1}/${totalPages}; color: white;`);
@@ -689,9 +704,24 @@ document.addEventListener("DOMContentLoaded", function () {
     // "GPT" 항목이 선택된 경우
     if (selectedFeature.name === "Questions and Answers"||selectedFeature.name === "질문하기") {
       if (currentLanguage === "en") {
-        sttText.setAttribute('value', 'Ask a question');
+        sttText.setAttribute('value', 'Ask a Question');
+        if (!isBoxVisible) {
+          subTextbar.setAttribute("value", "Ask a Question");
+          subTextbar.setAttribute("scale", desiredScale);
+        }
+        else {
+          subTextbar.setAttribute("value", "");
+        }
       } else if (currentLanguage === "ko-kr") {
         sttText.setAttribute('value', '질문하기');
+
+        if (!isBoxVisible) {
+          subTextbar.setAttribute("value", "질문하기");
+          subTextbar.setAttribute("scale", desiredScale);
+        }
+        else {
+          subTextbar.setAttribute("value", "");
+        }
       }
       GPTQuestion();
       return; // 추가된 부분: GPTQuestion 함수를 실행한 후 함수를 종료

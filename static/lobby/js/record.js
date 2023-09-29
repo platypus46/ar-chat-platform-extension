@@ -8,6 +8,7 @@ let eraserButton;
 let chatScroll;
 let sttText = document.querySelector("#sttText");
 const subTextbar = document.getElementById("subTextbar");
+let desiredScale = "0.7 0.7 1";
 
 let currentLanguage = "en";  // 초기 언어 설정
 let language_mode = document.querySelector("#language-mode");
@@ -149,7 +150,8 @@ async function initRecorder() {
       sttText.setAttribute("value", formatText(data.transcription));
 
       if (!isBoxVisible) {
-        subTextbar.setAttribute("value", formatText(data.transcription).substring(0, 10));
+        subTextbar.setAttribute("value", (data.transcription).substring(0, 10).replace(/\n/g, ""));
+        subTextbar.setAttribute("scale", desiredScale);
       }
       else {
         subTextbar.setAttribute("value", "");
@@ -179,7 +181,8 @@ async function initRecorder() {
     if (isBoxVisible) {
       targetPositionY = "-0.08"; 
 
-      subTextbar.setAttribute("value", sttText.getAttribute("value").substring(0, 10));
+      subTextbar.setAttribute("value", sttText.getAttribute("value").substring(0, 10).replace(/\n/g, ""));
+      subTextbar.setAttribute("scale", desiredScale);
     } else {
       targetPositionY = "0.08"; 
 
@@ -205,7 +208,7 @@ function eraseText() {
 }
 
 function formatText(content) {
-  const maxCharsPerLine = 5; 
+  const maxCharsPerLine = 8; 
   const lineHeight = 0.008; 
 
   const chunkedContent = [];

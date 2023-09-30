@@ -1,22 +1,29 @@
 from django.core.management.base import BaseCommand
-from mainapp.models import CustomUser, Subscription
+from mainapp.models import CustomUser, SubscriptionType, Service, Subscription
+
 
 class Command(BaseCommand):
-    help = 'Creates default subscriptions for all users'
+    help = 'Create default subscriptions for all users'
 
-    def handle(self, *args, **kwargs):
-        # 시스템 사용자 생성
-        system_usernames = ['질문하기']
-        system_users = []
-        for username in system_usernames:
-            user, created = CustomUser.objects.get_or_create(username=username, is_system_user=True, defaults={'full_name': username})
+    def handle(self, *args, **options):
+        hand_type = SubscriptionType.objects.get_or_create(name="Hand")[0]
+        controller_type = SubscriptionType.objects.get_or_create(name="Controller")[0]
+
+        qa_service = Service.objects.get_or_create(name="Questions and Answers")[0]
+        length_service = Service.objects.get_or_create(name="Length Measurement")[0]
+        post_it_service = Service.objects.get_or_create(name="Post-It")[0]
+
+        for user in CustomUser.objects.all():
+            qa_subscription, created = Subscription.objects.get_or_create(user=user, service=qa_service)
             if created:
-                self.stdout.write(self.style.SUCCESS(f'Successfully created system user {username}'))
-            system_users.append(user)
+                qa_subscription.types.add(hand_type, controller_type)
 
-        # 모든 사용자에게 기본 구독 설정
-        all_users = CustomUser.objects.filter(is_system_user=False)
-        for user in all_users:
-            for system_user in system_users:
-                Subscription.objects.get_or_create(user=user, subscribed_to=system_user)
-            self.stdout.write(self.style.SUCCESS(f'Successfully set default subscriptions for {user.username}'))
+            length_subscription, created = Subscription.objects.get_or_create(user=user, service=length_service)
+            if created:
+                length_subscription.types.add(hand_type)
+
+            post_it_subscription, created = Subscription.objects.get_or_create(user=user, service=post_it_service)
+            if created:
+                post_it_subscription.types.add(hand_type)
+
+        self.stdout.write(self.style.SUCCESS('Successfully created default subscriptions for all users'))

@@ -50,7 +50,6 @@ document.addEventListener("DOMContentLoaded", function () {
         displayMiscFeatures[0].name = "Questions and Answers";
         displayMiscFeatures[1].name = "Length Measurement";
         displayMiscFeatures[2].name = "Post-It";
-        displayMiscFeatures[3].name = "Calender";
 
         // 버튼 텍스트를 영어로 변경
         chatText.setAttribute("value", "chat");
@@ -66,7 +65,6 @@ document.addEventListener("DOMContentLoaded", function () {
         displayMiscFeatures[0].name = "질문하기";
         displayMiscFeatures[1].name = "길이 측정";
         displayMiscFeatures[2].name = "포스트잇";
-        displayMiscFeatures[3].name = "캘린더";
 
         // 버튼 텍스트를 한국어로 변경
         chatText.setAttribute("value", "채팅");
@@ -645,28 +643,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  const displayMiscFeatures = [
-    {
-      name: "Questions and Answers",
-    },
-    {
-      name: "Length Measurement",
-    },
-    {
-      name: "Post-It",
-    },
-    {
-      name: "Calender",
-    },
-    // ... 다른 항목들 ...
-  ];
+  const subscriptionItems = document.querySelectorAll('.subscriber-item');
+  const displayMiscFeatures = [];
   let currentFeaturePage = 0;
 
+  subscriptionItems.forEach(item => {
+    const subscriptionName = item.textContent.trim();
+    const images = Array.from(item.querySelectorAll('img')).map(img => img.alt);
+    displayMiscFeatures.push({ name: subscriptionName, images: images });
+  });
 
   function displayMisc() {
     const start = currentFeaturePage * itemsPerPage;
     const end = start + itemsPerPage;
-    const currentdisplayMisc = displayMiscFeatures.slice(start, end); // 수정된 부분
+    const currentdisplayMisc = displayMiscFeatures.slice(start, end);
     sttText.setAttribute("value", "Misc Mode");
 
     const totalPages = Math.ceil(displayMiscFeatures.length / itemsPerPage);
@@ -683,8 +673,9 @@ document.addEventListener("DOMContentLoaded", function () {
         "text",
         `value: ${feature.name}; color: white; align: center;`
       );
-      entity.setAttribute("position", `0 ${0.03 * (2 - index)} 0`);
-
+      const yPos = 0.03 * (2 - index);  // y 좌표를 변수로 추출
+      entity.setAttribute("position", `0 ${yPos} 0`);
+    
       if (index === selectedIndex) {
         entity.setAttribute("text", `color: yellow`);
         const animation = document.createElement("a-animation");
@@ -695,10 +686,29 @@ document.addEventListener("DOMContentLoaded", function () {
         animation.setAttribute("repeat", "indefinite");
         animation.setAttribute("direction", "alternate");
         entity.appendChild(animation);
+        
+        // 이미지 추가
+        feature.images.forEach((imageAlt, imgIndex) => {
+          const imageEntity = document.createElement("a-image");
+          const imagePath = imageAlt === "Hand" ? "/static/lobby/img/hand.png" : "/static/lobby/img/controller.png";
+          imageEntity.setAttribute("src", imagePath);
+    
+          // 이미지의 y 좌표를 텍스트의 y 좌표와 동일하게 설정
+          imageEntity.setAttribute("position", `${0.07+0.03 * (imgIndex + 1)} 0 0`);
+    
+          imageEntity.setAttribute("width", "0.02"); 
+          imageEntity.setAttribute("height", "0.02");
+    
+          // 이미지의 중심을 기준점으로 사용하도록 설정
+          imageEntity.setAttribute("geometry", "primitive: plane; height: 0.02; width: 0.02");
+          imageEntity.setAttribute("material", "shader: flat; src: " + imagePath);
+          entity.appendChild(imageEntity);
+        });
       }
       miscContainer.appendChild(entity);
     });
   }
+
 
   function displayMiscdetail() {
     const selectedFeature =

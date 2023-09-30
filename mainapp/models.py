@@ -31,10 +31,48 @@ class CustomUser(AbstractUser):
     is_online = models.BooleanField(default=False)  
     is_system_user = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        is_new = not self.pk  # 새로운 사용자인지 확인
+        super().save(*args, **kwargs)  # 원래의 save 메서드 호출
+
+        if is_new:  # 만약 새로운 사용자라면
+            # 기본 구독 로직
+            hand_type = SubscriptionType.objects.get_or_create(name="Hand")[0]
+            controller_type = SubscriptionType.objects.get_or_create(name="Controller")[0]
+            qa_service = Service.objects.get_or_create(name="Questions and Answers")[0]
+            length_service = Service.objects.get_or_create(name="Length Measurement")[0]
+            post_it_service = Service.objects.get_or_create(name="Post-It")[0]
+
+            # Questions and Answers에 대한 구독
+            qa_subscription = Subscription.objects.create(user=self, service=qa_service)
+            qa_subscription.types.add(hand_type, controller_type)
+
+            # Length Measurement와 Post-It에 대한 구독 (Hand만 추가)
+            length_subscription = Subscription.objects.create(user=self, service=length_service)
+            length_subscription.types.add(hand_type)
+
+            post_it_subscription = Subscription.objects.create(user=self, service=post_it_service)
+            post_it_subscription.types.add(hand_type)
+
+
+class SubscriptionType(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class Service(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
 
 class Subscription(models.Model):
     user = models.ForeignKey(CustomUser, related_name='subscriptions', on_delete=models.CASCADE)
-    subscribed_to = models.ForeignKey(CustomUser, related_name='subscribers', on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, related_name='subscribers', on_delete=models.CASCADE)
+    types = models.ManyToManyField(SubscriptionType, related_name='subscriptions')
+
 
 
 class Friendship(models.Model):

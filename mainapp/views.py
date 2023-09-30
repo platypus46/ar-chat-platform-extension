@@ -285,16 +285,16 @@ def subscription_shop(request, username):
     # 현재 로그인한 사용자 정보 가져오기
     current_user = request.user
 
-    # 해당 사용자가 구독한 사용자들의 목록을 가져옴
+    # 해당 사용자가 구독한 서비스들의 목록을 가져옴
     subscriptions = Subscription.objects.filter(user=target_user)
-    subscribed_users = [subscription.subscribed_to for subscription in subscriptions]
+    subscribed_services = [subscription.service for subscription in subscriptions]
 
     # 컨텍스트에 필요한 정보 저장
     context = {
         'current_user': current_user,
         'target_user': target_user,
         'subscriptions': subscriptions,
-        'subscribed_users': subscribed_users,
+        'subscribed_services': subscribed_services,
     }
 
     return render(request, 'subscription_shop.html', context)

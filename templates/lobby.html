@@ -6,6 +6,8 @@
     <script>
       eruda.init();
     </script>
+
+    
     <!-- 로비화면 -->
     <link
       rel="stylesheet"
@@ -91,13 +93,20 @@
     <div class="subscriber-list">
       <h3>구독 목록</h3>
       <div class="scrollable-content">
-        {% for subscription in subscriptions %}
-        <div class="subscriber-item">
-          {{ subscription.subscribed_to.full_name }}
-        </div>
-        {% empty %}
-        <div>구독 목록이 없습니다.</div>
-        {% endfor %}
+          {% for subscription in subscriptions %}
+          <div class="subscriber-item">
+              {{ subscription.service.name }}
+              {% for type in subscription.types.all %}
+                  {% if type.name == "Hand" %}
+                      <img src="/static/lobby/img/hand.png" alt="Hand">
+                  {% elif type.name == "Controller" %}
+                      <img src="/static/lobby/img/controller.png" alt="Controller">
+                  {% endif %}
+              {% endfor %}
+          </div>
+          {% empty %}
+          <div>구독 목록이 없습니다.</div>
+          {% endfor %}
       </div>
     </div>
 

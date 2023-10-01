@@ -1,4 +1,5 @@
 let isRecording = false;
+let isSubRecording = false; 
 let isBoxVisible = false; 
 let mediaRecorder;
 let audioChunks = [];
@@ -13,6 +14,11 @@ let desiredScale = "0.7 0.7 1";
 let currentLanguage = "en";  // 초기 언어 설정
 let language_mode = document.querySelector("#language-mode");
 let language_text = language_mode.querySelector("a-text");
+
+let subRecordButton;
+let canClickSpaceBar = true; 
+
+let wasSubRecording = false; 
 
 AFRAME.registerComponent('char-pager', {
   schema: {
@@ -53,10 +59,12 @@ AFRAME.registerComponent('char-pager', {
           prevBox.setAttribute('class', 'clickable');
 
           prevBox.addEventListener('click', function() {
-              if (data.current > 0) {
-                  data.current -= 5;
-                  refreshChars();
-              }
+            if (canClickSpaceBar) return; 
+
+            if (data.current > 0) {
+                data.current -= 5;
+                refreshChars();
+            }
           });
 
           el.appendChild(prevBox);
@@ -66,7 +74,7 @@ AFRAME.registerComponent('char-pager', {
             let charEntity = document.createElement('a-text');
             charEntity.setAttribute('value', char);
             charEntity.setAttribute('color', 'black');
-            charEntity.setAttribute('position', {x: (index + 1) * spacing - (totalWidth / 2) + (boxWidth / 2), y: 0, z: 0.001}); 
+            charEntity.setAttribute('position', {x: (index + 1) * spacing - (totalWidth / 2) + (boxWidth / 2), y: 0, z: 0.002}); 
             charEntity.setAttribute('scale', '0.03 0.03 0.03'); 
         
             let boxEntity = document.createElement('a-box');
@@ -76,14 +84,16 @@ AFRAME.registerComponent('char-pager', {
             boxEntity.setAttribute('class', 'clickable');
         
             boxEntity.addEventListener('click', function() {
+              if (canClickSpaceBar) return;  
+          
               charEntity.setAttribute('color', 'yellow');
               if (sttText) {
                   let currentText = sttText.getAttribute('value');
                   sttText.setAttribute('value', currentText + char);
               }
               setTimeout(function() {
-                  charEntity.setAttribute('color', 'black'); // 1초 후에 색상을 검정색으로 변경
-              }, 1000); // 1초 동안 대기
+                  charEntity.setAttribute('color', 'black'); 
+              }, 1000); 
           });
           
         
@@ -105,10 +115,12 @@ AFRAME.registerComponent('char-pager', {
           nextBox.setAttribute('class', 'clickable');
 
           nextBox.addEventListener('click', function() {
-              if (data.current + 5 < data.chars.length) {
-                  data.current += 5;
-                  refreshChars();
-              }
+            if (canClickSpaceBar) return; 
+
+            if (data.current + 5 < data.chars.length) {
+                data.current += 5;
+                refreshChars();
+            }
           });
 
           el.appendChild(nextBox);
@@ -128,6 +140,7 @@ async function initRecorder() {
   recordText = document.getElementById("recordText");
   eraserButton = document.getElementById("eraser-button");
   chatScroll = document.querySelector("#chatScroll");
+  subRecordButton = document.getElementById("subRecordButton");
 
   mediaRecorder.ondataavailable = event => {
     audioChunks.push(event.data);
@@ -147,7 +160,15 @@ async function initRecorder() {
     const data = await response.json();
 
     if (data.transcription) {
-      sttText.setAttribute("value", formatText(data.transcription));
+      let newTranscription = "";
+      if (isRecording) {
+        newTranscription = formatText(data.transcription);
+      } else { 
+        newTranscription = formatText(sttText.getAttribute("value") + data.transcription);
+      }
+      sttText.setAttribute("value", newTranscription);
+
+      subRecordButton.setAttribute("color", "red"); 
 
       if (!isBoxVisible) {
         subTextbar.setAttribute("value", (data.transcription).substring(0, 10).replace(/\n/g, ""));
@@ -167,10 +188,23 @@ async function initRecorder() {
       isRecording = false;
       recordButton.setAttribute("gltf-model", recordButtonModel);
     } else {
+      sttText.setAttribute("value", ""); // 녹음 시작 전 sttText 초기화
       mediaRecorder.start();
       recordText.setAttribute("value", "recording...");
       isRecording = true;
       recordButton.setAttribute("gltf-model", recordStopButtonModel);
+    }
+  });
+
+  subRecordButton.addEventListener("click", () => {
+    if (isSubRecording) { 
+      mediaRecorder.stop();
+      subRecordButton.setAttribute("color", "red");  
+      isSubRecording = false; 
+    } else {
+      mediaRecorder.start();
+      subRecordButton.setAttribute("color", "white");  
+      isSubRecording = true; 
     }
   });
 
@@ -222,6 +256,18 @@ function formatText(content) {
 
   return chunkedContent.join('\n');
 }
+
+document.querySelector("#backSpacebar").addEventListener("click", function() {
+  let currentText = sttText.getAttribute("value");
+  let newText = currentText.slice(0, -1);
+  sttText.setAttribute("value", newText);
+});
+
+document.querySelector("#spaceBar").addEventListener("click", function() {
+  let currentText = sttText.getAttribute("value");
+  let newText = currentText + ' ';
+  sttText.setAttribute("value", newText);
+});
 
 
 window.addEventListener("DOMContentLoaded", (event) => {

@@ -29,15 +29,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let specialCharacters = document.querySelector("#specialCharacters");
   let charPagerToolbar = document.querySelector("#charPagerToolbar");
+  let currentPosition = charPagerToolbar .getAttribute("position");
+  let spaceBar = document.querySelector("#spaceBar");
 
   let chatText = document.querySelector("#chatbutton a-text");
   let miscText = document.querySelector("#Miscbutton a-text");
 
+
   specialCharacters.addEventListener('click', function() {
     if (charPagerToolbar.getAttribute('visible')) {
       charPagerToolbar.setAttribute('visible', false);
+      charPagerToolbar.setAttribute("position", {x: currentPosition.x, y: currentPosition.y, z: 0.009});
+      spaceBar.setAttribute('visible', true);
+      canClickSpaceBar=true;
+
     } else {
       charPagerToolbar.setAttribute('visible', true);
+      spaceBar.setAttribute('visible', false);
+      charPagerToolbar.setAttribute("position", {x: currentPosition.x, y: currentPosition.y, z: 0.012});
+      canClickSpaceBar=false;
     }
   });
 
@@ -174,11 +184,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isUIVisible) {
       pauseall(ui);
       disableUIButtons();
-      hideUI.setAttribute("visible", "true");
     } else {
       playall(ui);
       enableUIButtons();
-      hideUI.setAttribute("visible", "false");
       ui.setAttribute("position", positionToString(initialUIPosition));
     }
     ui.setAttribute("visible", !isUIVisible);
@@ -251,18 +259,15 @@ document.addEventListener("DOMContentLoaded", function () {
       "right",
       "forward",
       "backward",
-      "recordButton",
-      "sttText",
-      "recordText",
-      "input-button",
-      "eraser-button",
-      "talkToolbar",
-      "roundBox",
-      "talkUIbox",
     ];
     buttons.forEach((buttonId) => {
       const button = document.getElementById(buttonId);
       button.setAttribute("visible", "false");
+    });
+
+    const uiButtons = document.querySelectorAll("#uibuttons .clickable");
+    uiButtons.forEach(button => {
+        button.classList.remove("clickable");
     });
   }
   function enableUIButtons() {
@@ -274,14 +279,6 @@ document.addEventListener("DOMContentLoaded", function () {
       "right",
       "forward",
       "backward",
-      "recordButton",
-      "sttText",
-      "recordText",
-      "input-button",
-      "eraser-button",
-      "talkToolbar",
-      "roundBox",
-      "talkUIbox",
     ];
     buttons.forEach((buttonId) => {
       const button = document.getElementById(buttonId);
@@ -289,6 +286,11 @@ document.addEventListener("DOMContentLoaded", function () {
       button.removeEventListener("click", movechat);
       button.removeEventListener("click", moveFeature);
       button.addEventListener("click", moveUI);
+    });
+
+    const uiButtons = document.querySelectorAll("#uibuttons a-entity");
+    uiButtons.forEach(button => {
+        button.classList.add("clickable");
     });
   }
 
@@ -351,12 +353,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         break;
       case "left":
+        selectedIndex = 0;
         if (currentPage > 0) {
           currentPage--;
           displayFriends();
         }
         break;
       case "right":
+        selectedIndex = 0;
         if ((currentPage + 1) * itemsPerPage < friends.length) {
           currentPage++;
           displayFriends();
@@ -783,7 +787,7 @@ document.addEventListener("DOMContentLoaded", function () {
         talkpad.setAttribute("visible", "true");
         Text.setAttribute("visible", "true");
         p_pad.setAttribute("visible", "true");
-        hideUI.setAttribute("visible", "false");
+        hideUI.setAttribute("visible", "true");
         pagenation.setAttribute("visible","false");
 
         pauseall(friend);

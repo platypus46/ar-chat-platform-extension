@@ -99,6 +99,51 @@ AFRAME.registerComponent('rounded-box', {
     }
 });
 
+AFRAME.registerComponent('rounded-plane-box', {
+  schema: {
+    width: { type: 'number', default: 1 },
+    height: { type: 'number', default: 1 },
+    radius: { type: 'number', default: 0.1 },
+    color: { type: 'color', default: '#D8BFD8' }  
+  },
+
+  init: function() {
+    const data = this.data;
+
+    const roundedRectShape = new THREE.Shape();
+    const x = -data.width/2;  
+    const y = data.height/2;
+    roundedRectShape.moveTo(x, y - data.radius);
+    roundedRectShape.lineTo(x, y - data.height + data.radius);
+    roundedRectShape.quadraticCurveTo(x, y - data.height, x + data.radius, y - data.height);
+    roundedRectShape.lineTo(x + data.width - data.radius, y - data.height);
+    roundedRectShape.quadraticCurveTo(x + data.width, y - data.height, x + data.width, y - data.height + data.radius);
+    roundedRectShape.lineTo(x + data.width, y - data.radius);
+    roundedRectShape.quadraticCurveTo(x + data.width, y, x + data.width - data.radius, y);
+    roundedRectShape.lineTo(x + data.radius, y);
+    roundedRectShape.quadraticCurveTo(x, y, x, y - data.radius);
+
+    // Convert shape to geometry
+    const geometry = new THREE.ShapeBufferGeometry(roundedRectShape);
+    const material = new THREE.MeshBasicMaterial({ color: data.color });
+    this.mesh = new THREE.Mesh(geometry, material);
+
+    this.el.setObject3D('mesh', this.mesh);
+  },
+
+  update: function(oldData) {
+    const data = this.data;
+    if (data.color !== oldData.color) {
+      this.mesh.material.color.set(data.color);
+    }
+  },
+
+  remove: function() {
+    this.el.removeObject3D('mesh');
+  }
+});
+
+
 AFRAME.registerComponent('click-handler', {
   init: function () {
     this.el.addEventListener('click', function (event) {

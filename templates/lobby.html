@@ -267,12 +267,19 @@
                 font="https://raw.githubusercontent.com/myso-kr/aframe-fonts-korean/master/fonts/ofl/nanumgothic/NanumGothic-Bold.json"
               ></a-text>
             </a-entity> 
-            <a-circle radius="0.008" color="#D3D3D3" position="0.05 0.055 0.011" class="clickable">
-              <a-entity troika-text="value: 😊 ; fontSize: 0.008; color: white;" position="0.001 0 0.01"></a-entity>
-            </a-circle>
+            <a-circle id= subRecordButton radius="0.006" color="red" position="0.05 0.055 0.011" class="clickable"></a-circle>
             <a-circle id="specialCharacters" radius="0.008" color="#D3D3D3" position="0.05 0.035 0.011" class="clickable">
               <a-text value="123" position="0.001 0 0.01" align="center" scale="0.5 0.5 0.5" ></a-text>
             </a-circle>
+            <a-circle radius="0.008" color="#D3D3D3" position="0.05 0.015 0.011" class="clickable">
+              <a-entity troika-text="value: 😊 ; fontSize: 0.008; color: white;" position="0.001 0 0.01"></a-entity>
+            </a-circle>
+            <a-entity id= "backSpacebar" rounded-plane-box="width:0.02; height: 0.04; radius: 0.004; color: #D3D3D3;" position="0.05 -0.03 0.011" class="clickable">
+              <a-text value="back" align="center" baseline="center" color="black" width="0.02" position="0 0 0.001"></a-text>
+            </a-entity>
+            <a-entity id="spaceBar" rounded-plane-box="width:0.07; height: 0.018; radius: 0.006; color: #D3D3D3;" position="-0.01 -0.06 0.011" class="clickable">
+              <a-text value="space" align="center" baseline="center" color="black" width="0.06" position="0 0 0.001"></a-text>
+            </a-entity>
             <a-entity id="charPagerToolbar" char-pager position="0 -0.06 0.01" visible="false"></a-entity>
           </a-entity>
           <!-- Char Pager 툴바 (기본적으로 숨김) -->
@@ -292,10 +299,10 @@
           </a-box>
           <a-box id="talkUIbox" position="0 -0.09 0" rotation="0 0 0" width="0.13" height="0.16" depth="0.01" color="#D3D3D3"></a-box>
         </a-entity>        
-        <a-entity id="hideUIButton" position="0 0 -0.4" visible="false">
+        <a-entity id="hideUIButton" position="-0.08 -0.2 -0.43" visible="false">
           <a-cylinder
-            geometry="radius: 0.02; height: 0.02; segmentsRadial: 32"
-            material="color: green"
+            geometry="radius: 0.012; height: 0.01; segmentsRadial: 32"
+            material="color: yellow"
             rotation="90 0 0"
             class="clickable"
           ></a-cylinder>

@@ -1,131 +1,176 @@
-window.count = 0;
+document.addEventListener("DOMContentLoaded", function () {
+  let currentStep = 1;
+  let registrationData = {};
 
-function showSignup() {
-  document.getElementById('gray-box').style.display = 'none'; // 로그인 박스 숨기기
-  document.getElementById('signup-box').style.display = 'block';
-  document.getElementById('wooden-sign').setAttribute('visible', true);
-
-  var woodenSign = document.getElementById('wooden-sign');
-  woodenSign.setAttribute('visible', true);
-
-  document.getElementById('wooden-sign').addEventListener('click', function() {
-      console.log("wooden-sign 클릭됨!"); // 콘솔 로그 출력
-  });
-}
-
-function closeSignup() {
-  document.getElementById('signup-box').style.display = 'none';
-  document.getElementById('gray-box').style.display = 'block'; 
-  document.getElementById('wooden-sign').setAttribute('visible', false); 
-}
-
-var registrationData = {};
-
-function validateStep(step) {
-  var csrftoken = getCookie('csrftoken');
-  console.log("CSRF token:", csrftoken);
-
-  var formData = new FormData();
-  if (step === 1) {
-    window.count += 1;
-    registrationData.username = $('#signup-username').val();
-    formData.append('username', registrationData.username);
-  } else if (step === 2) {
-    window.count += 1;
-    registrationData.full_name = $('#full_name').val();
-    formData.append('full_name', registrationData.full_name);
-  } else if (step === 3) {
-    window.count += 1;
-    registrationData.password1 = $('#password1').val();
-    registrationData.password2 = $('#password2').val();
-    formData.append('password1', registrationData.password1);
-    formData.append('password2', registrationData.password2);
+  function showStep(step) {
+    for (let i = 1; i <= 3; i++) {
+      document.getElementById("step" + i).style.display = "none";
+      let inputFields = document.querySelectorAll("#step" + i + " input");
+      inputFields.forEach((field) => (field.required = false));
+    }
+    let currentInputFields = document.querySelectorAll(
+      "#step" + step + " input"
+    );
+    currentInputFields.forEach((field) => (field.required = true));
+    document.getElementById("step" + step).style.display = "block";
   }
 
-  $.ajax({
-      type: 'POST',
-      url: '/validate_step/' + step + '/',
-      data: formData,
-      processData: false,
-      contentType: false,
-      beforeSend: function(xhr) {
-          xhr.setRequestHeader('X-CSRFToken', csrftoken);
-      },
-      success: function(response) {
-          if (response.status === 'success') {
-              if (step === 3) {
-                  finalRegistration();
-              } else {
-                  $('#step' + step).hide();
-                  $('#step' + (step + 1)).show();
-              }
-          } else {
-              alert('Error: ' + response.errors);
-          }
-      },
-      error: function() {
-          alert('Error: Something went wrong.');
+  function resetSignup() {
+    registrationData = {};
+    currentStep = 1;
+    showStep(currentStep);
+  }
+
+  document
+    .getElementById("next-to-step2")
+    .addEventListener("click", function (e) {
+      e.preventDefault();
+      if (document.getElementById("signup-username").checkValidity()) {
+        registrationData.username =
+          document.getElementById("signup-username").value;
+        currentStep++;
+        showStep(currentStep);
+      } else {
+        alert("Username is required!");
       }
-  });
-}
-
-function finalRegistration() {
-  var csrftoken = getCookie('csrftoken');
-
-  $.ajax({
-      type: 'POST',
-      url: '/register_login/',
-      data: {
-          'action': 'register',
-          'username': registrationData.username,
-          'full_name': registrationData.full_name,
-          'password1': registrationData.password1,
-          'password2': registrationData.password2,
-          'csrfmiddlewaretoken': csrftoken
-      },
-      success: function(response) {
-          if (response.status === 'success') {
-              window.location.href = '/login/';
-          } else {
-              alert('Error: ' + response.errors);
-          }
-      },
-      error: function() {
-          alert('에러가 발생함');
-      }
-  });
-}
-
-document.getElementById('login-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    var formData = new FormData(this);
-    fetch('/login/', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken')
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            window.location.href = '/lobby/' + data.username + '/';
-        } else {
-            alert(data.message);
-        }
     });
-  });
+
+  document
+    .getElementById("next-to-step3")
+    .addEventListener("click", function (e) {
+      e.preventDefault();
+      if (document.getElementById("signup-full_name").checkValidity()) {
+        registrationData.full_name =
+          document.getElementById("signup-full_name").value;
+        currentStep++;
+        showStep(currentStep);
+      } else {
+        alert("Full Name is required!");
+      }
+    });
+
+  document
+    .getElementById("go-to-login-button")
+    .addEventListener("click", function () {
+      resetSignup();
+      closeSignup();
+    });
+
+  document
+    .getElementById("signup-form")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
+      const csrftoken = getCookie("csrftoken");
+
+      if (currentStep === 1)
+        registrationData.username =
+          document.getElementById("signup-username").value;
+      else if (currentStep === 2)
+        registrationData.full_name =
+          document.getElementById("signup-nickname").value;
+      // nickname을 full_name으로 변경
+      else if (currentStep === 3)
+        registrationData.password1 =
+          document.getElementById("signup-password1").value; // id를 올바르게 수정합니다.
+
+      $.ajax({
+        type: "POST",
+        url: "/validate_step/" + currentStep + "/",
+        data: { ...registrationData, csrfmiddlewaretoken: csrftoken },
+        success: function (response) {
+          console.log("registrationData:", registrationData); // 이 부분을 추가
+          if (response.status === "success") {
+            if (currentStep === 3) {
+              $.ajax({
+                type: "POST",
+                url: "/register_login/",
+                data: {
+                  action: "register", // 추가된 부분
+                  ...registrationData,
+                  csrfmiddlewaretoken: csrftoken,
+                },
+                success: function (response) {
+                  if (response.status === "success") {
+                    window.location.href = "/login/";
+                  } else {
+                    alert(
+                      "Registration Error: " +
+                        (response.errors || "Unknown Error")
+                    );
+                  }
+                },
+                error: function (jqXHR) {
+                  let errorMessage =
+                    "Error: Something went wrong during registration.";
+                  if (jqXHR.responseJSON && jqXHR.responseJSON.errors) {
+                    errorMessage += " " + jqXHR.responseJSON.errors;
+                  }
+                  alert(errorMessage);
+                },
+              });
+            } else {
+              currentStep++;
+              showStep(currentStep);
+            }
+          } else {
+            alert("Validation Error: " + (response.errors || "Unknown Error"));
+          }
+        },
+        error: function (jqXHR) {
+          let errorMessage = "Error: Something went wrong during validation.";
+          if (jqXHR.responseJSON && jqXHR.responseJSON.errors) {
+            errorMessage += " " + jqXHR.responseJSON.errors;
+          }
+          alert(errorMessage);
+        },
+      });
+    });
+});
+
 function getCookie(name) {
   var cookieArr = document.cookie.split(";");
   for (var i = 0; i < cookieArr.length; i++) {
-      var cookiePair = cookieArr[i].split("=");
-      if (name == cookiePair[0].trim()) {
-          return decodeURIComponent(cookiePair[1]);
-      }
+    var cookiePair = cookieArr[i].split("=");
+    if (name == cookiePair[0].trim()) return decodeURIComponent(cookiePair[1]);
   }
   return null;
 }
 
-function hideSignupBox() {
-  document.getElementById('signup-box').style.display = 'none';
+document
+  .getElementById("go-to-signup-button")
+  .addEventListener("click", showSignup);
+document
+  .getElementById("go-to-login-button")
+  .addEventListener("click", closeSignup);
+function showSignup() {
+  document.getElementById("login-container").style.display = "none";
+  document.getElementById("signup-container").style.display = "block";
 }
+
+function closeSignup() {
+  document.getElementById("signup-container").style.display = "none";
+  document.getElementById("login-container").style.display = "block";
+}
+
+document.getElementById("login-form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const csrftoken = getCookie("csrftoken");
+  const formData = new FormData(this);
+
+  fetch("/login/", {
+    method: "POST",
+    body: formData,
+    headers: {
+      "X-CSRFToken": csrftoken,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "success")
+        window.location.href = "/lobby/" + data.username + "/";
+      else alert(data.message);
+    })
+    .catch(() => {
+      alert("로그인 중 에러가 발생했습니다.");
+    });
+});

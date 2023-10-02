@@ -1,13 +1,12 @@
 {% load static %}
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <script src="//cdn.jsdelivr.net/npm/eruda"></script>
     <script>
       eruda.init();
     </script>
 
-    
     <!-- 로비화면 -->
     <link
       rel="stylesheet"
@@ -18,8 +17,10 @@
     <script src="{% static 'lobby/js/profile.js' %}"></script>
     <script src="{% static 'lobby/js/gpt_api_key.js' %}"></script>
     <script type="text/javascript">
-      var recordButtonModel = "{% static 'lobby/img_model/record_button.glb' %}";
-      var recordStopButtonModel = "{% static 'lobby/img_model/record_stop_button.glb' %}";
+      var recordButtonModel =
+        "{% static 'lobby/img_model/record_button.glb' %}";
+      var recordStopButtonModel =
+        "{% static 'lobby/img_model/record_stop_button.glb' %}";
     </script>
 
     <!-- AR화면 -->
@@ -35,20 +36,33 @@
     <script src="{% static 'lobby/js/AR_setting.js' %}"></script>
     <script src="{% static 'lobby/js/shop.js' %}"></script>
   </head>
-  <body>
-    <div>
-      <h1 id="title">PLATYVERSE 사전설정</h1>
-      <div class="user-notification">{{ full_name }}님이 접속했습니다.</div>
-      <div class="profile-container">
-        <img
-          src="{{ profile_picture_url }}"
-          alt="{{ username }}의 프로필 사진"
-          class="profile-pic"
-          id="userProfilePic"
-        />
-        <input type="file" id="imageUpload" style="display: none" />
-        <button id="refreshProfile">프로필 적용</button> 
+  <body class="background-image">
+    <div id="profileSection">
+      <img
+        id="profileImageDisplay"
+        src="/static/lobby/img/default_profile.png"
+        width="100"
+        height="100"
+      />
+      <!-- 기본 프로필 이미지 설정 -->
+      <span id="username">{{full_name}}님 안녕하세요.</span>
     </div>
+    <section id="meteorSection">
+      <span id="meteor1"></span>
+      <span id="meteor2"></span>
+      <span id="meteor3"></span>
+      <span id="meteor4"></span>
+      <span id="meteor5"></span>
+      <span id="meteor6"></span>
+      <span id="meteor7"></span>
+      <span id="meteor8"></span>
+      <span id="meteor9"></span>
+      <span id="meteor10"></span>
+    </section>
+    <div id="Main_Box">
+      <div id="Chat_Box">Chat</div>
+      <div id="Subscribe_Box">Subscribe</div>
+      <div id="Setting_Box">setting</div>
     </div>
     <!-- 임시 상점 버튼 -->
     <div id="icon-button-container">
@@ -70,8 +84,92 @@
         });
       });
     </script>
-    {% block content %}
-    <div class="container">
+    <div id="Chat_Page" class="page">
+      <h2>Chat Page</h2>
+      <div>
+        <input
+          type="text"
+          id="newFriendName"
+          placeholder="Enter friend's username"
+        />
+        <button id="addFriendButton">Add Friend</button>
+      </div>
+      <div id="notificationSection">
+        <button id="notificationIcon">🔔</button>
+        <ul id="notificationList">
+          <!-- Notifications will be populated here -->
+        </ul>
+      </div>
+      <ul id="friendList">
+        {% for friend in friends %}
+        <li>
+          {% if friend.profile_picture %}
+          <img
+            src="{{ friend.profile_picture.url }}"
+            alt="{{ friend.full_name }}'s profile picture"
+            width="50"
+            height="50"
+          />
+          {% endif %}
+          <span>{{ friend.full_name }}</span>
+          <button
+            class="deleteFriendButton"
+            data-username="{{ friend.username }}"
+            id="deleteFriend_{{ friend.username }}"
+          >
+            삭제
+          </button>
+          <button
+            class="chatFriendButton"
+            id="chatWithFriend_{{ friend.username }}"
+          >
+            채팅
+          </button>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <!-- Chat Window (Initially Hidden) -->
+      <div
+        id="chatWindow"
+        style="
+          display: none;
+          border: 1px solid black;
+          height: 200px;
+          overflow: auto;
+        "
+      >
+        <h3 id="chatFriendName"></h3>
+        <div id="chatMessages"></div>
+        <div>
+          <input type="text" id="chatInput" placeholder="Enter your message" />
+          <button id="sendChatMessage">Send</button>
+        </div>
+        <button id="closechatWindowButton">close</button>
+      </div>
+      <button class="goBackButton">Back to Main</button>
+    </div>
+    <div id="Subscribe_Page" class="page">
+      <div class="subscriber-list">
+        <h3>구독 목록</h3>
+        <div class="scrollable-content">
+          {% for subscription in subscriptions %}
+          <div class="subscriber-item">
+            {{ subscription.service.name }} {% for type in
+            subscription.types.all %} {% if type.name == "Hand" %}
+            <img src="/static/lobby/img/hand.png" alt="Hand" />
+            {% elif type.name == "Controller" %}
+            <img src="/static/lobby/img/controller.png" alt="Controller" />
+            {% endif %} {% endfor %}
+          </div>
+          {% empty %}
+          <div>구독 목록이 없습니다.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div id="Setting_Page" class="page">
+      <h2>Profile Settings</h2>
       <div class="gpt-api-key-section">
         <h2>GPT API Key</h2>
         <form id="gptApiKeyForm" method="post">
@@ -88,112 +186,19 @@
           </div>
         </form>
       </div>
-    </div>
-    {% endblock %}
-    <div class="subscriber-list">
-      <h3>구독 목록</h3>
-      <div class="scrollable-content">
-          {% for subscription in subscriptions %}
-          <div class="subscriber-item">
-              {{ subscription.service.name }}
-              {% for type in subscription.types.all %}
-                  {% if type.name == "Hand" %}
-                      <img src="/static/lobby/img/hand.png" alt="Hand">
-                  {% elif type.name == "Controller" %}
-                      <img src="/static/lobby/img/controller.png" alt="Controller">
-                  {% endif %}
-              {% endfor %}
-          </div>
-          {% empty %}
-          <div>구독 목록이 없습니다.</div>
-          {% endfor %}
+      <div id="profileUpdateSection">
+        <h3>Update Profile</h3>
+        <form id="profileUpdateForm">
+          <label for="profileImageInput">Profile Image:</label>
+          <input
+            type="file"
+            id="profileImageInput"
+            name="profileImage"
+          /><!-- 수정된 부분 -->
+        </form>
       </div>
+      <button class="goBackButton">Back to Main</button>
     </div>
-
-    <div
-      id="chatOverlay"
-      style="
-        display: none;
-        z-index: 1000;
-        position: fixed;
-        top: 30%;
-        right: 10px;
-      "
-    >
-      <div id="chatHeader">
-        <span id="chatFriendName"></span>
-        <button id="closeChat">닫기</button>
-      </div>
-      <div id="chatMessages">
-        <!-- 채팅 메시지가 여기에 표시됩니다 -->
-      </div>
-      <div id="chatInputSection">
-        <input type="text" id="chatInput" placeholder="메시지 입력..." />
-        <button id="sendChatMessage">전송</button>
-      </div>
-    </div>
-    <div
-      id="notificationSection"
-      style="position: fixed; top: 20px; right: 20px; z-index: 1000"
-    >
-      <button id="notificationIcon">🔔</button>
-      <ul
-        id="notificationList"
-        style="
-          display: none;
-          position: absolute;
-          top: 30px;
-          right: 0;
-          background-color: #fff;
-          border: 1px solid #ccc;
-          padding: 10px;
-          z-index: 1000;
-        "
-      >
-        {% for notification in notifications %}
-        <li class="notificationElementClass" data-id="{{ notification.id }}">
-          {{ notification.message }}
-          <button class="acceptFriendRequest" data-id="{{ notification.id }}">
-            수락
-          </button>
-          <button class="closeNotification" data-id="{{ notification.id }}">
-            닫기
-          </button>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-    <div id="friendListSection">
-      <ul id="friendNames">
-        {% for friend in friends %}
-        <li>
-          <!-- 프로필 사진 추가 -->
-          {% if friend.profile_picture %}
-            <img src="{{ friend.profile_picture.url }}" alt="{{ friend.full_name }}'s profile picture" width="50" height="50">
-          {% endif %}
-          <span>{{ friend.full_name }}</span>
-          <button
-            class="deleteFriendButton"
-            data-username="{{ friend.username }}"
-            onclick="deleteFriend('{{ friend.username }}')"
-          >
-            삭제
-          </button>
-          <button
-            class="chatFriendButton"
-            onclick="chatWithFriend('{{ friend.username }}')"
-          >
-            채팅
-          </button>
-        </li>
-        {% endfor %}
-      </ul>
-      <div id="friendAddSection">
-        <input type="text" id="newFriendName" placeholder="친구 아이디 입력" />
-        <button id="addFriendButton">친구 추가</button>
-      </div>
-    </div>
-
     <!-- 로딩 스크린 -->
     <div
       id="loadingScreen"
@@ -218,7 +223,6 @@
       data-font-png="{% static 'lobby/font/NanumGothic-Bold.png' %}"
       auto-font
       scene-debounced-click
-
       screenshot="width: 1920; height: 1080;"
     >
       <a-light type="ambient" color="#888"></a-light>
@@ -230,10 +234,16 @@
       ></a-light>
 
       <!-- 왼손 컨트롤러 -->
-      <a-entity laser-controls="hand: left" raycaster="objects: .clickable"></a-entity>
+      <a-entity
+        laser-controls="hand: left"
+        raycaster="objects: .clickable"
+      ></a-entity>
 
       <!-- 오른손 컨트롤러 -->
-      <a-entity laser-controls="hand: right" raycaster="objects: .clickable"></a-entity>
+      <a-entity
+        laser-controls="hand: right"
+        raycaster="objects: .clickable"
+      ></a-entity>
       <a-entity
         id="leftHand"
         hand-tracking-controls="hand: left;"
@@ -255,8 +265,15 @@
       </a-entity>
       <a-camera id="camera">
         <a-entity id="Text" position="-0.12 -0.1 -0.45" visible="false">
-          <a-entity id= "roundBox" rounded-box="width: 0.12; height: 0.15; depth: 0.01; radius: 0.02; color: #D8BFD8" position="0 -0.08 -0.02">
-            <a-entity rounded-Box="width:0.09; height: 0.11; depth: 0.011; radius: 0.02; color: #800080" position="-0.009 0.013 0">
+          <a-entity
+            id="roundBox"
+            rounded-box="width: 0.12; height: 0.15; depth: 0.01; radius: 0.02; color: #D8BFD8"
+            position="0 -0.08 -0.02"
+          >
+            <a-entity
+              rounded-Box="width:0.09; height: 0.11; depth: 0.011; radius: 0.02; color: #800080"
+              position="-0.009 0.013 0"
+            >
               <a-text
                 id="sttText"
                 position="-0.04 0.04 0.01"
@@ -266,24 +283,86 @@
                 width="0.3"
                 font="https://raw.githubusercontent.com/myso-kr/aframe-fonts-korean/master/fonts/ofl/nanumgothic/NanumGothic-Bold.json"
               ></a-text>
-            </a-entity> 
-            <a-circle id= subRecordButton radius="0.006" color="red" position="0.05 0.055 0.011" class="clickable"></a-circle>
-            <a-circle id="specialCharacters" radius="0.008" color="#D3D3D3" position="0.05 0.035 0.011" class="clickable">
-              <a-text value="123" position="0.001 0 0.01" align="center" scale="0.5 0.5 0.5" ></a-text>
-            </a-circle>
-            <a-circle radius="0.008" color="#D3D3D3" position="0.05 0.015 0.011" class="clickable">
-              <a-entity troika-text="value: 😊 ; fontSize: 0.008; color: white;" position="0.001 0 0.01"></a-entity>
-            </a-circle>
-            <a-entity id= "backSpacebar" rounded-plane-box="width:0.02; height: 0.04; radius: 0.004; color: #D3D3D3;" position="0.05 -0.03 0.011" class="clickable">
-              <a-text value="back" align="center" baseline="center" color="black" width="0.02" position="0 0 0.001"></a-text>
             </a-entity>
-            <a-entity id="spaceBar" rounded-plane-box="width:0.07; height: 0.018; radius: 0.006; color: #D3D3D3;" position="-0.01 -0.06 0.011" class="clickable">
-              <a-text value="space" align="center" baseline="center" color="black" width="0.06" position="0 0 0.001"></a-text>
+            <a-circle
+              id="subRecordButton"
+              radius="0.006"
+              color="red"
+              position="0.05 0.055 0.011"
+              class="clickable"
+            ></a-circle>
+            <a-circle
+              id="specialCharacters"
+              radius="0.008"
+              color="#D3D3D3"
+              position="0.05 0.035 0.011"
+              class="clickable"
+            >
+              <a-text
+                value="123"
+                position="0.001 0 0.01"
+                align="center"
+                scale="0.5 0.5 0.5"
+              ></a-text>
+            </a-circle>
+            <a-circle
+              radius="0.008"
+              color="#D3D3D3"
+              position="0.05 0.015 0.011"
+              class="clickable"
+            >
+              <a-entity
+                troika-text="value: 😊 ; fontSize: 0.008; color: white;"
+                position="0.001 0 0.01"
+              ></a-entity>
+            </a-circle>
+            <a-entity
+              id="backSpacebar"
+              rounded-plane-box="width:0.02; height: 0.04; radius: 0.004; color: #D3D3D3;"
+              position="0.05 -0.03 0.011"
+              class="clickable"
+            >
+              <a-text
+                value="back"
+                align="center"
+                baseline="center"
+                color="black"
+                width="0.02"
+                position="0 0 0.001"
+              ></a-text>
             </a-entity>
-            <a-entity id="charPagerToolbar" char-pager position="0 -0.06 0.01" visible="false"></a-entity>
+            <a-entity
+              id="spaceBar"
+              rounded-plane-box="width:0.07; height: 0.018; radius: 0.006; color: #D3D3D3;"
+              position="-0.01 -0.06 0.011"
+              class="clickable"
+            >
+              <a-text
+                value="space"
+                align="center"
+                baseline="center"
+                color="black"
+                width="0.06"
+                position="0 0 0.001"
+              ></a-text>
+            </a-entity>
+            <a-entity
+              id="charPagerToolbar"
+              char-pager
+              position="0 -0.06 0.01"
+              visible="false"
+            ></a-entity>
           </a-entity>
           <!-- Char Pager 툴바 (기본적으로 숨김) -->
-          <a-box id="talkToolbar" position="0 0 0" rotation="0 0 0" width="0.13" height="0.02" depth="0.005" color="#888888">
+          <a-box
+            id="talkToolbar"
+            position="0 0 0"
+            rotation="0 0 0"
+            width="0.13"
+            height="0.02"
+            depth="0.005"
+            color="#888888"
+          >
             <a-cylinder
               position="0.05 0 0.01"
               radius="0.007"
@@ -293,12 +372,32 @@
               class="clickable"
               id="chatScroll"
             ></a-cylinder>
-            <a-box position="-0.01 0 0.01" rotation="0 0 0" width="0.08" height="0.014" depth="0.002" color="white">
-              <a-text id="subTextbar" value="platyverse" color="black" position="-0.04 0 0"></a-text>
+            <a-box
+              position="-0.01 0 0.01"
+              rotation="0 0 0"
+              width="0.08"
+              height="0.014"
+              depth="0.002"
+              color="white"
+            >
+              <a-text
+                id="subTextbar"
+                value="platyverse"
+                color="black"
+                position="-0.04 0 0"
+              ></a-text>
             </a-box>
           </a-box>
-          <a-box id="talkUIbox" position="0 -0.09 0" rotation="0 0 0" width="0.13" height="0.16" depth="0.01" color="#D3D3D3"></a-box>
-        </a-entity>        
+          <a-box
+            id="talkUIbox"
+            position="0 -0.09 0"
+            rotation="0 0 0"
+            width="0.13"
+            height="0.16"
+            depth="0.01"
+            color="#D3D3D3"
+          ></a-box>
+        </a-entity>
         <a-entity id="hideUIButton" position="-0.08 -0.2 -0.43" visible="false">
           <a-cylinder
             geometry="radius: 0.012; height: 0.01; segmentsRadial: 32"
@@ -309,17 +408,17 @@
         </a-entity>
         <a-entity
           id="ui"
-          rounded-box="width: 0.3; height: 0.45; depth: 0.001; radius: 0.04; color: #D8BFD8" 
+          rounded-box="width: 0.3; height: 0.45; depth: 0.001; radius: 0.04; color: #D8BFD8"
           material="opacity: 0.5; transparent: true; "
           position="0.1 0 -0.5"
           visible="false"
         >
-        <a-entity
-          id="profile"
-          geometry="primitive: plane; width: 0.2; height: 0.2"
-          material="src: {{ profile_picture_url }};"
-          position="0 0.06 0.01"
-        ></a-entity>
+          <a-entity
+            id="profile"
+            geometry="primitive: plane; width: 0.2; height: 0.2"
+            material="src: {{ profile_picture_url }};"
+            position="0 0.06 0.01"
+          ></a-entity>
           <a-entity
             id="friend"
             geometry="primitive: plane; width:0.2; height: 0.23"
@@ -395,9 +494,14 @@
               vertex-c="0 -0.017 0"
               material="color: #D7DF01"
               position="-0.04 -0.17 0"
-              rotation="0 0 -90">
+              rotation="0 0 -90"
+            >
             </a-triangle>
-            <a-entity id="pageInfo" position="0.15 -0.17 0" text="value: 1/1; color: white;"></a-entity>
+            <a-entity
+              id="pageInfo"
+              position="0.15 -0.17 0"
+              text="value: 1/1; color: white;"
+            ></a-entity>
             <a-triangle
               id="right_pagenation"
               vertex-a="0.017 0.017 0"
@@ -405,7 +509,8 @@
               vertex-c="0 -0.017 0"
               material="color: #D7DF01"
               position="0.06 -0.17 0"
-              rotation="0 0 90">
+              rotation="0 0 90"
+            >
             </a-triangle>
           </a-entity>
           <a-entity id="ui-info">
@@ -413,33 +518,109 @@
               id="language-mode"
               geometry="primitive: circle; radius: 0.01"
               material="color: white"
-             position="-0.11 0.19 0.01"
-              class="clickable">
-                <a-text value="EN" position="0 0 0.001" align="center" color="black"></a-text>
+              position="-0.11 0.19 0.01"
+              class="clickable"
+            >
+              <a-text
+                value="EN"
+                position="0 0 0.001"
+                align="center"
+                color="black"
+              ></a-text>
             </a-entity>
-            <a-entity rounded-box="width: 0.12; height: 0.02; depth: 0.001; radius: 0.003; color: white" position="0.07 0.19 0.001">
-              <a-text value="user: {{ username }}" position="0 0 0.002" align="center" color="black" font="size: 0.02"></a-text>
+            <a-entity
+              rounded-box="width: 0.12; height: 0.02; depth: 0.001; radius: 0.003; color: white"
+              position="0.07 0.19 0.001"
+            >
+              <a-text
+                value="user: {{ username }}"
+                position="0 0 0.002"
+                align="center"
+                color="black"
+                font="size: 0.02"
+              ></a-text>
             </a-entity>
           </a-entity>
-         
         </a-entity>
 
         <a-entity id="colorSelectorGroup" position="0.03 0 0" visible="false">
           <!-- 선택된 색깔을 보여줄 구 -->
-          <a-sphere id="selectedColorSphere" position="0 -0.25 -0.55" radius="0.03" color="#888888" class="clickable"></a-sphere>
+          <a-sphere
+            id="selectedColorSphere"
+            position="0 -0.25 -0.55"
+            radius="0.03"
+            color="#888888"
+            class="clickable"
+          ></a-sphere>
 
           <!-- 팔레트 그룹 -->
           <a-entity id="palette" position="0 0 -0.5">
-            <a-box id="redBox" position="-0.09 -0.3 0" scale="0.03 0.03 0.03" color="#FF0000" data-color="#FF0000" class="clickable"></a-box> <!-- 빨강 -->
-            <a-box id="orangeBox" position="-0.06 -0.3 0" scale="0.03 0.03 0.03" color="#FFA500" data-color="#FFA500" class="clickable"></a-box> <!-- 주황 -->
-            <a-box id="yellowBox" position="-0.03 -0.3 0" scale="0.03 0.03 0.03" color="#FFFF00" data-color="#FFFF00" class="clickable"></a-box> <!-- 노랑 -->
-            <a-box id="greenBox" position="0 -0.3 0"   scale="0.03 0.03 0.03" color="#008000" data-color="#008000" class="clickable"></a-box>  <!-- 초록 -->
-            <a-box id="blueBox" position="0.03 -0.3 0" scale="0.03 0.03 0.03" color="#0000FF" data-color="#0000FF" class="clickable"></a-box>  <!-- 파랑 -->
-            <a-box id="violetBox" position="0.06 -0.3 0" scale="0.03 0.03 0.03" color="#4B0082" data-color="#4B0082" class="clickable"></a-box> <!-- 남색 -->
-            <a-box id="purpleBox" position="0.09 -0.3 0" scale="0.03 0.03 0.03" color="#800080" data-color="#800080" class="clickable"></a-box> <!-- 보라 -->
+            <a-box
+              id="redBox"
+              position="-0.09 -0.3 0"
+              scale="0.03 0.03 0.03"
+              color="#FF0000"
+              data-color="#FF0000"
+              class="clickable"
+            ></a-box>
+            <!-- 빨강 -->
+            <a-box
+              id="orangeBox"
+              position="-0.06 -0.3 0"
+              scale="0.03 0.03 0.03"
+              color="#FFA500"
+              data-color="#FFA500"
+              class="clickable"
+            ></a-box>
+            <!-- 주황 -->
+            <a-box
+              id="yellowBox"
+              position="-0.03 -0.3 0"
+              scale="0.03 0.03 0.03"
+              color="#FFFF00"
+              data-color="#FFFF00"
+              class="clickable"
+            ></a-box>
+            <!-- 노랑 -->
+            <a-box
+              id="greenBox"
+              position="0 -0.3 0"
+              scale="0.03 0.03 0.03"
+              color="#008000"
+              data-color="#008000"
+              class="clickable"
+            ></a-box>
+            <!-- 초록 -->
+            <a-box
+              id="blueBox"
+              position="0.03 -0.3 0"
+              scale="0.03 0.03 0.03"
+              color="#0000FF"
+              data-color="#0000FF"
+              class="clickable"
+            ></a-box>
+            <!-- 파랑 -->
+            <a-box
+              id="violetBox"
+              position="0.06 -0.3 0"
+              scale="0.03 0.03 0.03"
+              color="#4B0082"
+              data-color="#4B0082"
+              class="clickable"
+            ></a-box>
+            <!-- 남색 -->
+            <a-box
+              id="purpleBox"
+              position="0.09 -0.3 0"
+              scale="0.03 0.03 0.03"
+              color="#800080"
+              data-color="#800080"
+              class="clickable"
+            ></a-box>
+            <!-- 보라 -->
           </a-entity>
         </a-entity>
-        
+
         <!-- Left Control Buttons -->
         <a-entity position="0.04 -0.27 -0.4" id="xypad" visible="false">
           <a-box
@@ -527,11 +708,7 @@
             class="clickable"
             id="input-button"
           >
-            <a-text
-              value="INPUT"
-              align="center"
-              position="0 0 0.011"
-            ></a-text>
+            <a-text value="INPUT" align="center" position="0 0 0.011"></a-text>
           </a-box>
           <a-box
             position="0 -0.1 0"
@@ -542,20 +719,18 @@
             class="clickable"
             id="eraser-button"
           >
-            <a-text
-              value="DEL"
-              align="center"
-              position="0 0 0.011"
-            ></a-text>
+            <a-text value="DEL" align="center" position="0 0 0.011"></a-text>
           </a-box>
         </a-entity>
       </a-camera>
     </a-scene>
   </body>
   <script>
-    document.getElementById('refreshProfile').addEventListener('click', function() {
-      location.reload();  // 페이지 새로고침
-    });
+    document
+      .getElementById("refreshProfile")
+      .addEventListener("click", function () {
+        location.reload(); // 페이지 새로고침
+      });
   </script>
   <script src="{% static 'lobby/js/text_translation.js' %}"></script>
   <script src="{% static 'lobby/js/record.js' %}"></script>

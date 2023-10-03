@@ -8,6 +8,7 @@
   margin: 20px;
   width: 70%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: auto;
 }
 .page.active {
   display: block;
@@ -78,6 +79,7 @@ html.a-fullscreen body {
   justify-content: center;
   align-items: center; /* 세로 방향 중앙 정렬 */
   z-index: 1000;
+  overflow: auto;
 }
 
 #Chat_Box {
@@ -243,6 +245,7 @@ html.a-fullscreen body {
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 20px;
+  z-index: 1001;
 }
 
 #subscriptionList li {

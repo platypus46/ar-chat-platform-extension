@@ -398,6 +398,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         pagenation.setAttribute("visible","true");
         ui_info.setAttribute("visible","false");
+        chatToolBox.setAttribute('visible', 'false');
         displayFriends();
         break;
       default:
@@ -576,23 +577,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function displayChatMessage(message, sender, positionY) {
     const friendsContainer = document.getElementById("friendsContainer");
-
+    const chatToolBox = document.getElementById("chatToolBox"); 
     let content = message.substring(message.indexOf(':') + 1).trim();
 
-    // 12글자마다 줄바꿈 추가
     const chunkedContent = [];
     for(let i = 0; i < content.length; i += 12) {
-      chunkedContent.push(content.substring(i, i + 12));
+        chunkedContent.push(content.substring(i, i + 12));
     }
-    content = chunkedContent.join('\n');
+    
+    const linesPerPage = 3;
+    const pages = [];
+    for(let i = 0; i < chunkedContent.length; i += linesPerPage) {
+        pages.push(chunkedContent.slice(i, i + linesPerPage).join('\n'));
+    }
 
-    // 줄바꿈 횟수에 따라 말풍선 높이 조정
-    const numberOfLines = chunkedContent.length;
+    const numberOfLines = Math.min(linesPerPage, chunkedContent.length); // 최대 3줄
     const height = 0.015 * numberOfLines;
 
-    // 가장 긴 줄의 길이를 기준으로 말풍선의 폭을 결정
     const maxLength = Math.max(...chunkedContent.map(line => line.length));
-    const width = 0.01 * maxLength + 0.008;  // 한 글자당 약 0.007 단위 폭을 가정하고 약간의 여유 공간을 추가
+    const width = 0.01 * maxLength + 0.008;
 
     const color = sender === username ? 'blue' : 'yellow';
 
@@ -601,9 +604,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const roundedBoxGeom = new THREE.RoundedBoxGeometry(width, height, 0.01, 0.01, 5); 
     
     if (sender === username) {
-      roundedBoxGeom.translate(-width / 2, 0, 0);
+        roundedBoxGeom.translate(-width / 2, 0, 0);
     } else {
-      roundedBoxGeom.translate(width / 2, 0, 0);
+        roundedBoxGeom.translate(width / 2, 0, 0);
     }
 
     const balloonMesh = new THREE.Mesh(roundedBoxGeom, meshMaterial);
@@ -614,7 +617,7 @@ document.addEventListener("DOMContentLoaded", function () {
     balloonEntity.setAttribute('class', 'clickable');
 
     const textEntity = document.createElement("a-troika-text");
-    textEntity.setAttribute('value', content); 
+    textEntity.setAttribute('value', pages[0]); 
     textEntity.setAttribute('color', 'black'); 
     textEntity.setAttribute('align', 'center'); 
     textEntity.setAttribute('width', width-0.02); 
@@ -630,23 +633,65 @@ document.addEventListener("DOMContentLoaded", function () {
     friendsContainer.appendChild(balloonEntity);
     balloonEntity.appendChild(textEntity);
 
-    balloonEntity.addEventListener('click', function() {
-      if (currentSelectedBalloon) {
-          currentSelectedBalloon.getObject3D('mesh').material.color.set(currentSelectedBalloonColor);
-          currentSelectedBalloon.classList.remove('selected');
-      }
-      if (balloonEntity.classList.contains('selected')) {
-          currentSelectedBalloon = null;
-          return;
-      }
+    balloonEntity.setAttribute('data-page', 0); 
+    balloonEntity.setAttribute('data-pages', pages.join('|')); 
 
+    balloonEntity.addEventListener('click', function() {
+      if (currentSelectedBalloon && currentSelectedBalloon !== balloonEntity) {
+        currentSelectedBalloon.getObject3D('mesh').material.color.set(currentSelectedBalloonColor);
+        currentSelectedBalloon.classList.remove('selected');
+        chatToolBox.setAttribute('visible', 'false');
+        
+        currentSelectedBalloon.setAttribute('data-page', 0);
+        const prevTextEntity = currentSelectedBalloon.querySelector("a-troika-text");
+        const prevPages = currentSelectedBalloon.getAttribute('data-pages').split('|');
+        prevTextEntity.setAttribute('value', prevPages[0]);
+      }
+    
+      if (balloonEntity.classList.contains('selected')) {
+        balloonMesh.material.color.set(color);
+        balloonEntity.classList.remove('selected');
+        currentSelectedBalloon = null;
+        chatToolBox.setAttribute('visible', 'false');
+    
+        balloonEntity.setAttribute('data-page', 0);
+        const textEntity = balloonEntity.querySelector("a-troika-text");
+        const pages = balloonEntity.getAttribute('data-pages').split('|');
+        textEntity.setAttribute('value', pages[0]);
+        return;
+      }
+    
       balloonMesh.material.color.set('orange');
       balloonEntity.classList.add('selected');
       currentSelectedBalloon = balloonEntity;
       currentSelectedBalloonColor = color;
-  });
+      chatToolBox.setAttribute('visible', 'true'); 
+    });
   }
 
+  function navigatePage(direction) {
+    if (!currentSelectedBalloon) return;
+    if (!currentSelectedBalloon) {
+      chatToolBox.setAttribute('visible', 'false'); // 챗 박스 숨기기
+      return;
+    }
+
+    const textEntity = currentSelectedBalloon.querySelector("a-troika-text");
+    const pages = currentSelectedBalloon.getAttribute('data-pages').split('|');
+    const currentPage = parseInt(currentSelectedBalloon.getAttribute('data-page'), 10);
+    let newPage = currentPage + direction;
+    newPage = Math.max(0, Math.min(pages.length - 1, newPage));
+
+    currentSelectedBalloon.setAttribute('data-page', newPage);
+    textEntity.setAttribute('value', pages[newPage]);
+  }
+
+  document.getElementById("chatUpButton").addEventListener('click', function() {
+    navigatePage(-1);
+  });
+  document.getElementById("chatDownButton").addEventListener('click', function() {
+    navigatePage(1);
+  });
 
   // displayConversation 함수 수정
   function displayConversation() {
@@ -672,7 +717,7 @@ document.addEventListener("DOMContentLoaded", function () {
     messages.forEach((message, index) => {
         // 발신자 이름 추출
         const sender = message.substring(0, message.indexOf(':'));
-        displayChatMessage(message, sender, 0.03 * (4 - index)+0.05);
+        displayChatMessage(message, sender, 0.04 * (4 - index)+0.04);
     });
 
 
@@ -840,6 +885,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
     chatbutton.addEventListener("click", function () {
+      chatToolBox.setAttribute('visible', 'false');
       initializeFriends(); // 친구 목록 초기화
       toggleChat();
     });

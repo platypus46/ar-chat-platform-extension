@@ -422,7 +422,37 @@
           material="opacity: 0.5; transparent: true; "
           position="0.1 0 -0.5"
           visible="false"
-        >
+        > <a-entity
+            id="chatToolBox"
+            rounded-box="width: 0.05; height: 0.28; depth: 0.001; radius: 0.008; color: white"
+            position="0.2 0 0"
+            visible="false"
+            > 
+            <a-entity
+              id="chatUpButton"
+              rounded-plane-box="width:0.03; height: 0.03; radius: 0.008; color: gray"
+              position="0 0.1 0.01"
+              class="clickable"
+              ><a-entity troika-text="value: up; 
+                font: /static/lobby/font/NanumGothic-Bold.ttf; 
+                fontSize: 0.008; 
+                color: black;" 
+                position="0 0 0.001"
+              ></a-entity>
+            </a-entity>
+            <a-entity
+              id="chatDownButton"
+              rounded-plane-box="width:0.03; height: 0.03; radius: 0.008; color: gray"
+              position="0 0.06 0.01"
+              class="clickable"
+              ><a-entity troika-text="value: down; 
+                font: /static/lobby/font/NanumGothic-Bold.ttf; 
+                fontSize: 0.008; 
+                color: black;" 
+                position="0 0 0.001"
+              ></a-entity>
+            </a-entity>
+          </a-entity>
           <a-entity
             id="profile"
             geometry="primitive: plane; width: 0.2; height: 0.2"

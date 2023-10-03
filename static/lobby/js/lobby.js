@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const messageInputDom = document.querySelector("#chatInput");
         const message = messageInputDom.value;
         // WebSocket이 열려 있을 때만 메시지를 보냄
-        if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+        if (message && chatSocket && chatSocket.readyState === WebSocket.OPEN) {
           chatSocket.send(
             JSON.stringify({
               message: message,
@@ -86,6 +86,9 @@ document.addEventListener("DOMContentLoaded", function () {
     .addEventListener("click", function () {
       document.getElementById("chatWindow").style.display = "none";
       document.getElementById("chatMessages").innerHTML = "";
+      if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED) {
+        chatSocket.close();
+      }
     });
 
   addFriendButton.addEventListener("click", function () {

@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
       e.target.parentNode.remove();
     } else if (e.target.classList.contains("chatFriendButton")) {
-      const friendUsername = e.target.getAttribute("data-username");
+      let friendUsername = e.target.id.replace("chatWithFriend_", "");
       chatWithFriend(friendUsername);
     }
   });

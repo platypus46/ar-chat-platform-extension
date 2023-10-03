@@ -57,9 +57,10 @@
 
 #body {
   height: 100vh; /* 화면 높이를 100%로 설정 */
-  overflow-y: hidden; /* 세로 스크롤 숨기기 */
 }
-
+html.a-fullscreen body {
+  overflow: auto;
+}
 #Chat_Box,
 #Subscribe_Box,
 #Setting_Box {
@@ -235,6 +236,9 @@
 }
 
 #chatWindow {
+  position: absolute;
+  top: 50%;
+  right: 50%;
   background-color: #f7f7f7;
   padding: 20px;
   border-radius: 10px;

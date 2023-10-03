@@ -17,6 +17,8 @@ let language_text = language_mode.querySelector("a-text");
 
 let subRecordButton;
 let canClickSpaceBar = true; 
+let canClickCharPagerButtons = false;
+let canClickEmojiPagerButtons = false;
 
 let wasSubRecording = false; 
 
@@ -60,6 +62,7 @@ AFRAME.registerComponent('char-pager', {
 
           prevBox.addEventListener('click', function() {
             if (canClickSpaceBar) return; 
+            if (canClickEmojiPagerButtons) return;
 
             if (data.current > 0) {
                 data.current -= 5;
@@ -74,7 +77,7 @@ AFRAME.registerComponent('char-pager', {
             let charEntity = document.createElement('a-text');
             charEntity.setAttribute('value', char);
             charEntity.setAttribute('color', 'black');
-            charEntity.setAttribute('position', {x: (index + 1) * spacing - (totalWidth / 2) + (boxWidth / 2), y: 0, z: 0.002}); 
+            charEntity.setAttribute('position', {x: (index + 1) * spacing - (totalWidth / 2) + (boxWidth / 2), y: 0, z: 0.001}); 
             charEntity.setAttribute('scale', '0.03 0.03 0.03'); 
         
             let boxEntity = document.createElement('a-box');
@@ -85,6 +88,8 @@ AFRAME.registerComponent('char-pager', {
         
             boxEntity.addEventListener('click', function() {
               if (canClickSpaceBar) return;  
+              if (canClickEmojiPagerButtons) return;
+
               
               charEntity.setAttribute('color', 'yellow');
               if (sttText) {
@@ -116,6 +121,7 @@ AFRAME.registerComponent('char-pager', {
 
           nextBox.addEventListener('click', function() {
             if (canClickSpaceBar) return; 
+            if (canClickEmojiPagerButtons) return;
 
             if (data.current + 5 < data.chars.length) {
                 data.current += 5;
@@ -130,6 +136,122 @@ AFRAME.registerComponent('char-pager', {
       setTimeout(refreshChars, 100);
     }
 });
+
+AFRAME.registerComponent('emoji-pager', {
+  schema: {
+      chars: {default: ['😀','😃','😄','😁','😆',
+      '😅','🤣','😂','🙂','🙃']},
+      current: {default: 0}
+  },
+  init: function () {
+      let data = this.data;
+      let el = this.el;
+
+      function refreshChars() {
+          let start = data.current;
+          let end = start + 5;
+          let displayedChars = data.chars.slice(start, end);
+          
+          const totalWidth = 0.1;
+          const numOfBoxes = 7; 
+          const boxWidth = totalWidth / numOfBoxes;
+          const spacing = boxWidth; 
+
+          el.innerHTML = '';
+
+          // 이전버튼
+          let prevButton = document.createElement('a-text');
+          prevButton.setAttribute('value', '<');
+          prevButton.setAttribute('color', 'black');
+          prevButton.setAttribute('position', {x: - (totalWidth / 2) + (boxWidth / 2), y: 0, z: 0.001}); 
+          prevButton.setAttribute('scale', '0.02 0.02 0.02'); 
+
+          let prevBox = document.createElement('a-box');
+          prevBox.setAttribute('position', {x: - (totalWidth / 2) + (boxWidth / 2), y: 0, z: 0});
+          prevBox.setAttribute('scale', `${boxWidth} 0.02 0.002`);
+          prevBox.setAttribute('color', 'white');
+          prevBox.setAttribute('class', 'clickable');
+
+          prevBox.addEventListener('click', function() {
+            if (canClickSpaceBar) return; 
+            if (canClickCharPagerButtons) return;
+
+            if (data.current > 0) {
+                data.current -= 5;
+                refreshChars();
+            }
+          });
+
+          el.appendChild(prevBox);
+          el.appendChild(prevButton);
+
+          displayedChars.forEach((char, index) => {
+            let charEntity = document.createElement('a-troika-text');
+            charEntity.setAttribute('value', char); 
+            charEntity.setAttribute('color', 'black'); 
+            charEntity.setAttribute('position', {x: (index + 1) * spacing - (totalWidth / 2) + (boxWidth / 2), y: 0, z: 0.001}); 
+            charEntity.setAttribute('scale', '0.03 0.03 0.03'); 
+            charEntity.setAttribute('font', '/static/lobby/font/NanumGothic-Bold.ttf'); 
+            charEntity.setAttribute('fontSize', '0.03'); 
+            charEntity.setAttribute('letterSpacing', '0'); 
+            charEntity.setAttribute('anchor', 'center'); 
+        
+            let boxEntity = document.createElement('a-box');
+            boxEntity.setAttribute('position', {x: (index + 1) * spacing - (totalWidth / 2) + (boxWidth / 2), y: 0, z: 0});
+            boxEntity.setAttribute('scale', `${boxWidth} 0.02 0.002`);
+            boxEntity.setAttribute('color', 'white');
+            boxEntity.setAttribute('class', 'clickable');
+        
+            boxEntity.addEventListener('click', function() {
+              if (canClickSpaceBar) return;  
+              if (canClickCharPagerButtons) return;
+              
+              charEntity.setAttribute('color', 'yellow');
+              if (sttText) {
+                  let currentText = sttText.getAttribute('troika-text').value;
+                  sttText.setAttribute('troika-text', `value: ${currentText + char}`);
+              }
+              setTimeout(function() {
+                  charEntity.setAttribute('color', 'black'); 
+              }, 1000); 
+          });
+          
+        
+            el.appendChild(boxEntity);
+            el.appendChild(charEntity);
+        });
+        
+          // 다음버튼
+          let nextButton = document.createElement('a-text');
+          nextButton.setAttribute('value', '>');
+          nextButton.setAttribute('color', 'black');
+          nextButton.setAttribute('position', {x: 6 * spacing - (totalWidth / 2) + (boxWidth / 2), y: 0, z: 0.001}); 
+          nextButton.setAttribute('scale', '0.02 0.02 0.02'); 
+
+          let nextBox = document.createElement('a-box');
+          nextBox.setAttribute('position', {x: 6 * spacing - (totalWidth / 2) + (boxWidth / 2), y: 0, z: 0});
+          nextBox.setAttribute('scale', `${boxWidth} 0.02 0.002`);
+          nextBox.setAttribute('color', 'white');
+          nextBox.setAttribute('class', 'clickable');
+
+          nextBox.addEventListener('click', function() {
+            if (canClickSpaceBar) return; 
+             if (canClickCharPagerButtons) return;
+
+            if (data.current + 5 < data.chars.length) {
+                data.current += 5;
+                refreshChars();
+            }
+          });
+
+          el.appendChild(nextBox);
+          el.appendChild(nextButton);
+      }
+
+      setTimeout(refreshChars, 100);
+    }
+});
+
 
 async function initRecorder() {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });

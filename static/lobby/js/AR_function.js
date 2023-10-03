@@ -163,7 +163,7 @@ function GPTQuestion() {
     const newQuestion = gptsttText.getAttribute('troika-text').value;
     if (longQuestion !== newQuestion) {
       longQuestion = newQuestion;
-      updateQuestion(longQuestion);  // 이 부분 추가
+      updateQuestion(longQuestion); 
     }
   }, 500);
 

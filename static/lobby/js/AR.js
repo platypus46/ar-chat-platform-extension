@@ -32,24 +32,44 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentPosition = charPagerToolbar .getAttribute("position");
   let spaceBar = document.querySelector("#spaceBar");
 
+  let emojiButton =  document.querySelector("#emojiButton");
+  let emojiToolbar = document.querySelector("#emojiPagerToolbar");
   let chatText = document.querySelector("#chatbutton a-text");
   let miscText = document.querySelector("#Miscbutton a-text");
 
-
   specialCharacters.addEventListener('click', function() {
-    if (charPagerToolbar.getAttribute('visible')) {
-      charPagerToolbar.setAttribute('visible', false);
-      charPagerToolbar.setAttribute("position", {x: currentPosition.x, y: currentPosition.y, z: 0.009});
-      spaceBar.setAttribute('visible', true);
-      canClickSpaceBar=true;
-
-    } else {
-      charPagerToolbar.setAttribute('visible', true);
-      spaceBar.setAttribute('visible', false);
-      charPagerToolbar.setAttribute("position", {x: currentPosition.x, y: currentPosition.y, z: 0.012});
-      canClickSpaceBar=false;
-    }
+    emojiToolbar.setAttribute('visible', false);
+    charPagerToolbar.setAttribute('visible', !charPagerToolbar.getAttribute('visible'));
+    
+    updateToolbarPositions();
+    updateSpaceBarVisibility();
+    updateToolbarAccessibility();
   });
+
+  emojiButton.addEventListener('click', function() {
+    charPagerToolbar.setAttribute('visible', false);
+    emojiToolbar.setAttribute('visible', !emojiToolbar.getAttribute('visible'));
+    
+    updateToolbarPositions();
+    updateSpaceBarVisibility();
+    updateToolbarAccessibility();
+  });
+
+  function updateToolbarPositions() {
+    charPagerToolbar.setAttribute("position", {x: currentPosition.x, y: currentPosition.y, z: charPagerToolbar.getAttribute('visible') ? 0.012 : 0.009});
+    emojiToolbar.setAttribute("position", {x: currentPosition.x, y: currentPosition.y, z: emojiToolbar.getAttribute('visible') ? 0.012 : 0.009});
+  }
+
+  function updateSpaceBarVisibility() {
+    spaceBar.setAttribute('visible', !charPagerToolbar.getAttribute('visible') && !emojiToolbar.getAttribute('visible'));
+  }
+
+  function updateToolbarAccessibility() {
+    canClickCharPagerButtons = charPagerToolbar.getAttribute('visible');
+    canClickEmojiPagerButtons = emojiToolbar.getAttribute('visible');
+    canClickSpaceBar = !canClickCharPagerButtons && !canClickEmojiPagerButtons;
+  }
+
 
   language_mode.addEventListener("click", function() {
     if (currentLanguage === "ko-kr") {
@@ -551,6 +571,9 @@ document.addEventListener("DOMContentLoaded", function () {
     return new THREE.ExtrudeGeometry(shape, extrudeSettings);
   };
 
+  let currentSelectedBalloon = null;
+  let currentSelectedBalloonColor = '';
+
   function displayChatMessage(message, sender, positionY) {
     const friendsContainer = document.getElementById("friendsContainer");
 
@@ -565,11 +588,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 줄바꿈 횟수에 따라 말풍선 높이 조정
     const numberOfLines = chunkedContent.length;
-    const height = 0.017 * numberOfLines;
+    const height = 0.015 * numberOfLines;
 
     // 가장 긴 줄의 길이를 기준으로 말풍선의 폭을 결정
     const maxLength = Math.max(...chunkedContent.map(line => line.length));
-    const width = 0.01 * maxLength + 0.01;  // 한 글자당 약 0.007 단위 폭을 가정하고 약간의 여유 공간을 추가
+    const width = 0.01 * maxLength + 0.008;  // 한 글자당 약 0.007 단위 폭을 가정하고 약간의 여유 공간을 추가
 
     const color = sender === username ? 'blue' : 'yellow';
 
@@ -588,15 +611,40 @@ document.addEventListener("DOMContentLoaded", function () {
     balloonEntity.setObject3D('mesh', balloonMesh);
     const positionStr = sender === username ? `0.08 ${positionY} 0` : `-0.08 ${positionY} 0`;
     balloonEntity.setAttribute('position', positionStr);
+    balloonEntity.setAttribute('class', 'clickable');
 
-    const textEntity = document.createElement("a-entity");
-    textEntity.setAttribute("text", `value: ${content}; color: white; align: center; width: ${width-0.02};`); 
-
+    const textEntity = document.createElement("a-troika-text");
+    textEntity.setAttribute('value', content); 
+    textEntity.setAttribute('color', 'black'); 
+    textEntity.setAttribute('align', 'center'); 
+    textEntity.setAttribute('width', width-0.02); 
+    textEntity.setAttribute('font', '/static/lobby/font/NanumGothic-Bold.ttf'); 
+    textEntity.setAttribute("fontsize", "0.04");
+    textEntity.setAttribute('scale', '0.04 0.04 0.04'); 
+    textEntity.setAttribute('anchor', 'center'); 
+    textEntity.setAttribute('baseline', 'center');
+    
     const textPositionStr = sender === username ? `-${width / 2} 0 0.01` : `${width / 2} 0 0.01`;
     textEntity.setAttribute("position", textPositionStr);
 
     friendsContainer.appendChild(balloonEntity);
     balloonEntity.appendChild(textEntity);
+
+    balloonEntity.addEventListener('click', function() {
+      if (currentSelectedBalloon) {
+          currentSelectedBalloon.getObject3D('mesh').material.color.set(currentSelectedBalloonColor);
+          currentSelectedBalloon.classList.remove('selected');
+      }
+      if (balloonEntity.classList.contains('selected')) {
+          currentSelectedBalloon = null;
+          return;
+      }
+
+      balloonMesh.material.color.set('orange');
+      balloonEntity.classList.add('selected');
+      currentSelectedBalloon = balloonEntity;
+      currentSelectedBalloonColor = color;
+  });
   }
 
 
@@ -624,7 +672,7 @@ document.addEventListener("DOMContentLoaded", function () {
     messages.forEach((message, index) => {
         // 발신자 이름 추출
         const sender = message.substring(0, message.indexOf(':'));
-        displayChatMessage(message, sender, 0.03 * (4 - index));
+        displayChatMessage(message, sender, 0.03 * (4 - index)+0.05);
     });
 
 
@@ -642,7 +690,7 @@ document.addEventListener("DOMContentLoaded", function () {
     messages.forEach((message, index) => {
        // 발신자 이름 추출
        const sender = message.substring(0, message.indexOf(':'));
-       displayChatMessage(message, sender, 0.03 * (4 - index));
+       displayChatMessage(message, sender, 0.03 * (4 - index)+0.05);
     });
   }
 

@@ -85,11 +85,11 @@ AFRAME.registerComponent('char-pager', {
         
             boxEntity.addEventListener('click', function() {
               if (canClickSpaceBar) return;  
-          
+              
               charEntity.setAttribute('color', 'yellow');
               if (sttText) {
-                  let currentText = sttText.getAttribute('value');
-                  sttText.setAttribute('value', currentText + char);
+                  let currentText = sttText.getAttribute('troika-text').value;
+                  sttText.setAttribute('troika-text', `value: ${currentText + char}`);
               }
               setTimeout(function() {
                   charEntity.setAttribute('color', 'black'); 
@@ -164,18 +164,17 @@ async function initRecorder() {
       if (isRecording) {
         newTranscription = formatText(data.transcription);
       } else { 
-        newTranscription = formatText(sttText.getAttribute("value") + data.transcription);
+        newTranscription = formatText(sttText.getAttribute('troika-text').value + data.transcription);
       }
-      sttText.setAttribute("value", newTranscription);
+      sttText.setAttribute('troika-text', 'value', newTranscription);
 
       subRecordButton.setAttribute("color", "red"); 
 
       if (!isBoxVisible) {
-        subTextbar.setAttribute("value", (data.transcription).substring(0, 10).replace(/\n/g, ""));
-        subTextbar.setAttribute("scale", desiredScale);
+        subTextbar.setAttribute('troika-text', 'value', (data.transcription).substring(0, 10).replace(/\n/g, ""));
       }
       else {
-        subTextbar.setAttribute("value", "");
+        subTextbar.setAttribute('troika-text', 'value', "");
       }
     }
     audioChunks = [];
@@ -188,7 +187,7 @@ async function initRecorder() {
       isRecording = false;
       recordButton.setAttribute("gltf-model", recordButtonModel);
     } else {
-      sttText.setAttribute("value", ""); // 녹음 시작 전 sttText 초기화
+      sttText.setAttribute("troika-text","value", ""); // 녹음 시작 전 sttText 초기화
       mediaRecorder.start();
       recordText.setAttribute("value", "recording...");
       isRecording = true;
@@ -213,23 +212,25 @@ async function initRecorder() {
     let targetPositionY;
   
     if (isBoxVisible) {
-      targetPositionY = "-0.08"; 
+        targetPositionY = "-0.08"; 
 
-      subTextbar.setAttribute("value", sttText.getAttribute("value").substring(0, 10).replace(/\n/g, ""));
-      subTextbar.setAttribute("scale", desiredScale);
+        // `troika-text`의 `value` 속성을 설정합니다.
+        const currentText = sttText.getAttribute('troika-text').value;
+        subTextbar.setAttribute('troika-text', `value: ${currentText.substring(0, 10).replace(/\n/g, "")}`);
     } else {
-      targetPositionY = "0.08"; 
+        targetPositionY = "0.08"; 
 
-      subTextbar.setAttribute("value", "");
+        // `troika-text`의 `value` 속성을 빈 문자열로 설정합니다.
+        subTextbar.setAttribute('troika-text', 'value: ');
     }
   
     roundBox.setAttribute("animation", `
-      property: position;
-      to: 0 ${targetPositionY} -0.02;
-      dur: 500; 
-      easing: easeInOutQuad;
+        property: position;
+        to: 0 ${targetPositionY} -0.02;
+        dur: 500; 
+        easing: easeInOutQuad;
     `);
-  
+
     isBoxVisible = !isBoxVisible; 
 });
 
@@ -238,7 +239,7 @@ async function initRecorder() {
 }
 
 function eraseText() {
-  sttText.setAttribute("value", "");
+  sttText.setAttribute('troika-text', 'value', "");
 }
 
 function formatText(content) {
@@ -252,23 +253,22 @@ function formatText(content) {
 
   const lines = chunkedContent.length;
   const newYPosition = 0.04 - (lines - 1) * lineHeight;
-  sttText.setAttribute("position", `-0.04 ${newYPosition} 0.01`);
+  sttText.setAttribute("position", `-0.02 ${newYPosition} 0.02`);
 
   return chunkedContent.join('\n');
 }
 
 document.querySelector("#backSpacebar").addEventListener("click", function() {
-  let currentText = sttText.getAttribute("value");
+  let currentText = sttText.getAttribute('troika-text').value;
   let newText = currentText.slice(0, -1);
-  sttText.setAttribute("value", newText);
+  sttText.setAttribute('troika-text', 'value', newText);
 });
 
 document.querySelector("#spaceBar").addEventListener("click", function() {
-  let currentText = sttText.getAttribute("value");
+  let currentText = sttText.getAttribute('troika-text').value;
   let newText = currentText + ' ';
-  sttText.setAttribute("value", newText);
+  sttText.setAttribute('troika-text', 'value', newText);
 });
-
 
 window.addEventListener("DOMContentLoaded", (event) => {
   initRecorder().catch(err => console.error('Initialization failed:', err));

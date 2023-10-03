@@ -67,14 +67,13 @@ function lengthMeasurement() {
 
     let measurementText = document.querySelector("#sttText");
 
-    measurementText.setAttribute("value", formatText(getLocalizedText("Length: Calculating...")));
+    measurementText.setAttribute("troika-text", `value: ${formatText(getLocalizedText("Length: Calculating..."))}`);
 
     if (!isBoxVisible) {
-      subTextbar.setAttribute("value", getLocalizedText("Length: Calculating...").replace(/\n/g, ""));
-      subTextbar.setAttribute("scale", desiredScale);
+      subTextbar.setAttribute("troika-text", `value: ${getLocalizedText("Length: Calculating...").replace(/\n/g, "")}`);
     }
     else {
-      subTextbar.setAttribute("value", "");
+      subTextbar.setAttribute("troika-text", "value: ");
     }
     eraserButton = document.querySelector("#eraser-button");
 
@@ -110,14 +109,13 @@ function lengthMeasurement() {
                   position
                 );
                 const roundedLength = parseFloat(length.toFixed(2));
-                measurementText.setAttribute("value", formatText(getLocalizedText("Length: Value", { length: roundedLength })));
+                measurementText.setAttribute("troika-text", `value: ${formatText(getLocalizedText("Length: Value", { length: roundedLength }))}`);
 
                 if (!isBoxVisible) {
-                  subTextbar.setAttribute("value", getLocalizedText("Length: Value", { length: roundedLength }).replace(/\n/g, ""));
-                  subTextbar.setAttribute("scale", desiredScale);
+                  subTextbar.setAttribute("troika-text", `value: ${getLocalizedText("Length: Value", { length: roundedLength }).replace(/\n/g, "")}`);
                 }
                 else {
-                  subTextbar.setAttribute("value", "");
+                  subTextbar.setAttribute("troika-text", "value: ");
                 }
                 
               }
@@ -134,14 +132,13 @@ function lengthMeasurement() {
         dotEntity = null;
         lineEntity = null;
         isFirstMeasurement = true; // Reset the flag
-        measurementText.setAttribute("value", formatText(getLocalizedText("Length: Initialized")));
+        measurementText.setAttribute("troika-text", `value: ${formatText(getLocalizedText("Length: Initialized"))}`);
 
         if (!isBoxVisible) {
-          subTextbar.setAttribute("value", getLocalizedText("Length: Initialized").replace(/\n/g, ""));
-          subTextbar.setAttribute("scale", desiredScale);
+          subTextbar.setAttribute("troika-text", `value: ${getLocalizedText("Length: Initialized").replace(/\n/g, "")}`);
         }
         else {
-          subTextbar.setAttribute("value", "");
+          subTextbar.setAttribute("troika-text", "value: ");
         }
       }
     };
@@ -160,10 +157,10 @@ function GPTQuestion() {
   document.getElementById("Miscbutton").setAttribute("visible", false);
 
 
-  let longQuestion = gptsttText.getAttribute("value") || "Ask a question";
+  let longQuestion = gptsttText.getAttribute('troika-text').value || "Ask a question";
 
-  checkQuestionInterval=setInterval(function () {
-    const newQuestion = gptsttText.getAttribute("value");
+  checkQuestionInterval = setInterval(function () {
+    const newQuestion = gptsttText.getAttribute('troika-text').value;
     if (longQuestion !== newQuestion) {
       longQuestion = newQuestion;
       updateQuestion(longQuestion);  // 이 부분 추가
@@ -447,7 +444,7 @@ function createPostIt(position, color) {
   console.log(sttText.getAttribute("value")); 
   // 텍스트 엔터티 생성 및 속성 설정
   const textEntity = document.createElement("a-text");
-  textEntity.setAttribute("value", sttText.getAttribute("value"));
+  textEntity.setAttribute("value", sttText.getAttribute('troika-text').value);
   textEntity.setAttribute("align", "center");
   textEntity.setAttribute("position", `${position.x} ${position.y} ${position.z+zvalue}`);
   textEntity.setAttribute("width", 0.4);

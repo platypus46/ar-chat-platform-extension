@@ -162,14 +162,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isChatVisible === false) {
       selectedIndex = 0;
       enableChatButtons();
-      sttText.setAttribute("value", "Chat mode");
+      sttText.setAttribute("troika-text","value", "Chat mode");
       pagenation.setAttribute("visible","true");
       ui_info.setAttribute("visible","false");
       playall(friend);
     } else{
       isMiscVisible=false;
       enableUIButtons();
-      sttText.setAttribute("value", "No mode");
+      sttText.setAttribute("troika-text","value", "No mode");
       pagenation.setAttribute("visible","false");
       ui_info.setAttribute("visible","true");
       pauseall(friend);
@@ -205,14 +205,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isMiscVisible === false) {
       selectedIndex = 0;
       enableMiscButtons();
-      sttText.setAttribute("value", "Misc Mode");
+      sttText.setAttribute("troika-text", "value", "Misc Mode");
       ui_info.setAttribute("visible","false");
       playall(misc);
       pagenation.setAttribute("visible","true");
     } else{
       isChatVisible = false;
       enableUIButtons();
-      sttText.setAttribute("value", "No mode");
+      sttText.setAttribute("troika-text", "value", "No mode");
       ui_info.setAttribute("visible","true");
       pagenation.setAttribute("visible","false");
       pauseall(misc);
@@ -468,11 +468,10 @@ document.addEventListener("DOMContentLoaded", function () {
         ui_info.setAttribute("visible","false");
 
         if (!isBoxVisible) {
-          subTextbar.setAttribute("value","Misc Mode");
-          subTextbar.setAttribute("scale", desiredScale);
+          subTextbar.setAttribute("troika-text","value","Misc Mode");
           }
         else {
-          subTextbar.setAttribute("value", "");
+          subTextbar.setAttribute("troika-text","value", "");
         }
         
         onBackwardButtonClick();
@@ -661,7 +660,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const start = currentFeaturePage * itemsPerPage;
     const end = start + itemsPerPage;
     const currentdisplayMisc = displayMiscFeatures.slice(start, end);
-    sttText.setAttribute("value", "Misc Mode");
+    sttText.setAttribute("troika-text","value", "Misc Mode");
 
     const totalPages = Math.ceil(displayMiscFeatures.length / itemsPerPage);
     document.getElementById("pageInfo").setAttribute("text", `value: ${currentFeaturePage + 1}/${totalPages}; color: white;`);
@@ -726,23 +725,21 @@ document.addEventListener("DOMContentLoaded", function () {
     // "GPT" 항목이 선택된 경우
     if (selectedFeature.name === "Questions and Answers"||selectedFeature.name === "질문하기") {
       if (currentLanguage === "en") {
-        sttText.setAttribute('value', 'Ask a Question');
+        sttText.setAttribute("troika-text",'value', 'Ask a Question');
         if (!isBoxVisible) {
-          subTextbar.setAttribute("value", "Ask a Question");
-          subTextbar.setAttribute("scale", desiredScale);
+          subTextbar.setAttribute("troika-text","value", "Ask a Question");
         }
         else {
-          subTextbar.setAttribute("value", "");
+          subTextbar.setAttribute("troika-text","value", "");
         }
       } else if (currentLanguage === "ko-kr") {
-        sttText.setAttribute('value', '질문하기');
+        sttText.setAttribute("troika-text",'value', '질문하기');
 
         if (!isBoxVisible) {
-          subTextbar.setAttribute("value", "질문하기");
-          subTextbar.setAttribute("scale", desiredScale);
+          subTextbar.setAttribute("troika-text","value", "질문하기");
         }
         else {
-          subTextbar.setAttribute("value", "");
+          subTextbar.setAttribute("troika-text","value", "");
         }
       }
       GPTQuestion();
@@ -810,7 +807,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let inputButton = document.querySelector("#input-button");
 
   inputButton.addEventListener("click", function () {
-    const message = sttText.getAttribute("value");
+    const message = sttText.getAttribute("troika-text").value;
     // Only run the following logic when the chat page is visible
     if (isChatVisible) {
       if (chatSocket) {
@@ -869,7 +866,7 @@ document.addEventListener("DOMContentLoaded", function () {
     else if (isValidExpression(message)) {
       try {
           let result = eval(message);
-          sttText.setAttribute('value', result.toString());
+          sttText.setAttribute("troika-text",'value', result.toString());
       } catch (e) {
           console.error("Error in evaluating the expression:", e);
       }

@@ -7,14 +7,12 @@ document.addEventListener("DOMContentLoaded", function () {
   function chatWithFriend(friendUsername) {
     if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED) {
       chatSocket.close();
-      // 기다려서 WebSocket이 완전히 닫히게 한 후에 새로운 WebSocket을 생성
       return;
     }
 
     document.querySelector("#chatInput").onkeyup = null;
     document.querySelector("#sendChatMessage").onclick = null;
 
-    // 새로운 WebSocket을 열고 전역 변수를 업데이트
     room_name =
       friendUsername < username
         ? `${friendUsername}_${username}`

@@ -91,7 +91,7 @@ html.a-fullscreen {
   justify-content: center;
   align-items: center; /* 세로 방향 중앙 정렬 */
   z-index: 1000;
-  overflow: auto;
+  overflow: hidden;
 }
 
 #Chat_Box {
@@ -100,7 +100,46 @@ html.a-fullscreen {
   top: 0%;
   left: 0%;
 }
+.speech-balloon {
+  position: relative;
+  width: 50%;
+  height: 30%;
+  background-color: #3498db;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s, visibility 0.5s; /* transition 속성 추가 */
+}
 
+#Chatbox_text {
+  position: absolute;
+  top: 45%;
+  right: 45%;
+  opacity: 1;
+  visibility: visible;
+}
+
+#Chat_Box:hover #speech-balloon-1 {
+  clip-path: polygon(100% 0, 100% 61%, 35% 61%, 0 100%, 20% 61%, 0% 60%, 0 0);
+  top: 5%;
+  opacity: 1;
+  visibility: visible;
+  animation: fadeIn 1s forwards;
+}
+
+#Chat_Box:hover #speech-balloon-2 {
+  clip-path: polygon(100% 0, 100% 61%, 80% 61%, 100% 100%, 65% 61%, 0% 60%, 0 0);
+  top: 15%;
+  opacity: 1;
+  visibility: visible;
+  animation: fadeIn 1.2s forwards;
+}
+
+#Chat_Box:hover #Chatbox_text {
+  opacity: 0;
+  visibility: hidden;
+  transition-delay: 0.5s; /* 원하는 딜레이 시간으로 조정 */
+  transition: opacity 1s, visibility 1s;
+}
 #Subscribe_Box {
   background: radial-gradient(
     rgb(255, 254, 234) 0%,
@@ -202,10 +241,13 @@ html.a-fullscreen {
   border-bottom: none;
 }
 .message {
-  max-width: 80%;
+  max-width: 50%;
   padding: 10px;
   margin: 5px;
   border-radius: 10px;
+  background-color: aliceblue;
+  outline-width: 2px;
+  border-radius: 80%;
 }
 
 .myMessage {
@@ -253,13 +295,16 @@ html.a-fullscreen {
   position: absolute;
   top: 50%;
   right: 50%;
-  background-color: #f7f7f7;
   padding: 20px;
+  background-color: #882b91;
   border-radius: 10px;
   margin-bottom: 20px;
   z-index: 1001;
 }
-
+#chatMessages p {
+  border-radius: 10px; /* 원하는 값으로 변경 가능 */
+  background-color: #ccc;
+}
 #subscriptionList li {
   padding: 10px;
   background-color: #f7f7f7;

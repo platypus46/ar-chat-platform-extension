@@ -22,6 +22,10 @@
       var recordStopButtonModel =
         "{% static 'lobby/img_model/record_stop_button.glb' %}";
     </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
 
     <!-- AR화면 -->
     <script src="https://threejs.org/build/three.js"></script>
@@ -60,7 +64,11 @@
       <span id="meteor10"></span>
     </section>
     <div id="Main_Box">
-      <div id="Chat_Box">Chat</div>
+      <div id="Chat_Box">
+        <div class="speech-balloon" id="speech-balloon-1"></div>
+        <div class="speech-balloon" id="speech-balloon-2"></div>
+        <div id="Chatbox_text">Chat</div>
+      </div>
       <div id="Subscribe_Box">Subscribe</div>
       <div id="Setting_Box">setting</div>
     </div>
@@ -279,12 +287,10 @@
             >
               <a-entity
                 id="sttText"
-
                 troika-text="value: PLATYVERSE; 
                 font: /static/lobby/font/NanumGothic-Bold.ttf; 
                 fontSize: 0.01; 
-                color: white;" 
-
+                color: white;"
                 position="-0.01 0.04 0.02"
               ></a-entity>
             </a-entity>
@@ -316,7 +322,10 @@
               position="0.05 0.015 0.011"
               class="clickable"
             >
-              <a-entity troika-text="value: 😊; font: /static/lobby/font/NanumGothic-Bold.ttf; fontSize: 0.008;" position="0 0 0.001"></a-entity>
+              <a-entity
+                troika-text="value: 😊; font: /static/lobby/font/NanumGothic-Bold.ttf; fontSize: 0.008;"
+                position="0 0 0.001"
+              ></a-entity>
             </a-circle>
             <a-entity
               id="backSpacebar"
@@ -393,7 +402,7 @@
                 troika-text="value: PLATYVERSE; 
                   font: /static/lobby/font/NanumGothic-Bold.ttf; 
                   fontSize: 0.008; 
-                  color: black;" 
+                  color: black;"
                 position="-0.01 0 0.01"
               ></a-entity>
             </a-box>
@@ -422,7 +431,8 @@
           material="opacity: 0.5; transparent: true; "
           position="0.1 0 -0.5"
           visible="false"
-        > <a-entity
+        >
+          <a-entity
             id="chatToolBox"
             rounded-box="width: 0.05; height: 0.15; depth: 0.001; radius: 0.008; color: white"
             position="0.13 0 0.01"
@@ -548,10 +558,11 @@
               rounded-plane-box="width:0.03; height: 0.03; radius: 0.008; color: gray"
               position="0 -0.04 0.01"
               class="clickable"
-              ><a-entity troika-text="value: DEL; 
+              ><a-entity
+                troika-text="value: DEL; 
                 font: /static/lobby/font/NanumGothic-Bold.ttf; 
                 fontSize: 0.01; 
-                color: black;" 
+                color: black;"
                 position="0 0 0.001"
               ></a-entity>
             </a-entity>

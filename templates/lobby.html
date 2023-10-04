@@ -424,14 +424,105 @@
           visible="false"
         > <a-entity
             id="chatToolBox"
-            rounded-box="width: 0.05; height: 0.28; depth: 0.001; radius: 0.008; color: white"
-            position="0.2 0 0"
+            rounded-box="width: 0.05; height: 0.15; depth: 0.001; radius: 0.008; color: white"
+            position="0.13 0 0.01"
             visible="false"
-            > 
+            >
+            <a-entity
+              id="chat-emoji"
+              rounded-box="width: 0.03; height: 0.24; depth: 0.001; radius: 0.008; color: white"
+              material="opacity: 0.7; transparent: true; "
+              position="0.05 0 0"
+              class="clickable" 
+              ><a-entity
+                id="chatToolid1"
+                rounded-plane-box="width:0.02; height: 0.02; radius: 0.008; color: gray"
+                position="0 0.09 0.01"
+                class="clickable"
+                ><a-image 
+                    src="/static/lobby/emoji/check.png" 
+                    position="0 0 0"
+                    width="0.02" 
+                    height="0.02"
+                  ></a-image>
+                </a-entity>
+              <a-entity
+                id="chatToolid2"
+                rounded-plane-box="width:0.02; height: 0.02; radius: 0.008; color: gray"
+                position="0 0.06 0.01"
+                class="clickable"
+                ><a-image 
+                    src="/static/lobby/emoji/heart.png" 
+                    position="0 0 0"
+                    width="0.02" 
+                    height="0.02"
+                ></a-image>
+              </a-entity>
+              <a-entity
+                id="chatToolid3"
+                rounded-plane-box="width:0.02; height: 0.02; radius: 0.008; color: gray"
+                position="0 0.03 0.01"
+                class="clickable"
+                ><a-image 
+                  src="/static/lobby/emoji/thumbup.png" 
+                  position="0 0 0"
+                  width="0.02" 
+                  height="0.02"
+                ></a-image>
+              </a-entity>
+              <a-entity
+                id="chatToolid4"
+                rounded-plane-box="width:0.02; height: 0.02; radius: 0.008; color: gray"
+                position="0 0 0.01"
+                class="clickable"
+                ><a-image 
+                  src="/static/lobby/emoji/appreciate.png" 
+                  position="0 0 0"
+                  width="0.02" 
+                  height="0.02"
+                ></a-image>
+              </a-entity>
+              <a-entity
+                id="chatToolid5"
+                rounded-plane-box="width:0.02; height: 0.02; radius: 0.008; color: gray"
+                position="0 -0.03 0.01"
+                class="clickable"
+                ><a-image 
+                  src="/static/lobby/emoji/smile.png" 
+                  position="0 0 0"
+                  width="0.02" 
+                  height="0.02"
+                ></a-image>
+              </a-entity>
+              <a-entity
+                id="chatToolid6"
+                rounded-plane-box="width:0.02; height: 0.02; radius: 0.008; color: gray"
+                position="0 -0.06 0.01"
+                class="clickable"
+                ><a-image 
+                  src="/static/lobby/emoji/sad.png" 
+                  position="0 0 0"
+                  width="0.02" 
+                  height="0.02"
+                ></a-image>
+              </a-entity>
+              <a-entity
+                id="chatToolid7"
+                rounded-plane-box="width:0.02; height: 0.02; radius: 0.008; color: gray"
+                position="0 -0.09 0.01"
+                class="clickable"
+                ><a-image 
+                  src="/static/lobby/emoji/surprised.png" 
+                  position="0 0 0"
+                  width="0.02" 
+                  height="0.02"
+                ></a-image>
+              </a-entity>
+            </a-entity> 
             <a-entity
               id="chatUpButton"
               rounded-plane-box="width:0.03; height: 0.03; radius: 0.008; color: gray"
-              position="0 0.1 0.01"
+              position="0 0.04 0.01"
               class="clickable"
               ><a-entity troika-text="value: up; 
                 font: /static/lobby/font/NanumGothic-Bold.ttf; 
@@ -443,7 +534,7 @@
             <a-entity
               id="chatDownButton"
               rounded-plane-box="width:0.03; height: 0.03; radius: 0.008; color: gray"
-              position="0 0.06 0.01"
+              position="0 0 0.01"
               class="clickable"
               ><a-entity troika-text="value: down; 
                 font: /static/lobby/font/NanumGothic-Bold.ttf; 
@@ -453,45 +544,9 @@
               ></a-entity>
             </a-entity>
             <a-entity
-              id="chatToolid1"
+              id="ToolDelButton"
               rounded-plane-box="width:0.03; height: 0.03; radius: 0.008; color: gray"
-              position="0 0.02 0.01"
-              class="clickable"
-              ><a-entity troika-text="value: 👍; 
-                font: /static/lobby/font/NanumGothic-Bold.ttf; 
-                fontSize: 0.01; 
-                color: black;" 
-                position="0 0 0.001"
-              ></a-entity>
-            </a-entity>
-            <a-entity
-              id="chatToolid2"
-              rounded-plane-box="width:0.03; height: 0.03; radius: 0.008; color: gray"
-              position="0 -0.02 0.01"
-              class="clickable"
-              ><a-entity troika-text="value: 😀; 
-                font: /static/lobby/font/NanumGothic-Bold.ttf; 
-                fontSize: 0.01; 
-                color: black;" 
-                position="0 0 0.001"
-              ></a-entity>
-            </a-entity>
-            <a-entity
-              id="chatToolid3"
-              rounded-plane-box="width:0.03; height: 0.03; radius: 0.008; color: gray"
-              position="0 -0.06 0.01"
-              class="clickable"
-              ><a-entity troika-text="value: 😂; 
-                font: /static/lobby/font/NanumGothic-Bold.ttf; 
-                fontSize: 0.01; 
-                color: black;" 
-                position="0 0 0.001"
-              ></a-entity>
-            </a-entity>
-            <a-entity
-              id="chatToolid4"
-              rounded-plane-box="width:0.03; height: 0.03; radius: 0.008; color: gray"
-              position="0 -0.1 0.01"
+              position="0 -0.04 0.01"
               class="clickable"
               ><a-entity troika-text="value: DEL; 
                 font: /static/lobby/font/NanumGothic-Bold.ttf; 

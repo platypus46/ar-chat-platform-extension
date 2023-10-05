@@ -212,17 +212,10 @@ html.a-fullscreen {
 }
 #notificationSection {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 15%;
+  right: 20%;
   z-index: 1000;
 }
-
-#notificationSection {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-}
-
 #notificationIcon {
   cursor: pointer;
 }
@@ -230,11 +223,14 @@ html.a-fullscreen {
 #notificationList {
   display: none;
   position: absolute;
-  top: 15%;
-  right: 10%;
-  padding-left: 10px; /* 왼쪽 내부 공간을 10px로 설정 */
-  padding-right: 10px; /* 오른쪽 내부 공간을 10px로 설정 */
-  width: 20%;
+  top: 25px;
+  left: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: 150px;
+  background: border-box;
+  background-color: aliceblue;
+  border-radius: 10px;
 }
 
 #notificationList li:last-child {
@@ -267,7 +263,7 @@ html.a-fullscreen {
   background-repeat: no-repeat;
   background-position: center center;
   min-height: 100vh;
-  z-index: -2;
+  z-index: 1;
 }
 
 #profileSection {
@@ -303,9 +299,12 @@ html.a-fullscreen {
 }
 #chatMessages p {
   border-radius: 10px; /* 원하는 값으로 변경 가능 */
+  word-wrap: break-word;
+  max-width: 85%;
   background-color: #ccc;
 }
 #subscriptionList li {
+  width: 20%;
   padding: 10px;
   background-color: #f7f7f7;
   border: 1px solid #ccc;

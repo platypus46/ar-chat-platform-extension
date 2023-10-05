@@ -3,7 +3,6 @@ from django.db import models
 import os
 from django.conf import settings
 
-
 def profile_pic_directory_path(instance, filename):
     # 확장자를 항상 'jpg'로 설정
     extension = 'jpg'
@@ -54,7 +53,6 @@ class CustomUser(AbstractUser):
             post_it_subscription = Subscription.objects.create(user=self, service=post_it_service)
             post_it_subscription.types.add(hand_type)
 
-
 class SubscriptionType(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -100,8 +98,41 @@ class ChatMessage(models.Model):
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    def get_reaction_counts(self):
+        reactions = self.emoji_reactions.all()
+        reaction_counts = {reaction_type[0]: 0 for reaction_type in EmojiReaction.REACTION_CHOICES}
+        for reaction in reactions:
+            reaction_counts[reaction.reaction_type] += 1
+        return reaction_counts
+
+    def can_delete(self, user):
+        return self.sender == user
+
+    def delete_message(self):
+        self.delete() 
+
     def is_visible_to(self, user):
         return user in self.chat_room.participants.all()
+
+class EmojiReaction(models.Model):
+    REACTION_CHOICES = (
+        ('appreciate', 'Appreciate'),
+        ('check', 'Check'),
+        ('heart', 'Heart'),
+        ('sad', 'Sad'),
+        ('smile', 'Smile'),
+        ('surprised', 'Surprised'),
+        ('thumbup', 'Thumb Up'),
+    )
+
+    user = models.ForeignKey(CustomUser, related_name='emoji_reactions', on_delete=models.CASCADE)
+    message = models.ForeignKey(ChatMessage, related_name='emoji_reactions', on_delete=models.CASCADE)
+    reaction_type = models.CharField(max_length=10, choices=REACTION_CHOICES)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'message', 'reaction_type')
+
 
 
 class Notification(models.Model):  

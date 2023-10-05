@@ -591,7 +591,7 @@ document.addEventListener("DOMContentLoaded", function () {
         pages.push(chunkedContent.slice(i, i + linesPerPage).join('\n'));
     }
 
-    const numberOfLines = Math.min(linesPerPage, chunkedContent.length); // 최대 3줄
+    const numberOfLines = Math.min(linesPerPage, chunkedContent.length); 
     const height = 0.015 * numberOfLines;
 
     const maxLength = Math.max(...chunkedContent.map(line => line.length));
@@ -901,7 +901,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let inputButton = document.querySelector("#input-button");
 
   inputButton.addEventListener("click", function () {
-    const message = sttText.getAttribute("troika-text").value;
+    const message = sttText.getAttribute("troika-text").value.replace(/\n/g, "");
     // Only run the following logic when the chat page is visible
     if (isChatVisible) {
       if (chatSocket) {

@@ -93,8 +93,10 @@ AFRAME.registerComponent('char-pager', {
               
               charEntity.setAttribute('color', 'yellow');
               if (sttText) {
-                  let currentText = sttText.getAttribute('troika-text').value;
-                  sttText.setAttribute('troika-text', `value: ${currentText + char}`);
+                let currentText = sttText.getAttribute('troika-text').value;
+                currentText = (currentText + char).replace(/\n/g, ""); 
+                currentText = formatText(currentText); 
+                sttText.setAttribute('troika-text', `value: ${currentText}`); 
               }
               setTimeout(function() {
                   charEntity.setAttribute('color', 'black'); 
@@ -208,8 +210,10 @@ AFRAME.registerComponent('emoji-pager', {
               
               charEntity.setAttribute('color', 'yellow');
               if (sttText) {
-                  let currentText = sttText.getAttribute('troika-text').value;
-                  sttText.setAttribute('troika-text', `value: ${currentText + char}`);
+                let currentText = sttText.getAttribute('troika-text').value;
+                currentText = (currentText + char).replace(/\n/g, ""); 
+                currentText = formatText(currentText); 
+                sttText.setAttribute('troika-text', `value: ${currentText}`); 
               }
               setTimeout(function() {
                   charEntity.setAttribute('color', 'black'); 
@@ -286,7 +290,8 @@ async function initRecorder() {
       if (isRecording) {
         newTranscription = formatText(data.transcription);
       } else { 
-        newTranscription = formatText(sttText.getAttribute('troika-text').value + data.transcription);
+        let combinedText = (sttText.getAttribute('troika-text').value + data.transcription).replace(/\n/g, ""); 
+        newTranscription = formatText(combinedText);
       }
       sttText.setAttribute('troika-text', 'value', newTranscription);
 
@@ -375,7 +380,7 @@ function formatText(content) {
 
   const lines = chunkedContent.length;
   const newYPosition = 0.04 - (lines - 1) * lineHeight;
-  sttText.setAttribute("position", `-0.02 ${newYPosition} 0.02`);
+  sttText.setAttribute("position", `-0.01 ${newYPosition} 0.02`);
 
   return chunkedContent.join('\n');
 }

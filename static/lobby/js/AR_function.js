@@ -157,7 +157,7 @@ function GPTQuestion() {
   document.getElementById("Miscbutton").setAttribute("visible", false);
 
 
-  let longQuestion = gptsttText.getAttribute('troika-text').value || "Ask a question";
+  let longQuestion = gptsttText.getAttribute('troika-text').value.replace(/\n/g, "") || "Ask a question";
 
   checkQuestionInterval = setInterval(function () {
     const newQuestion = gptsttText.getAttribute('troika-text').value;

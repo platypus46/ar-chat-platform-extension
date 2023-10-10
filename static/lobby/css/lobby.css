@@ -199,62 +199,113 @@ html.a-fullscreen {
   overflow: hidden;
 }
 
-#friendList li {
-  z-index: 1000;
+/* 친구 추가 섹션 */
+#newFriendName {
+  padding: 10px;
+  border-radius: 18px;
+  border: 1px solid #ddd;
+  margin-right: 10px;
+}
+
+#addFriendButton {
+  padding: 10px 15px;
+  background-color: #1877f2;
+  color: #fff;
+  border: none;
+  border-radius: 18px;
   cursor: pointer;
-  list-style-type: none;
-  padding: 5px;
-  border: 1px solid gray;
-  margin: 5px 0;
 }
-#friendList li:hover {
-  background-color: #e7e7e7;
-}
+
+/* 알림 섹션 */
 #notificationSection {
-  position: fixed;
-  top: 15%;
-  right: 20%;
-  z-index: 1000;
+  margin: 20px 0;
+  position: relative;
 }
+
 #notificationIcon {
+  background: none;
+  border: none;
+  font-size: 24px;
   cursor: pointer;
 }
 
 #notificationList {
   display: none;
   position: absolute;
-  top: 25px;
-  left: 5px;
-  padding-left: 10px;
-  padding-right: 10px;
-  width: 150px;
-  background: border-box;
-  background-color: aliceblue;
-  border-radius: 10px;
+  top: 100%;
+  right: 0;
+  width: 250px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#notificationList li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
 }
 
 #notificationList li:last-child {
   border-bottom: none;
 }
-.message {
-  max-width: 50%;
+
+/* 친구 목록 */
+#friendList {
+  list-style-type: none;
+  padding: 0;
+}
+
+#friendList li {
+  display: flex;
+  align-items: center;
   padding: 10px;
-  margin: 5px;
-  border-radius: 10px;
-  background-color: aliceblue;
-  outline-width: 2px;
-  border-radius: 80%;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  border-radius: 8px;
 }
 
-.myMessage {
-  background-color: #e0e0e0;
-  align-self: flex-end;
+#friendList img {
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
-.friendMessage {
-  background-color: #a0a0a0;
-  align-self: flex-start;
+.deleteFriendButton, .chatFriendButton {
+  margin-left: auto;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
 }
+
+.deleteFriendButton {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.chatFriendButton {
+  background-color: #1877f2;
+  color: #fff;
+  margin-left: 5px;
+}
+#chatwindow {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+  margin: 20px 0;
+  z-index: 1001;
+}
+#chatMessages p {
+  border-radius: 10px; /* 원하는 값으로 변경 가능 */
+  word-wrap: break-word;
+  max-width: 85%;
+  background-color: #ccc;
+}
+
 
 .background-image {
   cursor: default; /* 또는 필요한 다른 값 */
@@ -287,22 +338,8 @@ html.a-fullscreen {
   margin-right: 10px;
 }
 
-#chatWindow {
-  position: absolute;
-  top: 50%;
-  right: 50%;
-  padding: 20px;
-  background-color: #882b91;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  z-index: 1001;
-}
-#chatMessages p {
-  border-radius: 10px; /* 원하는 값으로 변경 가능 */
-  word-wrap: break-word;
-  max-width: 85%;
-  background-color: #ccc;
-}
+
+
 #subscriptionList li {
   width: 20%;
   padding: 10px;

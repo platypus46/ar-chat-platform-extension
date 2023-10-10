@@ -49,7 +49,7 @@ AFRAME.registerComponent("scene-debounced-click", {
     // 클릭 이벤트 중복 방지 코드
     init: function () {
       this.lastClickTime = 0;
-      this.debounceDuration = 300; // 300ms
+      this.debounceDuration = 200; // 200ms
   
       // 씬에 클릭 이벤트 리스너 추가
       this.el.addEventListener("click", this.handleClick.bind(this));

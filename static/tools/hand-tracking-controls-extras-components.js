@@ -692,21 +692,21 @@ exports.component = void 0;
 const component = AFRAME.registerComponent("finger-cursor", {
   schema: {
     lineColor: {
-      default: "transparent"   
+      default: "black"   
     },
     lineLength: {
-      default: "5"
+      default: "0.04"
     },
     pointThreshold: {
-      default: 0.95 
+      default: 0.85 
     }
   },
   init: function () {
     this.el.setAttribute("line", {
-      "color": "transparent",   
+      "color": "black",   
       "start": "0 0 0",
-      "opacity": 0,    
-      "end": "0 0 -2"
+      "opacity": 1,    
+      "end": "0 0 -0.04"
     });
     this.el.setAttribute("cursor", {
       "rayOrigin": "entity",
@@ -723,6 +723,7 @@ const component = AFRAME.registerComponent("finger-cursor", {
   },
   onMouseEnter: function (evt) {
     this.isec = evt.detail.intersectedEl;
+    this.activate(); 
   },
   onMouseLeave: function () {
     this.isec = null;

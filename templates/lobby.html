@@ -233,7 +233,6 @@
       data-font-json="{% static 'lobby/font/NanumGothic-Bold.json' %}"
       data-font-png="{% static 'lobby/font/NanumGothic-Bold.png' %}"
       auto-font
-      scene-debounced-click
       screenshot="width: 1920; height: 1080;"
     >
       <a-light type="ambient" color="#888"></a-light>
@@ -261,7 +260,7 @@
         hand-tracking-extras
         ><a-entity
           finger-cursor
-          raycaster="objects: .clickable; far: 0.03"
+          raycaster="objects: .clickable; far: 0.04"
         ></a-entity
       ></a-entity>
       <a-entity
@@ -271,7 +270,7 @@
       >
         <a-entity
           finger-cursor
-          raycaster="objects: .clickable; far: 0.03"
+          raycaster="objects: .clickable; far: 0.04"
         ></a-entity>
       </a-entity>
       <a-camera id="camera">

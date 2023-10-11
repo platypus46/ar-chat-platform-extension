@@ -49,7 +49,7 @@
         height="100"
       />
       <!-- 기본 프로필 이미지 설정 -->
-      <span id="username">{{full_name}}님 안녕하세요.</span>
+      <span id="username">{{full_name}}</span>
     </div>
     <section id="meteorSection">
       <span id="meteor1"></span>
@@ -64,23 +64,10 @@
       <span id="meteor10"></span>
     </section>
     <div id="Main_Box">
-      <div id="Chat_Box">
-        <div class="speech-balloon" id="speech-balloon-1"></div>
-        <div class="speech-balloon" id="speech-balloon-2"></div>
-        <div id="Chatbox_text">Chat</div>
-      </div>
+      <div id="Chat_Box">Chat</div>
       <div id="Subscribe_Box">Subscribe</div>
       <div id="Setting_Box">setting</div>
     </div>
-    <!-- 임시 상점 버튼 -->
-    <div id="icon-button-container">
-      <img
-        id="icon-button"
-        src="{% static 'lobby/icon/shop_test_icon.png' %}"
-        alt="Shop Icon"
-      />
-    </div>
-
     <!-- JavaScript 부분 -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -140,12 +127,6 @@
       <!-- Chat Window (Initially Hidden) -->
       <div
         id="chatWindow"
-        style="
-          display: none;
-          border: 1px solid black;
-          height: 200px;
-          overflow: auto;
-        "
       >
         <h3 id="chatFriendName"></h3>
         <div id="chatMessages"></div>
@@ -177,6 +158,14 @@
             {% endfor %}
         </div>
       </div>
+      <!-- 임시 상점 버튼 -->
+    <div id="icon-button-container">
+      <img
+        id="icon-button"
+        src="{% static 'lobby/icon/shop_test_icon.png' %}"
+        alt="Shop Icon"
+      />
+    </div>
       <button class="goBackButton">Back to Main</button>
     </div>
     <div id="Setting_Page" class="page">

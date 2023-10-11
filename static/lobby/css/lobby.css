@@ -92,60 +92,22 @@ html.a-fullscreen {
   align-items: center; /* 세로 방향 중앙 정렬 */
   z-index: 1000;
   overflow: hidden;
+  transition: transform 0.3s ease; /* 부드러운 transform 애니메이션 효과 추가 */
+  transform: scale(1); /* 초기 transform 값 설정 */
 }
-
+#Chat_Box:hover,
+#Subscribe_Box:hover,
+#Setting_Box:hover{
+  transform: scale(0.9);
+}
 #Chat_Box {
-  background-color: orange;
+  background: linear-gradient(135deg, #D1B3E0, #E6D4F1);
   animation: backInLeft 1s;
   top: 0%;
   left: 0%;
 }
-.speech-balloon {
-  position: relative;
-  width: 50%;
-  height: 30%;
-  background-color: #3498db;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.5s, visibility 0.5s; /* transition 속성 추가 */
-}
-
-#Chatbox_text {
-  position: absolute;
-  top: 45%;
-  right: 45%;
-  opacity: 1;
-  visibility: visible;
-}
-
-#Chat_Box:hover #speech-balloon-1 {
-  clip-path: polygon(100% 0, 100% 61%, 35% 61%, 0 100%, 20% 61%, 0% 60%, 0 0);
-  top: 5%;
-  opacity: 1;
-  visibility: visible;
-  animation: fadeIn 1s forwards;
-}
-
-#Chat_Box:hover #speech-balloon-2 {
-  clip-path: polygon(100% 0, 100% 61%, 80% 61%, 100% 100%, 65% 61%, 0% 60%, 0 0);
-  top: 15%;
-  opacity: 1;
-  visibility: visible;
-  animation: fadeIn 1.2s forwards;
-}
-
-#Chat_Box:hover #Chatbox_text {
-  opacity: 0;
-  visibility: hidden;
-  transition-delay: 0.5s; /* 원하는 딜레이 시간으로 조정 */
-  transition: opacity 1s, visibility 1s;
-}
 #Subscribe_Box {
-  background: radial-gradient(
-    rgb(255, 254, 234) 0%,
-    rgb(255, 254, 234) 35%,
-    #b7e8eb 100%
-  );
+  background: linear-gradient(135deg, #E6D4F1, #F2E8FA);
   top: 0%;
   left: 40%;
   text-align: center;
@@ -158,41 +120,8 @@ html.a-fullscreen {
   align-items: center;
   padding-right: 10px;
 }
-#Subscribe_Box .text {
-  transition: transform 0.3s ease-in-out;
-}
-#Subscribe_Box .icons {
-  position: relative;
-  display: flex;
-  align-items: center;
-  font-size: 24px;
-  color: blue;
-  opacity: 0;
-}
-#Subscribe_Box .outline,
-#Subscribe_Box .checkbox {
-  position: absolute;
-  opacity: 0;
-}
-#Subscribe_Box:hover .text {
-  transform: translateX(-20px);
-}
-#Subscribe_Box:hover .icons {
-  opacity: 1;
-}
-#Subscribe_Box:hover .outline {
-  animation: bounceInDown 2s forwards;
-  animation-fill-mode: both;
-  opacity: 1;
-}
-#Subscribe_Box:hover .checkbox {
-  opacity: 1;
-  transition: opacity 0.5s ease-in-out;
-  transition-delay: 2s;
-}
-
 #Setting_Box {
-  background-color: #4b371c;
+  background: linear-gradient(135deg, #D1B3E0, #F2E8FA);
   animation: backInLeft 1.4s;
   top: 40%;
   left: 0%;
@@ -290,8 +219,10 @@ html.a-fullscreen {
   margin-left: 5px;
 }
 #chatwindow {
+  display: none;
   background-color: #fff;
   border: 1px solid #ddd;
+  height: 200px;
   border-radius: 8px;
   padding: 15px;
   max-height: 400px;
@@ -323,9 +254,32 @@ html.a-fullscreen {
   top: 10px;
   right: 10px;
   display: flex;
-  align-items: center;
+  border: 1px solid black; /* 외각선 */
+  padding: 10px; /* 안쪽 여백 */
+
 }
-#profileSection #profileImage {
+#profileSection {
+  height: 130px;
+  width: 300px;
+  position: absolute;
+  top: 10px;
+  right: 50px;
+  display: flex;
+  align-items: center;
+  border-radius: 25px;
+}
+#profileSection::after {
+  content: ""; /* 실제 콘텐츠는 없지만, ::after 요소를 생성하기 위해 필요합니다 */
+  display: block; /* 블록 요소로 만들어 줍니다 */
+  width: 1px; /* 선의 너비 */
+  height: 100%; /* 선의 높이 */
+  background-color: black; /* 선의 색상 */
+  position: absolute; /* #profileSection 영역 내에서 절대 위치를 지정 */
+  left: 120px; /* 이미지의 너비(100px)와 좌측 패딩(10px)을 합한 위치에 선을 그립니다 */
+  top: 50%; /* 세로 중앙에 위치 */
+  transform: translateY(-50%); /* 세로 중앙 정렬을 위한 조정 */
+}
+#profileImageDisplay {
   border-radius: 50%;
   margin-right: 10px;
 }
@@ -334,6 +288,7 @@ html.a-fullscreen {
   margin-bottom: 10px;
 }
 #profileSection #username {
+  margin-left: 10px; /* 이름과 구분선 사이의 간격 */
   color: #a0a0a0;
   margin-right: 10px;
 }
@@ -489,19 +444,4 @@ html.a-fullscreen {
 .a-canvas.a-grab-cursor {
   cursor: default !important;
   z-index: -1000;
-}
-#profileSection {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  align-items: center;
-}
-#profileSection #profileImage {
-  border-radius: 50%;
-  margin-right: 10px;
-}
-#profileSection #username {
-  color: #a0a0a0;
-  margin-right: 10px;
 }

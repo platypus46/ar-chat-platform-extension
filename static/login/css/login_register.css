@@ -6,21 +6,27 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  font-family: "Noto Sans KR", sans-serif;
   background-image: url("/static/login/img/bg.jpeg");
   background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  position: relative;
 }
 
 body::before {
   content: "";
   position: absolute;
-  z-index: -1; /* 이 부분은 이미 잘 설정하셨습니다. */
+  z-index: -1;
   top: 0;
   right: 0;
   bottom: 0;
@@ -237,35 +243,4 @@ button:hover,
   right: 450px;
   animation-delay: 2.75s;
   animation-duration: 2.75s;
-}
-
-
-
-.input-area input {
-  font-family: 'Nunito', sans-serif;
-  border-radius: 10px;
-}
-
-
-.input-area label {
-  font-family: 'Nunito', sans-serif;
-}
-
-.button-area button {
-  font-family: 'Nunito', sans-serif;
-}
-
-.signup-form h1, .caption a {
-  font-family: 'Nunito', sans-serif;
-}
-
-#sparkle {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  background-color: white;
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease-out;
 }

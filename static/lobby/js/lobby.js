@@ -227,6 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
   }
+   
 
   // 페이지 전환 로직
   function showPage(pageId) {
@@ -238,13 +239,73 @@ document.addEventListener("DOMContentLoaded", function () {
     // 선택한 페이지만 보여줍니다.
     document.getElementById(pageId).style.display = "block";
   }
+  document.querySelector('#friend-pagination-controls button:nth-child(1)').addEventListener('click', function() {
+    prevPaginationPage('friend');
+});
+
+document.querySelector('#friend-pagination-controls button:nth-child(3)').addEventListener('click', function() {
+    nextPaginationPage('friend');
+});
+
+document.querySelector('#subscription-pagination-controls button:nth-child(1)').addEventListener('click', function() {
+    prevPaginationPage('subscription');
+});
+
+document.querySelector('#subscription-pagination-controls button:nth-child(3)').addEventListener('click', function() {
+    nextPaginationPage('subscription');
+});
+  const itemsPerPage = 5;
+  const currentPage = {
+  'friend': 1,
+  'subscription': 1
+  };
+  function showPaginationPage(listSelector, pageNumberSelector, page) {
+    const listItems = document.querySelectorAll(listSelector);
+    const pageNumberEl = document.getElementById(pageNumberSelector);
+  
+    for (let i = 0; i < listItems.length; i++) {
+      listItems[i].classList.remove('visible');
+    }
+    
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    
+    for (let i = start; i < end && i < listItems.length; i++) {
+      listItems[i].classList.add('visible');
+    }
+    
+    pageNumberEl.textContent = page;
+}
+function nextPaginationPage(pageType) {
+  const listSelector = pageType === 'friend' ? '#friendList li' : '.subscriber-item';
+  const pageNumberSelector = pageType === 'friend' ? 'friend-page-number' : 'subscription-page-number';
+  const listItems = document.querySelectorAll(listSelector);
+  
+  if (currentPage[pageType] * itemsPerPage < listItems.length) {
+      currentPage[pageType]++;
+      showPaginationPage(listSelector, pageNumberSelector, currentPage[pageType]);
+  }
+}
+
+function prevPaginationPage(pageType) {
+  const listSelector = pageType === 'friend' ? '#friendList li' : '.subscriber-item';
+  const pageNumberSelector = pageType === 'friend' ? 'friend-page-number' : 'subscription-page-number';
+  
+  if (currentPage[pageType] > 1) {
+      currentPage[pageType]--;
+      showPaginationPage(listSelector, pageNumberSelector, currentPage[pageType]);
+  }
+}
+ 
   document.getElementById("Chat_Box").addEventListener("click", function () {
     showPage("Chat_Page");
+    showPaginationPage('#friendList li', 'friend-page-number', 1);
   });
   document
     .getElementById("Subscribe_Box")
     .addEventListener("click", function () {
       showPage("Subscribe_Page");
+      showPaginationPage('.subscriber-list .subscriber-item', 'subscription-page-number', 1);
     });
   document.getElementById("Setting_Box").addEventListener("click", function () {
     showPage("Setting_Page");

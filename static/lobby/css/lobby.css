@@ -27,13 +27,13 @@
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
+  background-color: #A4ABD9;
   color: #fff;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 .page button:hover {
-  background-color: #0056b3;
+  background-color: #969dc9;
 }
 .page input[type="text"],
 .page input[type="file"] {
@@ -292,31 +292,9 @@ html.a-fullscreen {
   color: #a0a0a0;
   margin-right: 10px;
 }
-
-
-
-#subscriptionList li {
-  width: 20%;
-  padding: 10px;
-  background-color: #f7f7f7;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-#subscriptionList li.not-purchased {
-  background-color: orange;
-}
-#subscriptionList li.purchased {
-  background-color: purple;
-}
-#subscriptionList li.applied {
-  background-color: lime;
-}
-#subscriptionList li button {
-  margin-left: 10px;
+.subscriber-item {
+  border-bottom: 1px solid #ccc; /* 회색의 1픽셀 두께의 하단 테두리를 추가합니다. */
+  padding: 10px; /* 상하 패딩을 추가하여 테두리와 내용 사이에 간격을 줍니다. */
 }
 
 #meteorSection {
@@ -444,4 +422,13 @@ html.a-fullscreen {
 .a-canvas.a-grab-cursor {
   cursor: default !important;
   z-index: -1000;
+}
+/* 기본적으로 모든 항목을 숨깁니다. */
+#friendList li, .subscriber-item {
+  display: none;
+}
+
+/* visible 클래스가 추가된 항목만 표시합니다. */
+#friendList li.visible, .subscriber-item.visible {
+  display: block;
 }

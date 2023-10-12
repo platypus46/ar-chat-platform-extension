@@ -21,57 +21,55 @@ document.addEventListener("DOMContentLoaded", function () {
     showStep(currentStep);
   }
 
-  document
-    .getElementById("next-to-step2")
-    .addEventListener("click", function (e) {
-      e.preventDefault();
-      if (document.getElementById("signup-username").checkValidity()) {
-        registrationData.username =
-          document.getElementById("signup-username").value;
-        currentStep++;
-        showStep(currentStep);
-      } else {
-        alert("Username is required!");
+  document.getElementById("next-to-step2").addEventListener("click", function (e) {
+    e.preventDefault();
+    let username = document.getElementById("signup-username").value;
+
+    if (!username || username.length < 4 || /[\s\W]/.test(username)) {
+      alert("Username is required and must be at least 4 characters long without special characters and spaces!");
+      return;
+    }
+
+    registrationData.username = username;
+    currentStep++;
+    showStep(currentStep);
+  });
+
+  document.getElementById("next-to-step3").addEventListener("click", function (e) {
+    e.preventDefault();
+    let full_name = document.getElementById("signup-full_name").value;
+
+    if (!full_name || /[\s\W]/.test(full_name)) {
+      alert("Full Name is required and should not contain special characters and spaces!");
+      return;
+    }
+
+    registrationData.full_name = full_name;
+    currentStep++;
+    showStep(currentStep);
+  });
+
+  document.getElementById("go-to-login-button").addEventListener("click", function () {
+    resetSignup();
+    closeSignup();
+  });
+
+  document.getElementById("signup-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const csrftoken = getCookie("csrftoken");
+
+    if (currentStep === 3) {
+      let password1 = document.getElementById("signup-password1").value;
+      let password2 = document.getElementById("signup-password2").value;
+
+      if (!password1 || !password2 || /\s/.test(password1) || password1 !== password2) {
+        alert("Please ensure passwords are filled, do not contain spaces, and match!");
+        return;
       }
-    });
 
-  document
-    .getElementById("next-to-step3")
-    .addEventListener("click", function (e) {
-      e.preventDefault();
-      if (document.getElementById("signup-full_name").checkValidity()) {
-        registrationData.full_name =
-          document.getElementById("signup-full_name").value;
-        currentStep++;
-        showStep(currentStep);
-      } else {
-        alert("Full Name is required!");
-      }
-    });
-
-  document
-    .getElementById("go-to-login-button")
-    .addEventListener("click", function () {
-      resetSignup();
-      closeSignup();
-    });
-
-  document
-    .getElementById("signup-form")
-    .addEventListener("submit", function (e) {
-      e.preventDefault();
-      const csrftoken = getCookie("csrftoken");
-
-      if (currentStep === 1)
-        registrationData.username =
-          document.getElementById("signup-username").value;
-      else if (currentStep === 2)
-        registrationData.full_name =
-          document.getElementById("signup-nickname").value;
-      // nickname을 full_name으로 변경
-      else if (currentStep === 3)
-        registrationData.password1 =
-          document.getElementById("signup-password1").value; // id를 올바르게 수정합니다.
+      registrationData.password1 = password1;
+      registrationData.password2 = password2;
+    }
 
       $.ajax({
         type: "POST",

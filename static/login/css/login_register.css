@@ -27,9 +27,17 @@ body::before {
   left: 0;
 }
 
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
 .container > section {
   position: relative;
-  z-index: 2; /* 이 부분은 높은 값을 유지하셔도 되지만, 다른 요소와의 관계에서 2로 설정하였습니다. */
+  z-index: 1000; /* 이 부분은 높은 값을 유지하셔도 되지만, 다른 요소와의 관계에서 2로 설정하였습니다. */
   background-color: #fff;
   padding: 20px;
   border-radius: 5px;
@@ -82,7 +90,7 @@ button,
 .btn-area button {
   width: 100%;
   height: 50px;
-  background-color: #007bff;
+  background-color: #A4ABD9;
   color: #fff;
   border: none;
   padding: 10px;
@@ -94,11 +102,170 @@ button,
 
 button:hover,
 .btn-area button:hover {
-  background-color: #0056b3;
+  background-color: #A4ABD9;
 }
 
 .caption a {
   font-size: 15px;
   color: #999;
   text-decoration: none;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  src: url('/static/login/font/Nunito-Medium.ttf') format('truetype');
+}
+
+.signup-form h1 {
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  margin-bottom: 0;
+}
+
+#signup-form {
+  margin-top: 10px;
+}
+
+#meteorSection {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: -1;
+}
+#meteorSection span {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1),
+    0 0 0 8px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 0.1);
+  animation-name: animate;
+  animation-duration: 3s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+#meteorSection span::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 300px;
+  height: 1px;
+  background: linear-gradient(90deg, #fff, transparent);
+}
+
+@keyframes animate {
+  0% {
+    transform: rotate(315deg) translateX(0);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(315deg) translateX(-2500px);
+    opacity: 0;
+  }
+}
+
+#meteor1 {
+  animation-delay: 0s;
+  animation-duration: 1s;
+}
+
+#meteor2 {
+  top: 0;
+  right: 80px;
+  animation-delay: 0.2s;
+  animation-duration: 3s;
+}
+
+#meteor3 {
+  top: 80px;
+  right: 0;
+  animation-delay: 0.4s;
+  animation-duration: 2s;
+}
+
+#meteor4 {
+  top: 0;
+  right: 180px;
+  animation-delay: 0.6s;
+  animation-duration: 1.5s;
+}
+
+#meteor5 {
+  top: 0;
+  right: 400px;
+  animation-delay: 0.8s;
+  animation-duration: 2.5s;
+}
+
+#meteor6 {
+  top: 0;
+  right: 500px;
+  animation-delay: 1s;
+  animation-duration: 3s;
+}
+
+#meteor7 {
+  top: 300px;
+  right: 0;
+  animation-delay: 1.2s;
+  animation-duration: 1.75s;
+}
+
+#meteor8 {
+  top: 0;
+  right: 700px;
+  animation-delay: 1.4s;
+  animation-duration: 1.25s;
+}
+
+#meteor9 {
+  top: 0;
+  right: 1000px;
+  animation-delay: 0.75s;
+  animation-duration: 2.25s;
+}
+
+#meteor10 {
+  top: 0;
+  right: 450px;
+  animation-delay: 2.75s;
+  animation-duration: 2.75s;
+}
+
+
+
+.input-area input {
+  font-family: 'Nunito', sans-serif;
+  border-radius: 10px;
+}
+
+
+.input-area label {
+  font-family: 'Nunito', sans-serif;
+}
+
+.button-area button {
+  font-family: 'Nunito', sans-serif;
+}
+
+.signup-form h1, .caption a {
+  font-family: 'Nunito', sans-serif;
+}
+
+#sparkle {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease-out;
 }

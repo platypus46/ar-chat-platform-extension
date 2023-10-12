@@ -5,14 +5,40 @@
     <meta charset="UTF-8" />
     <title>Login & Sign up</title>
     <link rel="stylesheet" href="{% static 'login/css/login_register.css' %}" />
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'login/js/animation.js' %}"></script>
+    <script>
+      $(document).mousemove(function(e) {
+          $('#sparkle').css({
+              'top': e.pageY - 25,
+              'left': e.pageX - 25,
+              'opacity': 1
+          });
+          setTimeout(function() {
+              $('#sparkle').css('opacity', 0);
+          }, 500);
+      });
+    </script>
   </head>
   <body>
+    <div id="sparkle"></div>
+    <section id="meteorSection">
+      <span id="meteor1"></span>
+      <span id="meteor2"></span>
+      <span id="meteor3"></span>
+      <span id="meteor4"></span>
+      <span id="meteor5"></span>
+      <span id="meteor6"></span>
+      <span id="meteor7"></span>
+      <span id="meteor8"></span>
+      <span id="meteor9"></span>
+      <span id="meteor10"></span>
+    </section>
     <div class="container">
       <!-- Login Section -->
       <div id="login-container">
         <section class="form-section login-form">
-          <h1>LOGIN</h1>
           <form id="login-form" action="javascript:void(0)">
             {% csrf_token %}
             <div class="input-area">
@@ -78,13 +104,12 @@
             </div>
             <div id="step3" class="step" style="display: none">
               <div class="input-area">
-                <input
-                  type="password"
-                  name="password1"
-                  id="signup-password1"
-                  autocomplete="off"
-                />
+                <input type="password" name="password1" id="signup-password1" autocomplete="off" />
                 <label for="signup-password1">PASSWORD</label>
+              </div>
+              <div class="input-area"> 
+                <input type="password" name="password2" id="signup-password2" autocomplete="off" />
+                <label for="signup-password2">CONFIRM PASSWORD</label>
               </div>
               <div class="button-area">
                 <button type="submit" id="signup-button">SIGN UP</button>
@@ -97,6 +122,9 @@
         </section>
       </div>
     </div>
+    <a-scene id="aframe-scene" vr-mode-ui="enabled: false">
+      <a-camera position="0 20 80"></a-camera>
+    </a-scene>
     <script src="{% static 'login/js/login_register.js' %}"></script>
   </body>
 </html>

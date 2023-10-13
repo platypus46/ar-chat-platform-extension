@@ -72,8 +72,39 @@ document.addEventListener("DOMContentLoaded", function () {
   function displayMessage(sender, message) {
     const chatMessages = document.getElementById("chatMessages");
     const messageElement = document.createElement("p");
-    messageElement.innerHTML = `<strong>${sender}</strong>: ${message}`;
+    
+    if (sender === username) {
+      messageElement.className = "message me";
+    } else {
+      messageElement.className = "message other";
+    }
+  
+    messageElement.innerHTML = `${message}`;
+     // 메시지와 모달을 함께 추가
+     messageElement.innerHTML = `
+     ${message}
+     <div class="modal">
+       <div class="modal-content">
+         <span class="close-button">&times;</span>
+         <p>이곳은 빈 박스입니다.</p>
+       </div>
+     </div>
+   `;
+
+   // 메시지 클릭 이벤트 리스너 추가
+   messageElement.addEventListener("click", function() {
+     const modal = messageElement.querySelector(".modal");
+     modal.style.display = "block"; // 모달 보이게 설정
+   });
+
+   // 닫기 버튼 이벤트 리스너
+   messageElement.querySelector(".close-button").addEventListener("click", function() {
+     const modal = messageElement.querySelector(".modal");
+     modal.style.display = "none"; // 모달 숨기기
+   });
+
     chatMessages.appendChild(messageElement);
+    
   }
 
   function openchatWindow(friendUsername) {

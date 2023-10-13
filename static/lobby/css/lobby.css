@@ -138,7 +138,7 @@ html.a-fullscreen {
 
 #addFriendButton {
   padding: 10px 15px;
-  background-color: #1877f2;
+  background-color: #A4ABD9;
   color: #fff;
   border: none;
   border-radius: 18px;
@@ -230,13 +230,55 @@ html.a-fullscreen {
   margin: 20px 0;
   z-index: 1001;
 }
-#chatMessages p {
-  border-radius: 10px; /* 원하는 값으로 변경 가능 */
-  word-wrap: break-word;
-  max-width: 85%;
-  background-color: #ccc;
+/* 기본 메시지 스타일 */
+#chatMessages p.message {
+  max-width: 30%; 
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px; 
+  position: relative;
+  width: fit-content;   /* 내용에 따라 너비를 조절합니다. */
 }
 
+/* 자신이 보낸 메시지 스타일 */
+#chatMessages p.message.me {
+  background-color: #4d66cb;
+  text-align: right;
+  margin-left: auto;  
+}
+
+/* 상대방이 보낸 메시지 스타일 */
+#chatMessages p.message.other {
+  background-color: #D5DBDB;
+  text-align: left;  
+  margin-right: auto; 
+}
+.modal {
+  display: none; 
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7); 
+  z-index: 1; 
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  padding: 20px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.close-button {
+  float: right;
+  font-size: 20px;
+  cursor: pointer;
+}
 
 .background-image {
   cursor: default; /* 또는 필요한 다른 값 */

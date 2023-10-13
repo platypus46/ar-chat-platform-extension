@@ -244,3 +244,14 @@ button:hover,
   animation-delay: 2.75s;
   animation-duration: 2.75s;
 }
+
+#sparkle {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease-out;
+}

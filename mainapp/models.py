@@ -38,20 +38,39 @@ class CustomUser(AbstractUser):
             # 기본 구독 로직
             hand_type = SubscriptionType.objects.get_or_create(name="Hand")[0]
             controller_type = SubscriptionType.objects.get_or_create(name="Controller")[0]
-            qa_service = Service.objects.get_or_create(name="Questions and Answers")[0]
+
+            # 추가된 구독 타입
+            two_d_type = SubscriptionType.objects.get_or_create(name="2D")[0]
+            three_d_type = SubscriptionType.objects.get_or_create(name="3D")[0]
+            prompt_type = SubscriptionType.objects.get_or_create(name="Prompt")[0]
+            chat_type = SubscriptionType.objects.get_or_create(name="Chat")[0]
+
+            qa_service = Service.objects.get_or_create(name="Questions and Answers(AR)")[0]
             length_service = Service.objects.get_or_create(name="Length Measurement")[0]
             post_it_service = Service.objects.get_or_create(name="Post-It")[0]
 
-            # Questions and Answers에 대한 구독
-            qa_subscription = Subscription.objects.create(user=self, service=qa_service)
-            qa_subscription.types.add(hand_type, controller_type)
+            # 새로운 서비스 추가
+            emotion_detection = Service.objects.get_or_create(name="Emotion Detection")[0]
+            qa_subscription_td = Service.objects.get_or_create(name="Questions and Answers")[0]
 
-            # Length Measurement와 Post-It에 대한 구독 (Hand만 추가)
+            # 기존 서비스 구독 로직
+            qa_subscription = Subscription.objects.create(user=self, service=qa_service)
+            qa_subscription.types.add(three_d_type,hand_type, controller_type)
+
             length_subscription = Subscription.objects.create(user=self, service=length_service)
-            length_subscription.types.add(hand_type)
+            length_subscription.types.add(three_d_type,hand_type)
 
             post_it_subscription = Subscription.objects.create(user=self, service=post_it_service)
-            post_it_subscription.types.add(hand_type)
+            post_it_subscription.types.add(three_d_type,hand_type)
+
+            # 새로운 서비스 구독 로직
+            emotion_detection_subscription = Subscription.objects.create(user=self, service=emotion_detection)
+            emotion_detection_subscription.types.add(two_d_type, chat_type)
+
+            qa_subscription_td_instance = Subscription.objects.create(user=self, service=qa_subscription_td)
+            qa_subscription_td_instance.types.add(two_d_type, prompt_type)
+
+
 
 class SubscriptionType(models.Model):
     name = models.CharField(max_length=50, unique=True)

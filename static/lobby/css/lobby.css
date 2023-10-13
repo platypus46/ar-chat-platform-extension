@@ -242,7 +242,7 @@ html.a-fullscreen {
 
 /* 자신이 보낸 메시지 스타일 */
 #chatMessages p.message.me {
-  background-color: #4d66cb;
+  background-color: #FDE1DB;
   text-align: right;
   margin-left: auto;  
 }
@@ -473,4 +473,16 @@ html.a-fullscreen {
 /* visible 클래스가 추가된 항목만 표시합니다. */
 #friendList li.visible, .subscriber-item.visible {
   display: block;
+}
+
+
+#sparkle {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease-out;
 }

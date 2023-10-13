@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
         language_text.setAttribute("value", "EN");
 
         // 항목 이름을 영어로 변경
-        displayMiscFeatures[0].name = "Questions and Answers";
+        displayMiscFeatures[0].name = "Questions and Answers(AR)";
         displayMiscFeatures[1].name = "Length Measurement";
         displayMiscFeatures[2].name = "Post-It";
 
@@ -744,9 +744,12 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentFeaturePage = 0;
 
   subscriptionItems.forEach(item => {
-    const subscriptionName = item.textContent.trim();
-    const images = Array.from(item.querySelectorAll('img')).map(img => img.alt);
-    displayMiscFeatures.push({ name: subscriptionName, images: images });
+    const subscriptionTypes = item.dataset.types.split(',');  // data-types를 가져와서 쉼표로 나눕니다.
+    if(subscriptionTypes.includes('3D')) {  // '3D' 타입만 고려합니다.
+        const subscriptionName = item.textContent.trim();
+        const images = Array.from(item.querySelectorAll('img')).map(img => img.alt);
+        displayMiscFeatures.push({ name: subscriptionName, images: images });
+    }
   });
 
   function displayMisc() {
@@ -816,7 +819,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // "GPT" 항목이 선택된 경우
-    if (selectedFeature.name === "Questions and Answers"||selectedFeature.name === "질문하기") {
+    if (selectedFeature.name === "Questions and Answers(AR)"||selectedFeature.name === "질문하기") {
       if (currentLanguage === "en") {
         sttText.setAttribute("troika-text",'value', 'Ask a Question');
         if (!isBoxVisible) {

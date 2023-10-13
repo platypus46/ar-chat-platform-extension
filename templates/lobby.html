@@ -39,8 +39,21 @@
     <link rel="stylesheet" href="{% static 'lobby/css/lobby.css' %}" />
     <script src="{% static 'lobby/js/AR_setting.js' %}"></script>
     <script src="{% static 'lobby/js/shop.js' %}"></script>
+    <script>
+      $(document).mousemove(function(e) {
+          $('#sparkle').css({
+              'top': e.pageY - 25,
+              'left': e.pageX - 25,
+              'opacity': 1
+          });
+          setTimeout(function() {
+              $('#sparkle').css('opacity', 0);
+          }, 500);
+      });
+    </script>
   </head>
   <body class="background-image">
+    <div id="sparkle"></div>
     <div id="profileSection">
       <img
         id="profileImageDisplay"
@@ -148,15 +161,15 @@
         <h3>구독 목록</h3>
         <div class="scrollable-content">
             {% for subscription in subscriptions %}
-            <div class="subscriber-item">
-                {{ subscription.service.name }}
-                {% for type in subscription.types.all %}
-                    {% if type.name == "Hand" %}
-                        <img src="/static/lobby/img/hand.png" alt="Hand">
-                    {% elif type.name == "Controller" %}
-                        <img src="/static/lobby/img/controller.png" alt="Controller">
-                    {% endif %}
-                {% endfor %}
+            <div class="subscriber-item" data-types="{% for type in subscription.types.all %}{{ type.name }}{% if not forloop.last %},{% endif %}{% endfor %}">
+              {{ subscription.service.name }}
+              {% for type in subscription.types.all %}
+                  {% if type.name == "Hand" %}
+                      <img src="/static/lobby/img/hand.png" alt="Hand">
+                  {% elif type.name == "Controller" %}
+                      <img src="/static/lobby/img/controller.png" alt="Controller">
+                  {% endif %}
+              {% endfor %}
             </div>
             {% empty %}
             <div>구독 목록이 없습니다.</div>
@@ -369,16 +382,12 @@
             ></a-entity>
           </a-entity>
           <!-- Char Pager 툴바 (기본적으로 숨김) -->
-          <a-box
+          <a-entity
             id="talkToolbar"
             position="0 0 0"
             rotation="0 0 0"
-            width="0.13"
-            height="0.02"
-            depth="0.005"
-            color="#888888"
-          >
-            <a-cylinder
+            rounded-box="width: 0.13; height: 0.02; depth: 0.005; radius: 0.003; color: #888888"
+            ><a-cylinder
               position="0.05 0 0.01"
               radius="0.007"
               height="0.007"
@@ -387,15 +396,11 @@
               class="clickable"
               id="chatScroll"
             ></a-cylinder>
-            <a-box
+            <a-entity
               position="-0.01 0 0.01"
               rotation="0 0 0"
-              width="0.08"
-              height="0.014"
-              depth="0.002"
-              color="white"
-            >
-              <a-entity
+              rounded-box="width: 0.08; height: 0.014; depth: 0.002; radius: 0.002; color: white"
+              ><a-entity
                 id="subTextbar"
                 troika-text="value: PLATYVERSE; 
                   font: /static/lobby/font/NanumGothic-Bold.ttf; 
@@ -403,29 +408,29 @@
                   color: black;"
                 position="-0.01 0 0.01"
               ></a-entity>
-            </a-box>
-          </a-box>
+            ></a-entity>
+          </a-entity>
           <a-box
             id="talkUIbox"
-            position="0 -0.09 0"
+            position="0 -0.085 0"
             rotation="0 0 0"
             width="0.13"
-            height="0.16"
+            height="0.15"
             depth="0.01"
-            color="#D3D3D3"
+            color="#FCDFDB"
           ></a-box>
         </a-entity>
         <a-entity id="hideUIButton" position="-0.08 -0.2 -0.43" visible="false">
           <a-cylinder
             geometry="radius: 0.012; height: 0.01; segmentsRadial: 32"
-            material="color: yellow"
+            material="color: #E0C3D9"
             rotation="90 0 0"
             class="clickable"
           ></a-cylinder>
         </a-entity>
         <a-entity
           id="ui"
-          rounded-box="width: 0.3; height: 0.45; depth: 0.001; radius: 0.04; color: #D8BFD8"
+          rounded-box="width: 0.3; height: 0.45; depth: 0.001; radius: 0.04; color: #FAD7D9"
           material="opacity: 0.5; transparent: true; "
           position="0.1 0 -0.5"
           visible="false"
@@ -610,7 +615,7 @@
             <a-entity
               id="chatbutton"
               geometry="primitive: circle; radius: 0.03"
-              material="color: white"
+              material="color: #C0B3DD"
               position="-0.07 -0.1 0.05"
               class="clickable"
             >
@@ -625,7 +630,7 @@
             <a-entity
               id="Miscbutton"
               geometry="primitive: circle; radius: 0.03"
-              material="color: white"
+              material="color: #C0B3DD"
               position="0.06 -0.1 0.05"
               class="clickable"
             >
@@ -780,7 +785,7 @@
             width="0.04"
             height="0.04"
             depth="0.02"
-            color="gray"
+            color="#C0B3DD"
             class="clickable"
             id="up"
           ></a-box>
@@ -789,7 +794,7 @@
             width="0.04"
             height="0.04"
             depth="0.02"
-            color="gray"
+            color="#C0B3DD"
             class="clickable"
             id="down"
           ></a-box>
@@ -798,7 +803,7 @@
             width="0.04"
             height="0.04"
             depth="0.02"
-            color="gray"
+            color="#C0B3DD"
             class="clickable"
             id="left"
           ></a-box>
@@ -807,7 +812,7 @@
             width="0.04"
             height="0.04"
             depth="0.02"
-            color="gray"
+            color="#C0B3DD"
             class="clickable"
             id="right"
           ></a-box>
@@ -817,7 +822,7 @@
             position="0 -0.1 0"
             radius="0.02"
             height="0.02"
-            color="red"
+            color="#C0B3DD"
             rotation="90 0 0"
             class="clickable"
             id="forward"
@@ -826,13 +831,13 @@
             position="0 -0.15 0"
             radius="0.02"
             height="0.02"
-            color="red"
+            color="#C0B3DD"
             rotation="90 0 0"
             class="clickable"
             id="backward"
           ></a-cylinder>
         </a-entity>
-        <a-entity position="-0.08 -0.15 -0.43" id="talkpad" visible="false">
+        <a-entity position="-0.08 -0.15 -0.43" id="talkpad" visible="false" color="#FBD7D7">
           <a-entity
             position="0 0 0"
             scale="0.02 0.02 0.02"
@@ -856,7 +861,7 @@
             width="0.04"
             height="0.04"
             depth="0.02"
-            color="green"
+            color="#C0B3DD"
             class="clickable"
             id="input-button"
           >
@@ -867,7 +872,7 @@
             width="0.04"
             height="0.04"
             depth="0.02"
-            color="red"
+            color="#C0B3DD"
             class="clickable"
             id="eraser-button"
           >

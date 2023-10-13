@@ -39,8 +39,11 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
     let full_name = document.getElementById("signup-full_name").value;
 
-    if (!full_name || /[\s\W]/.test(full_name)) {
-      alert("Full Name is required and should not contain special characters and spaces!");
+    // 정규 표현식: 한글과 영어만 허용
+    let regex = /^[가-힣A-Za-z]+$/;
+
+    if (!full_name || !regex.test(full_name)) {
+      alert("Full Name is required and must contain only English and Korean characters without spaces!");
       return;
     }
 

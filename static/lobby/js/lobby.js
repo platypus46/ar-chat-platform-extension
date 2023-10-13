@@ -74,42 +74,59 @@ document.addEventListener("DOMContentLoaded", function () {
     const messageElement = document.createElement("p");
     
     if (sender === username) {
-      messageElement.className = "message me";
+        messageElement.className = "message me";
     } else {
-      messageElement.className = "message other";
+        messageElement.className = "message other";
     }
   
-    messageElement.innerHTML = `${message}`;
-     // 메시지와 모달을 함께 추가
-     messageElement.innerHTML = `
+    // 메시지와 모달을 함께 추가
+    messageElement.innerHTML = `
      ${message}
      <div class="modal">
        <div class="modal-content">
          <span class="close-button">&times;</span>
-         <p>이곳은 빈 박스입니다.</p>
+         <ul id="service-list"></ul>
        </div>
      </div>
-   `;
+    `;
 
-   // 메시지 클릭 이벤트 리스너 추가
-   messageElement.addEventListener("click", function() {
-     const modal = messageElement.querySelector(".modal");
-     modal.style.display = "block"; // 모달 보이게 설정
-   });
+    // 메시지를 생성할 때, 서비스 목록을 함께 생성
+    const modal = messageElement.querySelector(".modal");
+    const serviceList = modal.querySelector("#service-list");
+    const subscriptionItems = document.querySelectorAll(".subscriber-item");
+    
+    subscriptionItems.forEach(item => {
+        const subscriptionTypes = item.dataset.types.split(',');
 
-   // 닫기 버튼 이벤트 리스너
-   messageElement.querySelector(".close-button").addEventListener("click", function() {
-     const modal = messageElement.querySelector(".modal");
-     modal.style.display = "none"; // 모달 숨기기
-   });
+        if(subscriptionTypes.includes("2D") && subscriptionTypes.includes("Chat")) {
+            const serviceItem = document.createElement("li");
+            serviceItem.innerText = item.textContent.trim();
+            serviceItem.onclick = function() {
+                alert(`${message} 클릭됨!`);
+            };
+            serviceList.appendChild(serviceItem);  
+        }
+    });
+
+    // 메시지 클릭 이벤트 리스너: 모달의 표시 상태만 제어
+    messageElement.addEventListener("click", function() {
+        modal.style.display = "block"; 
+    });
+
+    // 닫기 버튼 이벤트 리스너
+    messageElement.querySelector(".close-button").addEventListener("click", function(event) {
+        event.stopPropagation();  // 이벤트 버블링을 중단합니다.
+        modal.style.display = "none"; // 모달 숨기기
+    });
 
     chatMessages.appendChild(messageElement);
-    
   }
+
+
 
   function openchatWindow(friendUsername) {
     document.getElementById("chatWindow").style.display = "block";
-    document.getElementById("chatFriendName").innerText = friendUsername; // 디스플레이 용도로만 사용
+    document.getElementById("chatFriendName").innerText = friendUsername; 
   }
 
   document

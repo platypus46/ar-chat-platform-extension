@@ -142,19 +142,33 @@
         <span id="friend-page-number">1</span>
         <button>다음</button>
       </div>
-      <!-- Chat Window (Initially Hidden) -->
-      <div
-        id="chatWindow"
-      >
-        <h3 id="chatFriendName"></h3>
-        <div id="chatMessages"></div>
-        <div>
-          <input type="text" id="chatInput" placeholder="Enter your message" />
-          <button id="sendChatMessage">Send</button>
+     <!-- Chat Window (Initially Hidden) -->
+      <div id="windowSection" >
+        <div id="chatWindow">
+            <h3 id="chatFriendName"></h3>
+            <div id="chatMessages"></div>
+            <div>
+                <input type="text" id="chatInput" placeholder="Enter your message" />
+                <button id="sendChatMessage">Send</button>
+            </div>
+            <button id="closechatWindowButton">close</button>
         </div>
-        <button id="closechatWindowButton">close</button>
+        <!-- 서비스 목록 윈도우 (기존 모달을 윈도우로 변경) -->
+        <div id="serviceWindow" style="display: none;">
+            <div class="window-content">
+                <ul id="service-list"></ul>
+                <span class="close-button">&times;</span>
+            </div>
+        </div>
       </div>
-      <button class="goBackButton">Back to Main</button>
+      <div id="buttonSection">
+        <div id="buttonGroup">
+            <button class="goBackButton">Back to Main</button>
+            <button id="record">음성녹음</button>
+            <button id="image">이미지</button>
+            <button id="AI">AI</button>
+        </div>
+      </div>
     </div>
     <div id="Subscribe_Page" class="page">
       <div class="subscriber-list">

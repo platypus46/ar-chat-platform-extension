@@ -218,6 +218,9 @@ html.a-fullscreen {
   color: #fff;
   margin-left: 5px;
 }
+#windowSection {
+  display: flex;
+}
 #chatwindow {
   display: none;
   background-color: #fff;
@@ -253,18 +256,18 @@ html.a-fullscreen {
   text-align: left;  
   margin-right: auto; 
 }
-.modal {
-  display: none; 
-  position: fixed; 
+#serviceWindow {
+  display: none;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.7); 
-  z-index: 1; 
+  background-color: rgba(0,0,0,0.7);
+  z-index: 1;
 }
 
-.modal-content {
+.window-content {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -274,6 +277,33 @@ html.a-fullscreen {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 
+.window-content ul#service-list {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.window-content ul#service-list li {
+  width: 80%;
+  height: 15%;
+  border-radius: 20px;
+  margin: 10px auto;
+  border: 1px solid #e0e0e0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+#buttonSection {
+  display: flex;
+  margin: 20px;
+}
+
+#buttonGroup button {
+  text-align:center;
+  height: 38.4px;
+  margin: 20px;
+}
 .close-button {
   float: right;
   font-size: 20px;

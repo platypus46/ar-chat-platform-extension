@@ -68,60 +68,99 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     openchatWindow(friendUsername);
   }
+  let selectedMessage = null;
+  let isAIDisplayed = false; // AI 관련 콘텐츠가 표시되는지 여부를 나타내는 플래그
+  // AI 버튼 클릭 이벤트
+  document.getElementById("AI").addEventListener("click", function() {
+    const serviceList = document.getElementById("service-list");
+    const aiButton = document.getElementById("AI");
+    serviceList.innerHTML = ""; // 기존 목록을 지웁니다.
 
-  function displayMessage(sender, message) {
-    const chatMessages = document.getElementById("chatMessages");
-    const messageElement = document.createElement("p");
-    
-    if (sender === username) {
-        messageElement.className = "message me";
-    } else {
-        messageElement.className = "message other";
-    }
-  
-    // 메시지와 모달을 함께 추가
-    messageElement.innerHTML = `
-     ${message}
-     <div class="modal">
-       <div class="modal-content">
-         <span class="close-button">&times;</span>
-         <ul id="service-list"></ul>
-       </div>
-     </div>
-    `;
-
-    // 메시지를 생성할 때, 서비스 목록을 함께 생성
-    const modal = messageElement.querySelector(".modal");
-    const serviceList = modal.querySelector("#service-list");
     const subscriptionItems = document.querySelectorAll(".subscriber-item");
-    
     subscriptionItems.forEach(item => {
         const subscriptionTypes = item.dataset.types.split(',');
 
-        if(subscriptionTypes.includes("2D") && subscriptionTypes.includes("Chat")) {
-            const serviceItem = document.createElement("li");
-            serviceItem.innerText = item.textContent.trim();
-            serviceItem.onclick = function() {
-                alert(`${message} 클릭됨!`);
-            };
-            serviceList.appendChild(serviceItem);  
+        if (isAIDisplayed) {
+            // AI 관련 콘텐츠로 변경
+            if (subscriptionTypes.includes("2D") && subscriptionTypes.includes("Prompt")) {
+                const serviceItem = document.createElement("li");
+                serviceItem.innerText = item.textContent.trim();
+                serviceItem.onclick = function() {
+                    alert(`${item.textContent.trim()} 클릭됨!`);
+                };
+                serviceList.appendChild(serviceItem);
+            }
+            aiButton.style.backgroundColor = "#FF1493"; // 색 변경
+        } else {
+            // 원래의 콘텐츠로 변경
+            if (subscriptionTypes.includes("2D") && subscriptionTypes.includes("Chat")) {
+                const serviceItem = document.createElement("li");
+                serviceItem.innerText = item.textContent.trim();
+                serviceItem.onclick = function() {
+                    alert(`${item.textContent.trim()} 클릭됨!`);
+                };
+                serviceList.appendChild(serviceItem);
+            }
+            aiButton.style.backgroundColor = "A4ABD9";//원색으로 변경
         }
     });
 
-    // 메시지 클릭 이벤트 리스너: 모달의 표시 상태만 제어
-    messageElement.addEventListener("click", function() {
-        modal.style.display = "block"; 
-    });
+    isAIDisplayed = !isAIDisplayed; // 토글 상태 변경
+});
 
-    // 닫기 버튼 이벤트 리스너
-    messageElement.querySelector(".close-button").addEventListener("click", function(event) {
-        event.stopPropagation();  // 이벤트 버블링을 중단합니다.
-        modal.style.display = "none"; // 모달 숨기기
-    });
-
-    chatMessages.appendChild(messageElement);
+  function displayMessage(sender, message) {
+      const chatMessages = document.getElementById("chatMessages");
+      const messageElement = document.createElement("p");
+      
+      if (sender === username) {
+          messageElement.className = "message me";
+      } else {
+          messageElement.className = "message other";
+      }
+    
+      messageElement.innerHTML = `${message}`;
+  
+      // 메시지를 생성할 때, 서비스 목록을 함께 생성
+      const serviceWindow = document.getElementById("serviceWindow");
+      const serviceList = serviceWindow.querySelector("#service-list");
+      const subscriptionItems = document.querySelectorAll(".subscriber-item");
+  
+      subscriptionItems.forEach(item => {
+          const subscriptionTypes = item.dataset.types.split(',');
+  
+          if(subscriptionTypes.includes("2D") && subscriptionTypes.includes("Chat")) {
+              const serviceItem = document.createElement("li");
+              serviceItem.innerText = item.textContent.trim();
+              serviceItem.onclick = function() {
+                  alert(`${message} 클릭됨!`);
+              };
+              serviceList.appendChild(serviceItem);  
+          }
+      });
+  
+      
+      // 메시지 클릭 이벤트 리스너: 서비스 윈도우 표시
+      messageElement.addEventListener("click", function() {
+          serviceWindow.style.display = "block";
+  
+          // 이전에 선택된 메시지의 색깔을 원래대로 되돌립니다.
+          if (selectedMessage) {
+              selectedMessage.style.backgroundColor = ""; // 원래의 배경색으로 변경
+          }
+  
+          // 현재 클릭된 메시지의 색깔을 변경합니다.
+          messageElement.style.backgroundColor = "#FF69B4"; // 예: 핫핑크로 변경
+          selectedMessage = messageElement; // 현재 클릭된 메시지를 추적합니다.
+      });
+  
+      // 닫기 버튼 이벤트 리스너
+      document.querySelector(".close-button").addEventListener("click", function(event) {
+          event.stopPropagation();
+          serviceWindow.style.display = "none";
+      });
+  
+      chatMessages.appendChild(messageElement);
   }
-
 
 
   function openchatWindow(friendUsername) {

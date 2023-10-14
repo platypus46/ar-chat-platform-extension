@@ -239,7 +239,8 @@
     >
       <div class="loader"></div>
     </div>
-    <a-scene
+    <a-scene 
+      flat-shading
       physics="debug: true"
       light="defaultLightsEnabled:false"
       data-font-json="{% static 'lobby/font/NanumGothic-Bold.json' %}"
@@ -248,12 +249,7 @@
       screenshot="width: 1920; height: 1080;"
     >
       <a-light type="ambient" color="#888"></a-light>
-      <a-light
-        type="directional"
-        color="#FFF"
-        intensity="1"
-        position="2 4 -3"
-      ></a-light>
+      
 
       <!-- 왼손 컨트롤러 -->
       <a-entity
@@ -286,6 +282,12 @@
         ></a-entity>
       </a-entity>
       <a-camera id="camera">
+        <a-light
+          type="directional"
+          color="#FFF"
+          intensity="1"
+          position="0 4 0"
+        ></a-light>
         <a-entity id="Text" position="-0.12 -0.1 -0.45" visible="false">
           <a-entity
             id="roundBox"
@@ -340,33 +342,27 @@
             </a-circle>
             <a-entity
               id="backSpacebar"
-              rounded-plane-box="width:0.02; height: 0.04; radius: 0.004; color: #D3D3D3;"
+              rounded-plane-box="width:0.02; height: 0.04; radius: 0.004; color: white;"
               position="0.05 -0.03 0.011"
               class="clickable"
-            >
-              <a-text
-                value="back"
-                align="center"
-                baseline="center"
-                color="black"
-                width="0.02"
+            ><a-image 
+                src="/static/lobby/icon/backspaceBar.png" 
                 position="0 0 0.001"
-              ></a-text>
+                width="0.018"
+                height="0.018"
+              ></a-image>
             </a-entity>
             <a-entity
               id="spaceBar"
-              rounded-plane-box="width:0.07; height: 0.018; radius: 0.006; color: #D3D3D3;"
+              rounded-plane-box="width:0.07; height: 0.018; radius: 0.006; color: white;"
               position="-0.01 -0.06 0.011"
               class="clickable"
-            >
-              <a-text
-                value="space"
-                align="center"
-                baseline="center"
-                color="black"
-                width="0.06"
+            ><a-image 
+                src="/static/lobby/icon/spaceBar.png" 
                 position="0 0 0.001"
-              ></a-text>
+                width="0.018"
+                height="0.018"
+              ></a-image>
             </a-entity>
             <a-entity
               id="charPagerToolbar"
@@ -431,7 +427,7 @@
         <a-entity
           id="ui"
           rounded-box="width: 0.3; height: 0.45; depth: 0.001; radius: 0.04; color: #FAD7D9"
-          material="opacity: 0.5; transparent: true; "
+          material="opacity: 0.5; "
           position="0.1 0 -0.5"
           visible="false"
         >
@@ -444,7 +440,7 @@
             <a-entity
               id="chat-emoji"
               rounded-box="width: 0.03; height: 0.24; depth: 0.001; radius: 0.008; color: white"
-              material="opacity: 0.7; transparent: true; "
+              material="opacity: 0.7; "
               position="0.05 0 0"
               class="clickable" 
               ><a-entity
@@ -572,14 +568,19 @@
           </a-entity>
           <a-entity
             id="profile"
-            geometry="primitive: plane; width: 0.2; height: 0.2"
-            material="src: {{ profile_picture_url }};"
+            rounded-plane-box="width: 0.18; height: 0.18; radius: 0.02; color: white"
             position="0 0.06 0.01"
-          ></a-entity>
+            ><a-image
+              src="{{ profile_picture_url }}"
+              width="0.16"
+              height="0.16"
+              position="0 0 0.001"
+            ></a-image>
+          </a-entity>
           <a-entity
             id="friend"
             geometry="primitive: plane; width:0.2; height: 0.23"
-            material="color:green"
+            material="color:#FCDFDB"
             position="0 0.1 -0.01"
             visible="false"
           >
@@ -600,7 +601,7 @@
           <a-entity
             id="Misc"
             geometry="primitive: plane; width:0.2; height: 0.2"
-            material="color:purple"
+            material="color:#FCDFDB"
             position="0 0 -0.01"
             visible="false"
           >
@@ -614,27 +615,23 @@
           <a-entity id="uibuttons">
             <a-entity
               id="chatbutton"
-              geometry="primitive: circle; radius: 0.03"
-              material="color: #C0B3DD"
-              position="-0.07 -0.1 0.05"
+              rounded-plane-box="width: 0.15; height: 0.04; radius: 0.01; color: #C0B3DD"
+              position="0 -0.08 0.05"
               class="clickable"
-            >
-              <a-text
+              ><a-text
                 value="chat"
-                align="center"
-                color="black"
+               align="center"
+               color="black"
                 position="0 0 0.001"
                 width="0.5"
               ></a-text>
             </a-entity>
             <a-entity
               id="Miscbutton"
-              geometry="primitive: circle; radius: 0.03"
-              material="color: #C0B3DD"
-              position="0.06 -0.1 0.05"
+              rounded-plane-box="width: 0.15; height: 0.04; radius: 0.01; color: #C0B3DD"
+              position="0 -0.15 0.05"
               class="clickable"
-            >
-              <a-text
+              ><a-text
                 value="misc"
                 align="center"
                 color="black"

@@ -151,3 +151,14 @@ AFRAME.registerComponent('click-handler', {
     });
   }
 });
+
+AFRAME.registerComponent('flat-shading', {
+  init: function () {
+    // 해당 엔터티의 material 컴포넌트를 flat shader로 설정
+    this.el.setAttribute('material', 'shader', 'flat');
+    // 만약 추후에 생성될 엔터티에도 적용하려면, 이벤트 리스너를 사용
+    this.el.sceneEl.addEventListener('child-attached', (event) => {
+      event.detail.el.setAttribute('material', 'shader', 'flat');
+    });
+  }
+});

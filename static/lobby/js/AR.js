@@ -597,7 +597,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const maxLength = Math.max(...chunkedContent.map(line => line.length));
     const width = 0.01 * maxLength + 0.008;
 
-    const color = sender === username ? 'blue' : 'yellow';
+    const color = sender === username ? '#AEADD6' : '#FFEE95';
 
     const balloonEntity = document.createElement('a-entity');
     const meshMaterial = new THREE.MeshBasicMaterial({ color: color });
@@ -618,7 +618,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const textEntity = document.createElement("a-troika-text");
     textEntity.setAttribute('value', pages[0]); 
-    textEntity.setAttribute('color', 'black'); 
+    textEntity.setAttribute('color', '#603A36'); 
     textEntity.setAttribute('align', 'center'); 
     textEntity.setAttribute('width', width-0.02); 
     textEntity.setAttribute('font', '/static/lobby/font/NanumGothic-Bold.ttf'); 

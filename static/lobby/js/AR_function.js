@@ -214,7 +214,7 @@ function GPTQuestion() {
   pageEntity.setAttribute("text", `value: 1/1; color: white; align: center;`);
   pageEntity.setAttribute("geometry", "primitive: plane; width: 0.08; height: 0.04");
   pageEntity.setAttribute("position", `0 -0.2 0.02`);
-  pageEntity.setAttribute("material", "color: #0000FF"); 
+  pageEntity.setAttribute("material", "color: #B0B0D8"); 
   miscContainer.appendChild(pageEntity);
 
   const questionEntity = document.createElement("a-entity");

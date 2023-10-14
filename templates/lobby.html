@@ -240,7 +240,6 @@
       <div class="loader"></div>
     </div>
     <a-scene 
-      flat-shading
       physics="debug: true"
       light="defaultLightsEnabled:false"
       data-font-json="{% static 'lobby/font/NanumGothic-Bold.json' %}"
@@ -422,7 +421,14 @@
             material="color: #E0C3D9"
             rotation="90 0 0"
             class="clickable"
-          ></a-cylinder>
+          ><a-image 
+              src="/static/lobby/icon/s_icon.png"
+              position="0 0.011 0"
+              rotation="90 180 0"
+              width="0.025"
+              height="0.025"
+          ></a-image>
+        </a-cylinder>
         </a-entity>
         <a-entity
           id="ui"
@@ -785,7 +791,13 @@
             color="#C0B3DD"
             class="clickable"
             id="up"
-          ></a-box>
+            ><a-image 
+              src="/static/lobby/icon/up.png" 
+              position="0 0 0.011"
+              width="0.02"
+              height="0.02"
+            ></a-image>
+          </a-box>
           <a-box
             position="0 -0.04 0"
             width="0.04"
@@ -794,7 +806,13 @@
             color="#C0B3DD"
             class="clickable"
             id="down"
-          ></a-box>
+            ><a-image 
+              src="/static/lobby/icon/down.png" 
+              position="0 0 0.011"
+              width="0.02"
+              height="0.02"
+            ></a-image>
+          </a-box>
           <a-box
             position="-0.04 0 0"
             width="0.04"
@@ -803,7 +821,13 @@
             color="#C0B3DD"
             class="clickable"
             id="left"
-          ></a-box>
+            ><a-image 
+              src="/static/lobby/icon/left.png" 
+              position="0 0 0.011"
+              width="0.02"
+              height="0.02"
+            ></a-image>
+          </a-box>
           <a-box
             position="0.04 0 0"
             width="0.04"
@@ -812,7 +836,13 @@
             color="#C0B3DD"
             class="clickable"
             id="right"
-          ></a-box>
+            ><a-image 
+              src="/static/lobby/icon/right.png" 
+              position="0 0 0.011"
+              width="0.02"
+              height="0.02"
+            ></a-image>
+          </a-box>
         </a-entity>
         <a-entity position="0.18 -0.16 -0.4" id="zpad" visible="false">
           <a-cylinder
@@ -823,7 +853,25 @@
             rotation="90 0 0"
             class="clickable"
             id="forward"
-          ></a-cylinder>
+            ><a-image 
+              src="/static/lobby/icon/entree.png"
+              position="0 0.011 0"
+              rotation="-90 0 0"
+              width="0.02"
+              height="0.02"
+              id="entreeImage"
+              visible="false"
+            ></a-image>
+            <a-image 
+              src="/static/lobby/icon/forward.png"
+              position="0 0.011 0"
+              rotation="-90 0 0"
+              width="0.02"
+              height="0.02"
+              id="forwardImage"
+              visible="true"
+            ></a-image>
+          </a-cylinder>
           <a-cylinder
             position="0 -0.15 0"
             radius="0.02"
@@ -832,6 +880,24 @@
             rotation="90 0 0"
             class="clickable"
             id="backward"
+            ><a-image 
+              src="/static/lobby/icon/undo.png"
+              position="0 0.011 0"
+              rotation="-90 0 0"
+              width="0.02"
+              height="0.02"
+              id="undoImage"
+              visible="false"
+            ></a-image>
+            <a-image 
+              src="/static/lobby/icon/backward.png"
+              position="0 0.011 0"
+              rotation="-90 0 0"
+              width="0.02"
+              height="0.02"
+              id="backwardImage"
+              visible="true"
+            ></a-image>
           ></a-cylinder>
         </a-entity>
         <a-entity position="-0.08 -0.15 -0.43" id="talkpad" visible="false" color="#FBD7D7">

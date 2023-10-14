@@ -37,6 +37,12 @@ document.addEventListener("DOMContentLoaded", function () {
   let chatText = document.querySelector("#chatbutton a-text");
   let miscText = document.querySelector("#Miscbutton a-text");
 
+  const entreeImage = document.querySelector('#entreeImage');
+  const undoImage = document.querySelector('#undoImage');
+
+  const forwardImage = document.querySelector('#forwardImage');
+  const backwardImage = document.querySelector('#backwardImage');
+
   specialCharacters.addEventListener('click', function() {
     emojiToolbar.setAttribute('visible', false);
     charPagerToolbar.setAttribute('visible', !charPagerToolbar.getAttribute('visible'));
@@ -174,6 +180,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isMiscVisible) {
       return;
     }
+    entreeImage.setAttribute("visible", !isChatVisible);
+    undoImage.setAttribute("visible", !isChatVisible);
+
+    forwardImage.setAttribute("visible", isChatVisible);
+    backwardImage.setAttribute("visible", isChatVisible);
 
     //채팅창 띄우기 및 감추기
     friend.setAttribute("visible", !isChatVisible);
@@ -216,6 +227,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isChatVisible) {
       return;
     }
+    entreeImage.setAttribute("visible", !isMiscVisible);
+    undoImage.setAttribute("visible", !isMiscVisible);
+
+    forwardImage.setAttribute("visible", isMiscVisible);
+    backwardImage.setAttribute("visible", isMiscVisible);
 
     // Misc 화면 띄우기 및 감추기
     misc.setAttribute("visible", !isMiscVisible);

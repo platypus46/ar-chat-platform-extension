@@ -93,7 +93,14 @@
       });
     </script>
     <div id="Chat_Page" class="page">
-      <h2>Chat Page</h2>
+      <h2>Chat Page
+        <div id="notificationSection">
+          <button id="notificationIcon">🔔</button>
+          <ul id="notificationList">
+            <!-- Notifications will be populated here -->
+          </ul>
+        </div>
+      </h2>
       <div>
         <input
           type="text"
@@ -102,12 +109,7 @@
         />
         <button id="addFriendButton">Add Friend</button>
       </div>
-      <div id="notificationSection">
-        <button id="notificationIcon">🔔</button>
-        <ul id="notificationList">
-          <!-- Notifications will be populated here -->
-        </ul>
-      </div>
+      
       <ul id="friendList">
         {% for friend in friends %}
         <li>
@@ -173,7 +175,14 @@
     </div>
     <div id="Subscribe_Page" class="page">
       <div class="subscriber-list">
-        <h3>구독 목록</h3>
+        <h3>구독 목록
+          <div id="icon-button-container">
+            <img
+              id="icon-button"
+              src="{% static 'lobby/icon/shop_test_icon.png' %}"
+              alt="Shop Icon"
+            />
+        </h3>
         <div class="scrollable-content">
             {% for subscription in subscriptions %}
             <div class="subscriber-item" data-types="{% for type in subscription.types.all %}{{ type.name }}{% if not forloop.last %},{% endif %}{% endfor %}">
@@ -192,19 +201,14 @@
         </div>
       </div>
       <!-- 임시 상점 버튼 -->
-    <div id="icon-button-container">
-      <img
-        id="icon-button"
-        src="{% static 'lobby/icon/shop_test_icon.png' %}"
-        alt="Shop Icon"
-      />
-    <div id="subscription-pagination-controls">
-      <button >이전</button>
-      <span id="subscription-page-number">1</span>
-      <button >다음</button>
-    </div>
-    </div>
+    
+      <div id="subscription-pagination-controls">
+        <button >이전</button>
+        <span id="subscription-page-number">1</span>
+        <button >다음</button>
+      </div>
       <button class="goBackButton">Back to Main</button>
+    </div>
     </div>
     <div id="Setting_Page" class="page">
       <h2>Profile Settings</h2>

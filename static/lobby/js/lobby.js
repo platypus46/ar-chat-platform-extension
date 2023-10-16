@@ -23,12 +23,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     chatSocket.onmessage = function (e) {
       const data = JSON.parse(e.data);
+  
       if (data.message_type === "load_messages") {
-        data.messages.forEach((msg) => {
-          displayMessage(msg.sender, msg.message);
+          data.messages.forEach((msg) => {
+            displayMessage(msg.sender, msg.message, msg.image_url);  
         });
       } else if (data.message_type === "new_message") {
-        displayMessage(data.sender, data.message);
+          displayMessage(data.sender, data.message, data.image_url); 
       }
     };
 
@@ -104,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  function displayMessage(sender, message) {
+  function displayMessage(sender, message, imageUrl) {
       const chatMessages = document.getElementById("chatMessages");
       const messageElement = document.createElement("p");
 
@@ -146,9 +147,55 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedMessage.style.backgroundColor = selectedMessage.dataset.originalColor;
         }
       });
+
+      if (imageUrl) {
+        const imgElement = document.createElement("img");
+        imgElement.onload = function() {
+          const width = this.width;
+          if (width > 150) {
+            messageElement.style.maxWidth = '150px';
+          } else {
+            messageElement.style.maxWidth = `${width}px`;
+          }
+        };
+        imgElement.src = imageUrl;
+        imgElement.className = "chat-image";  
+        messageElement.appendChild(imgElement);
+      }
   
       chatMessages.appendChild(messageElement);
   }
+
+  const imageInput = document.getElementById("imageInput");
+  const imageButton = document.getElementById("imageButton");
+
+  // 버튼을 클릭하면 숨겨진 input[type="file"] 요소를 트리거합니다.
+  imageButton.addEventListener("click", function() {
+      imageInput.click();
+  });
+
+  // 파일이 선택되면 이벤트를 처리합니다.
+  imageInput.addEventListener("change", function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const imageAsBase64 = evt.target.result;
+            
+            console.log("Sending image to server...");  // 디버깅 로그 추가
+
+            // 이미지를 base64로 서버에 전송
+            chatSocket.send(
+              JSON.stringify({
+                  image: imageAsBase64,
+                  message: "",  // 여기에 빈 문자열 추가
+                  sender: username
+              })
+          );
+        }
+        reader.readAsDataURL(file);
+    }
+  });
 
 
   function openchatWindow(friendUsername) {

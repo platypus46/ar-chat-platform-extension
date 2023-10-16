@@ -115,6 +115,8 @@ class ChatMessage(models.Model):
     chat_room = models.ForeignKey(ChatRoom, related_name='messages', on_delete=models.CASCADE, null=True)
     sender = models.ForeignKey(CustomUser, related_name='sent_messages', on_delete=models.CASCADE)
     message = models.TextField()
+    image = models.ImageField(upload_to='chat_images/', null=True, blank=True)
+    audio_clip = models.FileField(upload_to='chat_audio/', null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def get_reaction_counts(self):

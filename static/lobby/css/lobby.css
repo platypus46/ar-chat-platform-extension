@@ -516,3 +516,15 @@ html.a-fullscreen {
   pointer-events: none;
   transition: opacity 0.5s ease-out;
 }
+
+/* 말풍선관련코드 */
+.chat-image {
+  max-width: 150px;   
+  max-height: 150px;  
+  display: block;
+  margin: 5px 0;
+}
+
+.message {
+  max-width: max-content;
+}

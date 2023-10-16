@@ -4,6 +4,8 @@ from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoom, ChatMessage
 from channels.exceptions import DenyConnection
+from django.core.files.base import ContentFile
+import base64
 
 CustomUser = get_user_model()
 
@@ -241,43 +243,55 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-        sender = text_data_json.get('sender', self.scope["user"].username)  
+        message = text_data_json.get('message', None)
+        image_data = text_data_json.get('image', None)
+        sender = text_data_json.get('sender', self.scope["user"].username)
 
+        print(f"Received data: {text_data_json}")  # 디버깅 로그 추가
 
-        await self.save_message(self.room_name, sender, message)
+        image_url = None
+        if image_data:
+            format, imgstr = image_data.split(';base64,') 
+            ext = format.split('/')[-1] 
+            image_data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+            image_url = await self.save_message(self.room_name, sender, message, image_data)
 
+            print(f"Saved image URL: {image_url}")  # 디버깅 로그 추가
+        else:
+            await self.save_message(self.room_name, sender, message)
+    
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
                 'message': message,
-                'sender': sender 
+                'sender': sender,
+                'image_url': image_url 
             }
         )
 
     async def chat_message(self, event):
         message = event['message']
         sender = event['sender']
+        image_url = event.get('image_url', None) 
 
         await self.send(text_data=json.dumps({
             'message_type': 'new_message',
             'message': message,
-            'sender': sender
+            'sender': sender,
+             'image_url': image_url
         }))
-
-    @database_sync_to_async
-    def save_message(self, room_name, sender, message):
-        room = ChatRoom.objects.get(name=room_name)
-        user = CustomUser.objects.get(username=sender)
-        ChatMessage.objects.create(chat_room=room, sender=user, message=message)
 
     @database_sync_to_async
     def get_last_50_messages(self, room_name):
         room = ChatRoom.objects.get(name=room_name)
         messages = ChatMessage.objects.filter(chat_room=room).order_by('-timestamp')[:50]
         return [
-            {'sender': msg.sender.username, 'message': msg.message} 
+            {
+                'sender': msg.sender.username, 
+                'message': msg.message,
+                'image_url': msg.image.url if msg.image else None  # 이 부분 추가
+            } 
             for msg in reversed(messages) 
             if msg.sender.username in [room.participant1.username, room.participant2.username]
         ]
@@ -288,3 +302,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message_type': 'load_messages',
             'messages': last_50_messages
         }))
+
+    @database_sync_to_async
+    def save_message(self, room_name, sender, message, image_data=None): 
+        room = ChatRoom.objects.get(name=room_name)
+        user = CustomUser.objects.get(username=sender)
+        message_obj = ChatMessage.objects.create(chat_room=room, sender=user, message=message)
+    
+        if image_data:
+            message_obj.image.save(name=image_data.name, content=image_data)
+            return message_obj.image.url
+        return None

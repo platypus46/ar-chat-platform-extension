@@ -69,7 +69,6 @@ class LobbyConsumer(AsyncWebsocketConsumer):
         elif message_type == 'close_notification':
             notification_id = text_data_json['notification_id']
             if not notification_id:
-                print("Invalid notification ID")
                 return
             await self.close_notification(notification_id)
 
@@ -222,17 +221,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             is_user_in_room = await check_user_in_room(self.scope["user"], room)  
 
             if not is_user_in_room:
-                print(f"Denying connection to room {self.room_name}")  # 로그를 찍어서 확인
-                print(f"Scope user: {self.scope['user'].username}")  # Add this line
-                print(f"Room participants: {room.participant1.username}, {room.participant2.username}")  # Add this line
                 raise DenyConnection("Not allowed to join this room")
 
-            print(f"Connecting to room {self.room_name}")  # 로그를 찍어서 확인
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
             await self.accept()
             await self.fetch_past_messages() 
         except Exception as e:
-            print(f"An error occurred: {e}")
             raise DenyConnection(str(e))
 
     async def disconnect(self, close_code):
@@ -247,7 +241,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         image_data = text_data_json.get('image', None)
         sender = text_data_json.get('sender', self.scope["user"].username)
 
-        print(f"Received data: {text_data_json}")  # 디버깅 로그 추가
 
         image_url = None
         if image_data:
@@ -255,8 +248,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             ext = format.split('/')[-1] 
             image_data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
             image_url = await self.save_message(self.room_name, sender, message, image_data)
-
-            print(f"Saved image URL: {image_url}")  # 디버깅 로그 추가
         else:
             await self.save_message(self.room_name, sender, message)
     

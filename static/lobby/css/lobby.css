@@ -261,6 +261,7 @@ html.a-fullscreen {
   text-align: left;  
   margin-right: auto; 
 }
+
 #serviceWindow {
   display: none;
   position: fixed;
@@ -270,6 +271,26 @@ html.a-fullscreen {
   height: 100%;
   background-color: rgba(0,0,0,0.7);
   z-index: 1;
+}
+
+#chatWindow > div {
+  position: relative;  /* 이 부분 추가 */
+}
+
+#AI_Icon {
+  width: 50px;
+  height: 50px;
+  vertical-align: middle;  
+}
+
+#loadingAnimation {
+  overflow: hidden;
+  border-right: .15em solid orange;
+  white-space: nowrap;
+  letter-spacing: .15em;
+  position: absolute; /* 이미 추가됨 */
+  left: 60px;         /* 이 부분 추가 (50px AI_Icon의 넓이 + 10px 마진) */
+  top: 40px;  
 }
 
 .window-content {

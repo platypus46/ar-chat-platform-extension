@@ -1,4 +1,46 @@
 document.addEventListener("DOMContentLoaded", function () {
+  //구독서비스 상태관리
+  let serviceStates = {
+    "Questions and Answers(AR)": false,
+    "Length Measurement": false,
+    "Post-It": false,
+    "Emotion Detection": false,
+    "Questions and Answers": false
+  };
+
+  function displayLoadingAnimation() {
+    const loadingElement = document.getElementById("loadingAnimation");
+    loadingElement.textContent = ""; 
+    const loadingText = "Generating Answer...";
+    let index = 0;
+
+    function type() {
+        if (index < loadingText.length) {
+            loadingElement.textContent += loadingText[index];
+            index++;
+            setTimeout(type, 100);  
+        } else {
+            index = 0;
+            loadingElement.textContent = "";
+            setTimeout(type, 500);  
+        }
+    }
+
+    type();
+}
+
+  function stopLoadingAnimation() {
+    document.getElementById("loadingAnimation").style.display = "none";
+  }
+  
+
+  function getCookie(name) {
+    let value = "; " + document.cookie;
+    let parts = value.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  }
+
+
   const ws_protocol =
     window.location.protocol === "https:" ? "wss://" : "ws://";
   const socket = new WebSocket(
@@ -29,7 +71,9 @@ document.addEventListener("DOMContentLoaded", function () {
             displayMessage(msg.sender, msg.message, msg.image_url);  
         });
       } else if (data.message_type === "new_message") {
+        if (data.sender !== username) {
           displayMessage(data.sender, data.message, data.image_url); 
+        }
       }
     };
 
@@ -37,58 +81,91 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Chat socket closed unexpectedly");
     };
 
-    document.querySelector("#chatInput").onkeyup = function (e) {
-      if (e.keyCode === 13) {
-        const messageInputDom = document.querySelector("#chatInput");
-        const message = messageInputDom.value;
-        chatSocket.send(
-          JSON.stringify({
-            message: message,
-            sender: username,
+    function sendChatMessage() {
+      const messageInputDom = document.querySelector("#chatInput");
+      const message = messageInputDom.value;
+    
+      if (message && chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+        if (serviceStates["Questions and Answers"]) {
+          document.getElementById("loadingAnimation").style.display = "inline";
+          displayLoadingAnimation();  
+          fetch('/get_gpt_answer/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest',
+              'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ question: message })
           })
-        );
-        messageInputDom.value = "";
-      }
-    };
+          .then(response => response.json())
+          .then(data => {
+            displayMessage(username, '[Question]<br>' + message + '<br><br>[Answer]<br>' + data.answer);
+    
+            chatSocket.send(
+              JSON.stringify({
+                message: '[Question]<br>' + message + '<br><br>[Answer]<br>' + data.answer,
+                sender: username,
+              })
+            );
+            stopLoadingAnimation();  
+            document.getElementById("loadingAnimation").style.display = "none";
 
-    document
-      .querySelector("#sendChatMessage")
-      .addEventListener("click", function () {
-        const messageInputDom = document.querySelector("#chatInput");
-        const message = messageInputDom.value;
-        // WebSocket이 열려 있을 때만 메시지를 보냄
-        if (message && chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+            aiIcon.style.display = "none";
+            serviceStates["Questions and Answers"] = false;
+          });
+        } else {
           chatSocket.send(
             JSON.stringify({
               message: message,
               sender: username,
             })
           );
-          messageInputDom.value = "";
         }
-      });
+        
+        messageInputDom.value = "";
+      }
+    }
+
+    document.querySelector("#chatInput").onkeyup = function (e) {
+      if (e.keyCode === 13) {
+        sendChatMessage();
+      }
+    };
+
+    document.querySelector("#sendChatMessage").addEventListener("click", function () {
+      sendChatMessage();
+    });
+
+
     openchatWindow(friendUsername);
   }
   let selectedMessage = null;
 
+  const aiIcon = document.getElementById("AI_Icon");
+
   function displayServiceList(type) {
-    console.log("Displaying service list for type:", type);
     const serviceList = document.getElementById("service-list");
     serviceList.innerHTML = "";
     const subscriptionItems = document.querySelectorAll(".subscriber-item");
 
     subscriptionItems.forEach(item => {
         const subscriptionTypes = item.dataset.types.split(',');
-        console.log("Subscription Types:", subscriptionTypes);
+  
 
         if (subscriptionTypes.includes("2D") && subscriptionTypes.includes(type)) {
-            console.log("Adding service item:", item.textContent.trim());
-            const serviceItem = document.createElement("li");
-            serviceItem.innerText = item.textContent.trim();
-            serviceItem.onclick = function() {
-                alert(`${item.textContent.trim()} clicked!`);
-            };
-            serviceList.appendChild(serviceItem);
+          const serviceItem = document.createElement("li");
+          serviceItem.innerText = item.textContent.trim();
+          
+          serviceItem.onclick = function() {
+              if (item.textContent.trim() === "Questions and Answers") {
+                  aiIcon.style.display = "block";
+                  serviceStates["Questions and Answers"] = true;
+              } else {
+                  alert(`${item.textContent.trim()} clicked!`);
+              }
+          };
+          serviceList.appendChild(serviceItem);
         }
     });
   }
@@ -96,7 +173,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // AI 버튼 클릭 이벤트
   document.getElementById("AI").addEventListener("click", function() {
     serviceWindow.style.display = "block";
-    displayServiceList("Prompt");  
+    displayServiceList("Prompt");
+      
 
     // 닫기 버튼 이벤트 리스너
     document.querySelector(".close-button").addEventListener("click", function(event) {
@@ -109,11 +187,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const chatMessages = document.getElementById("chatMessages");
       const messageElement = document.createElement("p");
 
-      let originalColor;  // 원래의 배경색을 저장할 변수
+      let originalColor;  
       if (sender === username) {
         messageElement.className = "message me";
         originalColor = "#FDE1DB";  
-      } else {
+      }  else {
         messageElement.className = "message other";
         originalColor = "#D5DBDB";  
       }
@@ -127,17 +205,23 @@ document.addEventListener("DOMContentLoaded", function () {
         serviceWindow.style.display = "block";
 
         if (selectedMessage) {
-
-          selectedMessage.style.backgroundColor = selectedMessage.dataset.originalColor;
+            selectedMessage.style.backgroundColor = selectedMessage.dataset.originalColor;
         }
-
 
         messageElement.style.backgroundColor = "#FFEE96";
         selectedMessage = messageElement;
         selectedMessage.dataset.originalColor = originalColor;
-        
-        displayServiceList("Chat");  
-      });
+
+        displayServiceList("Chat");
+
+        // NEW: Reset all service states to false
+        for (const service in serviceStates) {
+            serviceStates[service] = false;
+        }
+
+        // NEW: Hide the AI icon
+        aiIcon.style.display = "none";
+    });
   
       // 닫기 버튼 이벤트 리스너
       document.querySelector(".close-button").addEventListener("click", function(event) {
@@ -174,21 +258,18 @@ document.addEventListener("DOMContentLoaded", function () {
       imageInput.click();
   });
 
-  // 파일이 선택되면 이벤트를 처리합니다.
   imageInput.addEventListener("change", function() {
     const file = this.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = function(evt) {
             const imageAsBase64 = evt.target.result;
-            
-            console.log("Sending image to server...");  // 디버깅 로그 추가
 
             // 이미지를 base64로 서버에 전송
             chatSocket.send(
               JSON.stringify({
                   image: imageAsBase64,
-                  message: "",  // 여기에 빈 문자열 추가
+                  message: "",  
                   sender: username
               })
           );

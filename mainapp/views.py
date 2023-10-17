@@ -191,10 +191,6 @@ def get_friends_and_conversations(request):
             f"{msg.sender.username}: {msg.message}" for msg in messages
         ])
 
-        print(f"ChatRoom Name: {chat_room.name}")  # 채팅방 이름 출력
-        print(f"Conversation with {friend.full_name}:")  # 친구 이름 출력
-        print(conversation)  # 대화 내용 출력
-
         friends_list.append({
         'name': friend.full_name,
         'username': friend.username,
@@ -246,7 +242,6 @@ def get_gpt_answer(question, api_key):
         messages=messages,
         max_tokens=600 
     )
-    print(f"GPT-3 API Response: {response}")  
     return response['choices'][0]['message']['content'].strip()
 
 #스크린샷 테스트용

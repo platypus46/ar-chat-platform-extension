@@ -174,15 +174,24 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("AI").addEventListener("click", function() {
     serviceWindow.style.display = "block";
     displayServiceList("Prompt");
-      
+    changeInputStyle("2px solid #000000");  // 예: 빨간색 테두리로 변경
 
     // 닫기 버튼 이벤트 리스너
     document.querySelector(".close-button").addEventListener("click", function(event) {
       event.stopPropagation();
       serviceWindow.style.display = "none";
+      resetInputStyle();
     });
   });
+    function changeInputStyle(borderStyle) {
+        const chatInput = document.getElementById("chatInput");
+        chatInput.style.border = borderStyle;
+    }
 
+    function resetInputStyle() {
+        const chatInput = document.getElementById("chatInput");
+        chatInput.style.border = "";  // 원래 스타일로 돌아가게 하려면 빈 문자열을 설정
+    }
   function displayMessage(sender, message, imageUrl) {
       const chatMessages = document.getElementById("chatMessages");
       const messageElement = document.createElement("p");
@@ -197,7 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       
       messageElement.innerHTML = `${message}`;
-  
+    
   
       
       // 메시지 클릭 이벤트 리스너: 서비스 윈도우 표시
@@ -248,7 +257,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
   
       chatMessages.appendChild(messageElement);
-  }
+      }
 
   const imageInput = document.getElementById("imageInput");
   const imageButton = document.getElementById("imageButton");

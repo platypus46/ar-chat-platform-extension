@@ -149,13 +149,21 @@
         <div id="chatWindow">
             <h3 id="chatFriendName"></h3>
             <div id="chatMessages"></div>
-            <div>
+            <div">
                 <img id="AI_Icon" src="/static/lobby/icon/AI_icon.png" style="display: none;">
                 <span id="loadingAnimation" style="display: none;">Generating answer...</span>
                 <input type="text" id="chatInput" placeholder="Enter your message" />
                 <button id="sendChatMessage">Send</button>
             </div>
-            <button id="closechatWindowButton">close</button>
+            <div id="buttonSection">
+              <div id="buttonGroup">
+                  <button id="closechatWindowButton">close</button>
+                  <button id="record">음성녹음</button>
+                  <input type="file" id="imageInput" style="display:none;">
+                  <button id="imageButton">이미지</button>
+                  <button id="AI">AI</button>
+              </div>
+            </div>
         </div>
         <!-- 서비스 목록 윈도우 (기존 모달을 윈도우로 변경) -->
         <div id="serviceWindow" style="display: none;">
@@ -165,15 +173,7 @@
             </div>
         </div>
       </div>
-      <div id="buttonSection">
-        <div id="buttonGroup">
-            <button class="goBackButton">Back to Main</button>
-            <button id="record">음성녹음</button>
-            <input type="file" id="imageInput" style="display:none;">
-            <button id="imageButton">이미지</button>
-            <button id="AI">AI</button>
-        </div>
-      </div>
+      <button class="goBackButton">Back to Main</button>
     </div>
     <div id="Subscribe_Page" class="page">
       <div class="subscriber-list">

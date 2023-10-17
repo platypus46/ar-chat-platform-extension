@@ -115,6 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
             serviceStates["Questions and Answers"] = false;
           });
         } else {
+          displayMessage(username, message);
           chatSocket.send(
             JSON.stringify({
               message: message,

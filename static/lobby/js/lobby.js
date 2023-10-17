@@ -275,6 +275,8 @@ document.addEventListener("DOMContentLoaded", function () {
         reader.onload = function(evt) {
             const imageAsBase64 = evt.target.result;
 
+            displayMessage(username, "", imageAsBase64);
+
             // 이미지를 base64로 서버에 전송
             chatSocket.send(
               JSON.stringify({

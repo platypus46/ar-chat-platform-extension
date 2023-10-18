@@ -7,31 +7,39 @@ document.addEventListener("DOMContentLoaded", function () {
     "Emotion Detection": false,
     "Questions and Answers": false
   };
+  let typingTimer;  // 타이핑 애니메이션의 setTimeout을 저장하기 위한 변수
 
   function displayLoadingAnimation() {
     const loadingElement = document.getElementById("loadingAnimation");
     loadingElement.textContent = ""; 
     const loadingText = "Generating Answer...";
-    let index = 0;
 
-    function type() {
+    // 이미 실행 중인 타이핑 애니메이션의 setTimeout을 취소
+    if (typingTimer) {
+        clearTimeout(typingTimer);
+    }
+
+    function type(index) {  // index를 파라미터로 받음
         if (index < loadingText.length) {
             loadingElement.textContent += loadingText[index];
             index++;
-            setTimeout(type, 100);  
+            typingTimer = setTimeout(() => type(index), 100);  // index 값을 전달
         } else {
-            index = 0;
             loadingElement.textContent = "";
-            setTimeout(type, 500);  
+            typingTimer = setTimeout(() => type(0), 500);  // index를 0으로 초기화하여 전달
         }
     }
 
-    type();
+    type(0);  // 초기 index 값 0으로 시작
 }
 
-  function stopLoadingAnimation() {
+function stopLoadingAnimation() {
+    // 타이핑 애니메이션의 setTimeout을 취소
+    if (typingTimer) {
+        clearTimeout(typingTimer);
+    }
     document.getElementById("loadingAnimation").style.display = "none";
-  }
+}
   
 
   function getCookie(name) {
@@ -162,6 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
               if (item.textContent.trim() === "Questions and Answers") {
                   aiIcon.style.display = "block";
                   serviceStates["Questions and Answers"] = true;
+                  changeInputStyle("2px solid #000000");  // 예: 빨간색 테두리로 변경
               } else {
                   alert(`${item.textContent.trim()} clicked!`);
               }
@@ -175,7 +184,6 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("AI").addEventListener("click", function() {
     serviceWindow.style.display = "block";
     displayServiceList("Prompt");
-    changeInputStyle("2px solid #000000");  // 예: 빨간색 테두리로 변경
 
     // 닫기 버튼 이벤트 리스너
     document.querySelector(".close-button").addEventListener("click", function(event) {

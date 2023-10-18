@@ -224,7 +224,14 @@ html.a-fullscreen {
   color: #fff;
   margin-left: 5px;
 }
+#chatControl {
+  position: relative;
+  left: 20px;
+  display: inline-flex;
+  justify-content: center;
+}
 #chatInput:focus {
+  width: 70%;
   outline: none; /* 포커스될 때 외곽선을 제거합니다. */
 }
 #windowSection {
@@ -297,7 +304,8 @@ html.a-fullscreen {
   letter-spacing: .15em;
   position: absolute; /* 이미 추가됨 */
   left: 60px;         /* 이 부분 추가 (50px AI_Icon의 넓이 + 10px 마진) */
-  top: 40px;  
+  top: -30px;
+  width: 190px;
 }
 
 .window-content {

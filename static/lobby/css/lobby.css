@@ -88,7 +88,7 @@ html.a-fullscreen {
   color: #a0a0a0;
   width: 40%;
   height: 40%;
-  border: 1px solid black;
+  border: 1px solid #CFBCDA;
   position: absolute;
   opacity: 1;
   animation-duration: 2s;
@@ -119,7 +119,7 @@ html.a-fullscreen {
   text-align: center;
   font-size: 40px;
   color: #a0a0a0;
-  border: 1px solid black;
+  border: 1px solid #CFBCDA;
   animation: backInLeft 1.2s;
   display: flex;
   justify-content: center;

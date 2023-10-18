@@ -224,12 +224,14 @@ html.a-fullscreen {
   color: #fff;
   margin-left: 5px;
 }
-#chatControl {
+#chatcontrol {
   position: relative;
   left: 20px;
-  display: inline-flex;
+  display: flex; 
   justify-content: center;
+  width: 100%; 
 }
+
 #chatInput:focus {
   width: 70%;
   outline: none; /* 포커스될 때 외곽선을 제거합니다. */
@@ -260,6 +262,8 @@ html.a-fullscreen {
   width: fit-content;   /* 내용에 따라 너비를 조절합니다. */
   display: flex;
   flex-direction: column; /* 요소들을 세로 방향으로 배열합니다. */
+  word-wrap: break-word;      /* 오래된 브라우저를 위한 설정 */
+  overflow-wrap: break-word; 
 }
 
 /* 자신이 보낸 메시지 스타일 */
@@ -337,14 +341,32 @@ html.a-fullscreen {
 
 #buttonSection {
   display: flex;
-  margin: 20px;
+  justify-content: center;
+  width: fit-content; 
+  margin: 20px auto; 
+  border-radius: 15px;
+  background-color: #f0f0f0;
+  padding: 10px;
+}
+
+#buttonGroup {
+  display: flex;
+  flex-direction: row;
+  gap: 10px; 
 }
 
 #buttonGroup button {
   text-align:center;
   height: 38.4px;
-  margin: 20px;
+  margin: 0; 
+  border-radius: 8px; 
 }
+
+#buttonGroup input {
+  margin: 0; 
+}
+
+
 .close-button {
   float: right;
   font-size: 20px;
@@ -365,12 +387,12 @@ html.a-fullscreen {
   left: 85%;
 }
 #profileSection {
-  background-color: aliceblue;
+  background-color: #C9CDE8;
   position: absolute;
   top: 10px;
   right: 10px;
   display: flex;
-  border: 1px solid black; /* 외각선 */
+  border: 3px solid #CFBCDA; /* 외각선 */
   padding: 10px; /* 안쪽 여백 */
 
 }
@@ -387,9 +409,9 @@ html.a-fullscreen {
 #profileSection::after {
   content: ""; /* 실제 콘텐츠는 없지만, ::after 요소를 생성하기 위해 필요합니다 */
   display: block; /* 블록 요소로 만들어 줍니다 */
-  width: 1px; /* 선의 너비 */
+  width: 2px; /* 선의 너비 */
   height: 100%; /* 선의 높이 */
-  background-color: black; /* 선의 색상 */
+  background-color: #CFBCDA; /* 선의 색상 */
   position: absolute; /* #profileSection 영역 내에서 절대 위치를 지정 */
   left: 120px; /* 이미지의 너비(100px)와 좌측 패딩(10px)을 합한 위치에 선을 그립니다 */
   top: 50%; /* 세로 중앙에 위치 */
@@ -403,11 +425,22 @@ html.a-fullscreen {
   display: block;
   margin-bottom: 10px;
 }
-#profileSection #username {
-  margin-left: 10px; /* 이름과 구분선 사이의 간격 */
-  color: #a0a0a0;
-  margin-right: 10px;
+
+@font-face {
+  font-family: 'SOYOMapleBoldTTF';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2310@1.0/SOYOMapleBoldTTF.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
 }
+
+#profileSection #username {
+  margin-left: 10px; 
+  color: white;
+  margin-right: 10px;
+  font-family: 'SOYOMapleBoldTTF', sans-serif; 
+  font-size: 20px;
+}
+
 .subscriber-item {
   border-bottom: 1px solid #ccc; /* 회색의 1픽셀 두께의 하단 테두리를 추가합니다. */
   padding: 10px; /* 상하 패딩을 추가하여 테두리와 내용 사이에 간격을 줍니다. */

@@ -61,6 +61,7 @@ function calculateDistance(start, end) {
 }
 
 function lengthMeasurement() {
+    enterFunction();
     ui.setAttribute("visible", "false");
     talkpad.setAttribute("visible", "false");
     xypad.setAttribute("visible", "false");
@@ -148,6 +149,7 @@ function lengthMeasurement() {
 }
 
 function GPTQuestion() {
+  enterFunction();
   // 페이지네이션을 위한 변수 선언
   let currentPage = 0;
   let totalPages = 0;
@@ -337,6 +339,7 @@ function toggleVisibility() {
     document.querySelector("#zpad"),
     document.querySelector("#recordButton"),
     document.querySelector("#Text"),
+    document.querySelector("#hideUIButton"),
   ];
 
   elementsToToggle.forEach((el) => {
@@ -372,6 +375,7 @@ function moveColor(event) {
 }
 
 function postIt() {
+  enterFunction();
   const colorSelectorGroup = document.querySelector('#colorSelectorGroup');
   ui.setAttribute("visible", "false");
   xypad.setAttribute("visible", "false");
@@ -462,10 +466,25 @@ function createPostIt(position, color) {
   createdTextEntities.push(textEntity);
 }
 
+function enterFunction() {
+  const hideUIButton = document.querySelector("#hideUIButton");
+  if (hideUIButton) {
+    hideUIButton.setAttribute("visible", "false");
+    hideUIButton.classList.remove("clickable");
+  }
+}
+
 
 function onBackwardButtonClick() {
   const scene = document.querySelector("a-scene");
   document.getElementById("Miscbutton").setAttribute("visible", true);
+  const hideUIButton = document.querySelector("#hideUIButton");
+  if (hideUIButton) {
+    hideUIButton.setAttribute("visible", "true");
+    hideUIButton.classList.add("clickable");
+  }
+
+
   // 이벤트 리스너 제거
   if (input_Button) {
     if (measureEventListener) {

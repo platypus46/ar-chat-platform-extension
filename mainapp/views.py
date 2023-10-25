@@ -10,6 +10,7 @@ from .models import CustomUser, FriendRequest, Friendship, Notification, ChatRoo
 from django.views.decorators.csrf import csrf_exempt
 from .forms import ProfilePictureForm
 import speech_recognition as sr
+from django.db.models import Q
 import openai
 import base64
 import subprocess
@@ -181,14 +182,13 @@ def get_friends_and_conversations(request):
         )
         
         messages = ChatMessage.objects.filter(
-            chat_room=chat_room
-        ).order_by('-timestamp')[:5]    # 최근 5개의 메시지만 가져옴
-
+            Q(chat_room=chat_room) & (Q(image__isnull=True) | Q(image=''))
+        ).order_by('-timestamp')[:5]  
+        
         messages = list(reversed(list(messages)))
 
-        # conversation 문자열을 만드는 부분을 수정
         conversation = '\n'.join([
-            f"{msg.sender.username}: {msg.message}" for msg in messages
+            "{}: {}".format(msg.sender.username, msg.message.replace('\n', ' ').replace('<br>', '   ')) for msg in messages
         ])
 
         friends_list.append({

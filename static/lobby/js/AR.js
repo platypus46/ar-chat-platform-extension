@@ -211,6 +211,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   function toggleUIVisibility() {
+    //시연을 위한 임시 코드
+    if(isMiscVisible){
+      toggleMisc();
+    }
+
+    if(isChatVisible){
+      toggleChat();
+    }
+
+
     //UI전체 숨김 및 노출
     if (isUIVisible) {
       pauseall(ui);
@@ -223,6 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ui.setAttribute("visible", !isUIVisible);
     isUIVisible = !isUIVisible;
   }
+
   function toggleMisc() {
     if (isChatVisible) {
       return;

@@ -80,12 +80,18 @@ html.a-fullscreen {
   height: 100vh; /* 화면 높이를 100%로 설정 */
 }
 
+@font-face {
+  font-family: 'Nunito';
+  src: url('/static/lobby/font/Nunito-Bold.ttf') format('truetype');
+}
+
 #Chat_Box,
 #Subscribe_Box,
 #Setting_Box {
+  font-family: 'Nunito', sans-serif;
   text-align: center;
   font-size: 40px;
-  color: #a0a0a0;
+  color: white;
   width: 40%;
   height: 40%;
   border: 1px solid #CFBCDA;
@@ -100,6 +106,7 @@ html.a-fullscreen {
   overflow: hidden;
   transition: transform 0.3s ease; /* 부드러운 transform 애니메이션 효과 추가 */
   transform: scale(1); /* 초기 transform 값 설정 */
+  text-shadow: 2px 2px 4px rgba(178, 178, 216, 0.5);
 }
 #Chat_Box:hover,
 #Subscribe_Box:hover,
@@ -118,7 +125,7 @@ html.a-fullscreen {
   left: 40%;
   text-align: center;
   font-size: 40px;
-  color: #a0a0a0;
+  color: white;
   border: 1px solid #CFBCDA;
   animation: backInLeft 1.2s;
   display: flex;

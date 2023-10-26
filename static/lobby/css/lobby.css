@@ -286,7 +286,10 @@ html.a-fullscreen {
   text-align: left;  
   margin-right: auto;
 }
-
+#chatControlPannel{
+  width: 35%;
+  display: none;
+}
 #serviceWindow {
   display: none;
   position: fixed;

@@ -301,6 +301,7 @@ function stopLoadingAnimation() {
 
   function openchatWindow(friendUsername) {
     document.getElementById("chatWindow").style.display = "block";
+    document.getElementById("chatControlPannel").style.display="block"
     document.getElementById("chatFriendName").innerText = friendUsername; 
   }
 
@@ -308,6 +309,7 @@ function stopLoadingAnimation() {
     .getElementById("closechatWindowButton")
     .addEventListener("click", function () {
       document.getElementById("chatWindow").style.display = "none";
+      document.getElementById("chatControlPannel").style.display="none"
       document.getElementById("chatMessages").innerHTML = "";
       if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED) {
         chatSocket.close();

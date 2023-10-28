@@ -175,8 +175,8 @@
               <button id="closechatWindowButton">close</button>
             </div>
           </div>
-        <button class="goBackButton">Back to Main</button>
       </div>
+      <button class="goBackButton">Back to Main</button>
     </div>
     <div id="Subscribe_Page" class="page">
       <div class="subscriber-list">
@@ -197,9 +197,17 @@
                       <img src="/static/lobby/img/hand.png" alt="Hand">
                   {% elif type.name == "Controller" %}
                       <img src="/static/lobby/img/controller.png" alt="Controller">
+                  {% elif type.name == "2D" %}
+                      <img src="/static/lobby/img/2d.png" alt="2D">
+                  {% elif type.name == "3D" %}
+                      <img src="/static/lobby/img/3d.png" alt="3D">
+                  {% elif type.name == "Chat" %}
+                      <img src="/static/lobby/img/chat.png" alt="Chat">
+                  {% elif type.name == "Prompt" %}
+                      <img src="/static/lobby/img/prompt.png" alt="Prompt">
                   {% endif %}
               {% endfor %}
-            </div>
+          </div>
             {% empty %}
             <div>구독 목록이 없습니다.</div>
             {% endfor %}

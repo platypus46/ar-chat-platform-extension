@@ -93,6 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         document.querySelector("#input-button a-text").setAttribute("value", "INPUT");
         document.querySelector("#eraser-button a-text").setAttribute("value", "DEL");
+        document.querySelector("#friendHeader a-entity").setAttribute("troika-text", "value: Friends List; font: /static/lobby/font/NanumGothic-Bold.ttf; fontSize: 0.015; color: black;");
     } else {
         currentLanguage = "ko-kr";
         language_text.setAttribute("value", "KR");
@@ -108,6 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         document.querySelector("#input-button a-text").setAttribute("value", "입력");
         document.querySelector("#eraser-button a-text").setAttribute("value", "삭제");
+        document.querySelector("#friendHeader a-entity").setAttribute("troika-text", "value: 친구목록; font: /static/lobby/font/NanumGothic-Bold.ttf; fontSize: 0.015; color: black;");
     }
   });
 
@@ -199,6 +201,11 @@ document.addEventListener("DOMContentLoaded", function () {
       playall(friend);
     } else{
       isMiscVisible=false;
+      if (currentLanguage === "ko-kr") {
+        document.querySelector("#friendHeader a-entity").setAttribute("troika-text", "value: 친구목록; font: /static/lobby/font/NanumGothic-Bold.ttf; fontSize: 0.015; color: black;");
+      } else {
+        document.querySelector("#friendHeader a-entity").setAttribute("troika-text", "value: Friends List; font: /static/lobby/font/NanumGothic-Bold.ttf; fontSize: 0.015; color: black;");
+      }
       enableUIButtons();
       sttText.setAttribute("troika-text","value", "No mode");
       pagenation.setAttribute("visible","false");
@@ -417,6 +424,11 @@ document.addEventListener("DOMContentLoaded", function () {
         selectedFriend = friends[currentPage * itemsPerPage + selectedIndex];
         pagenation.setAttribute("visible","false");
         displayConversation();
+        if (currentLanguage === "ko-kr") {
+          document.querySelector("#friendHeader a-entity").setAttribute("troika-text", "value: 1:1 채팅; font: /static/lobby/font/NanumGothic-Bold.ttf; fontSize: 0.015; color: black;");
+        } else {
+          document.querySelector("#friendHeader a-entity").setAttribute("troika-text", "value: 1:1 Chatting; font: /static/lobby/font/NanumGothic-Bold.ttf; fontSize: 0.015; color: black;");
+        }
         break;
       case "backward":
         const friendsContainer = document.getElementById("friendsContainer");
@@ -427,6 +439,13 @@ document.addEventListener("DOMContentLoaded", function () {
         ui_info.setAttribute("visible","false");
         chatToolBox.setAttribute('visible', 'false');
         displayFriends();
+
+        if (currentLanguage === "ko-kr") {
+          document.querySelector("#friendHeader a-entity").setAttribute("troika-text", "value: 친구목록; font: /static/lobby/font/NanumGothic-Bold.ttf; fontSize: 0.015; color: black;");
+        } else {
+          document.querySelector("#friendHeader a-entity").setAttribute("troika-text", "value: Friends List; font: /static/lobby/font/NanumGothic-Bold.ttf; fontSize: 0.015; color: black;");
+        }
+
         break;
       default:
         break;
@@ -549,16 +568,19 @@ document.addEventListener("DOMContentLoaded", function () {
         `value: ${friend.name}; color: white; align: center;`
       );
       entity.setAttribute("position", `0 ${0.03 * (5 - index)} 0`); // 위치 조절
+
       if (index === selectedIndex) {
         entity.setAttribute("text", `color: yellow`); // 선택된 친구
         const animation = document.createElement("a-animation");
         animation.setAttribute("attribute", "material.opacity");
         animation.setAttribute("from", "0.5"); // 시작 투명도 (반투명)
         animation.setAttribute("to", "1"); // 끝 투명도 (완전 불투명)
-        animation.setAttribute("dur", "1500"); // 지속 시간 (1초)
+        animation.setAttribute("dur", "1500"); // 지속 시간 (1.5초)
         animation.setAttribute("repeat", "indefinite"); // 무한 반복
         animation.setAttribute("direction", "alternate"); // 애니메이션 방향 전환 (어두워졌다 밝아짐)
+        entity.appendChild(animation);
       }
+
       // 프로필 사진 추가
       if (friend.profile_picture) {
         const imgEntity = document.createElement("a-image");
@@ -569,14 +591,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (index !== selectedIndex) {
           imgEntity.setAttribute("visible", "false");
-        
         }
         entity.appendChild(imgEntity);
       }
 
       friendsContainer.appendChild(entity);
+
+      // 친구 목록 사이에 선 추가
+      if (index < currentFriends.length - 1) { // 마지막 항목 제외
+        const lineEntity = document.createElement("a-box");
+        lineEntity.setAttribute("height", "0.002"); // 선의 두께
+        lineEntity.setAttribute("width", "0.13");   // 선의 너비
+        lineEntity.setAttribute("depth", "0.01");  // 선의 깊이
+        lineEntity.setAttribute("color", "#D5DBDB");  // 선의 색상
+        lineEntity.setAttribute("position", `0 ${0.03 * (5 - index) - 0.016} 0`); // 선의 위치 조정
+
+        friendsContainer.appendChild(lineEntity);
+      }
     });
-  }
+}
+
 
   THREE.RoundedBoxGeometry = function(width, height, depth, radius){
     var shape = new THREE.Shape();
@@ -619,16 +653,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const numberOfLines = Math.min(linesPerPage, chunkedContent.length); 
-    const height = 0.015 * numberOfLines;
+    const height = 0.01 * numberOfLines;
 
     const maxLength = Math.max(...chunkedContent.map(line => line.length));
-    const width = 0.01 * maxLength + 0.008;
+    const width = 0.008 * maxLength + 0.004;
 
     const color = sender === username ? '#AEADD6' : '#FFEE95';
 
     const balloonEntity = document.createElement('a-entity');
     const meshMaterial = new THREE.MeshBasicMaterial({ color: color });
-    const roundedBoxGeom = new THREE.RoundedBoxGeometry(width, height, 0.01, 0.01, 5); 
+    const roundedBoxGeom = new THREE.RoundedBoxGeometry(width, height, 0.01, 0.005); 
     
     if (sender === username) {
         roundedBoxGeom.translate(-width / 2, 0, 0);
@@ -744,7 +778,7 @@ document.addEventListener("DOMContentLoaded", function () {
     messages.forEach((message, index) => {
         // 발신자 이름 추출
         const sender = message.substring(0, message.indexOf(':'));
-        displayChatMessage(message, sender, 0.04 * (4 - index)+0.04);
+        displayChatMessage(message, sender, 0.03 * (4 - index)+0.05);
     });
 
 
@@ -816,18 +850,27 @@ document.addEventListener("DOMContentLoaded", function () {
         // 이미지 추가
         feature.images.forEach((imageAlt, imgIndex) => {
           const imageEntity = document.createElement("a-image");
-          const imagePath = imageAlt === "Hand" ? "/static/lobby/img/hand.png" : "/static/lobby/img/controller.png";
+          let imagePath = "";
+          switch (imageAlt) {
+            case "Hand":
+              imagePath = "/static/lobby/img/hand.png";
+              break;
+            case "Controller":
+              imagePath = "/static/lobby/img/controller.png";
+              break;
+            case "3D":
+              imagePath = "/static/lobby/img/3d.png";  // 3D 타입에 대한 이미지 경로 추가
+              break;
+          }
           imageEntity.setAttribute("src", imagePath);
     
           // 이미지의 y 좌표를 텍스트의 y 좌표와 동일하게 설정
-          imageEntity.setAttribute("position", `${0.07+0.03 * (imgIndex + 1)} 0 0`);
+          imageEntity.setAttribute("position", `${0.03 * (imgIndex)} -0.02 0`);
     
           imageEntity.setAttribute("width", "0.02"); 
           imageEntity.setAttribute("height", "0.02");
     
-          // 이미지의 중심을 기준점으로 사용하도록 설정
-          imageEntity.setAttribute("geometry", "primitive: plane; height: 0.02; width: 0.02");
-          imageEntity.setAttribute("material", "shader: flat; src: " + imagePath);
+      
           entity.appendChild(imageEntity);
         });
       }

@@ -622,10 +622,16 @@
           >
             <a-entity
               id="friendHeader"
-              geometry="primitive: plane; width:0.15; height: 0.03"
-              material="color:yellow"
-              position="0 0.11 0"
-            ></a-entity>
+              rounded-plane-box="width: 0.14; height: 0.035; radius: 0.01; color: #FFEEA9"
+              position="0 0.13 0.015"
+              ><a-entity
+                troika-text="value: Friends List; 
+                font: /static/lobby/font/NanumGothic-Bold.ttf; 
+                fontSize: 0.015; 
+                color: black;"
+                position="0 0 0.001"
+              ></a-entity>
+            </a-entity>
             <a-entity
               id="friendsContainer"
               position="0 -0.1 0"

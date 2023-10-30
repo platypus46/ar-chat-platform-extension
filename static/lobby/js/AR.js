@@ -415,7 +415,7 @@ document.addEventListener("DOMContentLoaded", function () {
         break;
       case "right":
         selectedIndex = 0;
-        if ((currentPage + 1) * itemsPerPage < friends.length) {
+        if (currentPage < Math.ceil(friends.length / itemsPerPage) - 1) {
           currentPage++;
           displayFriends();
         }
@@ -561,13 +561,19 @@ document.addEventListener("DOMContentLoaded", function () {
       friendsContainer.removeChild(friendsContainer.firstChild);
     }
 
+    // 세로선 높이를 전역 변수로 설정
+    const verticalLineHeight = 0.002;
+
     currentFriends.forEach((friend, index) => {
       const entity = document.createElement("a-entity");
       entity.setAttribute(
         "text",
         `value: ${friend.name}; color: white; align: center;`
       );
-      entity.setAttribute("position", `0 ${0.03 * (5 - index)} 0`); // 위치 조절
+
+      // 위치 계산 수정
+      let positionY = 0.15 - (index * 0.03);
+      entity.setAttribute("position", `0 ${positionY} 0`);
 
       if (index === selectedIndex) {
         entity.setAttribute("text", `color: yellow`); // 선택된 친구
@@ -597,19 +603,70 @@ document.addEventListener("DOMContentLoaded", function () {
 
       friendsContainer.appendChild(entity);
 
-      // 친구 목록 사이에 선 추가
-      if (index < currentFriends.length - 1) { // 마지막 항목 제외
+      // 가로선, 세로선 및 아래 뚜껑 추가
+      if (index === 0 || index === currentFriends.length - 1 || currentFriends.length === 1) {
         const lineEntity = document.createElement("a-box");
-        lineEntity.setAttribute("height", "0.002"); // 선의 두께
-        lineEntity.setAttribute("width", "0.13");   // 선의 너비
-        lineEntity.setAttribute("depth", "0.01");  // 선의 깊이
-        lineEntity.setAttribute("color", "#D5DBDB");  // 선의 색상
-        lineEntity.setAttribute("position", `0 ${0.03 * (5 - index) - 0.016} 0`); // 선의 위치 조정
-
+        lineEntity.setAttribute("height", "0.002");
+        lineEntity.setAttribute("width", "0.13");
+        lineEntity.setAttribute("depth", "0.01");
+        lineEntity.setAttribute("color", "white");
+        lineEntity.setAttribute("position", `0 ${positionY + (index === 0 ? 0.016 : -0.016)} 0`);
         friendsContainer.appendChild(lineEntity);
+
+        for (let i = -1; i <= 1; i += 2) {
+          const verticalLineEntity = document.createElement("a-box");
+          verticalLineEntity.setAttribute("height", verticalLineHeight);
+          verticalLineEntity.setAttribute("width", "0.002");
+          verticalLineEntity.setAttribute("depth", "0.01");
+          verticalLineEntity.setAttribute("color", "white");
+          verticalLineEntity.setAttribute("position", `${0.055 * i} ${positionY + (index === 0 ? 0.016 : -0.016)} 0`);
+          friendsContainer.appendChild(verticalLineEntity);
+        }
+      }
+
+      if (index < currentFriends.length - 1) {
+        const lineEntity = document.createElement("a-box");
+        lineEntity.setAttribute("height", "0.002");
+        lineEntity.setAttribute("width", "0.13");
+        lineEntity.setAttribute("depth", "0.01");
+        lineEntity.setAttribute("color", "white");
+        lineEntity.setAttribute("position", `0 ${positionY - 0.016} 0`);
+        friendsContainer.appendChild(lineEntity);
+
+        const verticalLineHeightBetween = 0.06;
+        for (let i = -1; i <= 1; i += 2) {
+          const verticalLineEntity = document.createElement("a-box");
+          verticalLineEntity.setAttribute("height", verticalLineHeightBetween);
+          verticalLineEntity.setAttribute("width", "0.004");
+          verticalLineEntity.setAttribute("depth", "0.01");
+          verticalLineEntity.setAttribute("color", "white");
+          verticalLineEntity.setAttribute("position", `${0.065 * i} ${positionY - 0.016} 0`);
+          friendsContainer.appendChild(verticalLineEntity);
+        }
+      }
+
+      if (currentFriends.length === 1 && index === 0) {
+        let bottomPositionY = positionY - 0.03;
+        const bottomLineEntity = document.createElement("a-box");
+        bottomLineEntity.setAttribute("height", "0.002");
+        bottomLineEntity.setAttribute("width", "0.13");
+        bottomLineEntity.setAttribute("depth", "0.01");
+        bottomLineEntity.setAttribute("color", "white");
+        bottomLineEntity.setAttribute("position", `0 ${bottomPositionY} 0`);
+        friendsContainer.appendChild(bottomLineEntity);
+
+        for (let i = -1; i <= 1; i += 2) {
+          const bottomVerticalLineEntity = document.createElement("a-box");
+          bottomVerticalLineEntity.setAttribute("height", verticalLineHeight);
+          bottomVerticalLineEntity.setAttribute("width", "0.002");
+          bottomVerticalLineEntity.setAttribute("depth", "0.01");
+          bottomVerticalLineEntity.setAttribute("color", "white");
+          bottomVerticalLineEntity.setAttribute("position", `${0.055 * i} ${bottomPositionY} 0`);
+          friendsContainer.appendChild(bottomVerticalLineEntity);
+        }
       }
     });
-}
+  }
 
 
   THREE.RoundedBoxGeometry = function(width, height, depth, radius){

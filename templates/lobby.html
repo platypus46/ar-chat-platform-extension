@@ -121,7 +121,7 @@
             height="50"
           />
           {% endif %}
-          <span>{{ friend.full_name }}</span>
+          <span class="friend-name">{{ friend.full_name }}</span>
           <button
             class="deleteFriendButton"
             data-username="{{ friend.username }}"
@@ -191,7 +191,7 @@
         <div class="scrollable-content">
             {% for subscription in subscriptions %}
             <div class="subscriber-item" data-types="{% for type in subscription.types.all %}{{ type.name }}{% if not forloop.last %},{% endif %}{% endfor %}">
-              {{ subscription.service.name }}
+              <span class="service-name">{{ subscription.service.name }}</span>
               {% for type in subscription.types.all %}
                   {% if type.name == "Hand" %}
                       <img src="/static/lobby/img/hand.png" alt="Hand">

@@ -80,11 +80,17 @@ function stopLoadingAnimation() {
         });
       } else if (data.message_type === "new_message") {
         if (data.sender !== username) {
-          displayMessage(data.sender, data.message, data.image_url); 
+          displayMessage(data.sender, data.message, data.image_url);
+          updateScroll();  // 채팅 창을 최신 메시지 위치로 스크롤
         }
       }
     };
-
+    function updateScroll() {
+      const messagesContainer = document.getElementById("chatMessages");
+      if (messagesContainer) {
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+  }
     chatSocket.onclose = function (e) {
       console.error("Chat socket closed unexpectedly");
     };
@@ -359,7 +365,15 @@ function stopLoadingAnimation() {
     const message = data["message"];
     const fromFullName = data["from_full_name"];
     const notificationId = data["notification_id"];
-
+    console.log('Received data:', data);
+    
+    // fullname이 제대로 도착했는지 로그를 통해 확인합니다.
+    if (data["new_friend_full_name"]) {
+        // DOM 업데이트 함수 호출
+        addFriendToList(friendList, data["new_friend_username"], data["new_friend_full_name"]);
+    } else {
+        console.error('Full name is undefined in received data');
+    }
     if (message === "friend_request" || message === "friend_request_accepted") {
       const notificationElement = document.createElement("li");
       if (message === "friend_request") {
@@ -372,39 +386,16 @@ function stopLoadingAnimation() {
 
       addAcceptAndCloseButtonListeners(notificationElement, notificationId);
     } else if (message === "new_friend_added") {
-      const newFriendUsername = data["new_friend_username"]; // 수정된 부분
-      const friendList = document.getElementById("friendList");
-      const newFriendElement = document.createElement("li");
+      const newFriendUsername = data["new_friend_username"];
+      const newFriendFullName = data["new_friend_name"];
+    
+    // 기존의 친구 목록을 유지하고, 새로운 친구만 추가합니다.
+    const friendList = document.getElementById("friendList");
 
-      const friendNameSpan = document.createElement("span");
-      friendNameSpan.innerText = data["new_friend_name"]; // 디스플레이 이름은 full_name을 사용할 수 있습니다.
-      newFriendElement.appendChild(friendNameSpan);
-
-      const deleteButton = document.createElement("button");
-      deleteButton.innerText = "삭제";
-      deleteButton.className = "deleteFriendButton";
-      deleteButton.setAttribute("data-username", newFriendUsername); // 수정된 부분
-      deleteButton.addEventListener("click", function () {
-        socket.send(
-          JSON.stringify({
-            message: "delete_friend",
-            from_user: username,
-            friend_user: newFriendUsername, // 수정된 부분
-          })
-        );
-        newFriendElement.remove();
-      });
-      newFriendElement.appendChild(deleteButton);
-
-      const chatButton = document.createElement("button");
-      chatButton.innerText = "채팅";
-      chatButton.addEventListener("click", function () {
-        chatWithFriend(newFriendUsername); // 수정된 부분
-      });
-      newFriendElement.appendChild(chatButton);
-
-      friendList.appendChild(newFriendElement);
-    } else if (message === "friend_deleted") {
+    // 새로운 친구 정보를 DOM에 추가하는 함수
+    addFriendToList(friendList, newFriendUsername, newFriendFullName);
+    }
+     else if (message === "friend_deleted") {
       const deletedFriendUsername = data["friend_username"];
       const friendList = document.getElementById("friendList");
       const friendItems = friendList.getElementsByTagName("li");
@@ -421,7 +412,49 @@ function stopLoadingAnimation() {
       }
     }
   };
+  function addFriendToList(friendList, username, fullName) {
+    const newFriendElement = document.createElement("li");
+    console.log('Adding friend:', username, fullName);
+    // 'visible' 클래스를 li 요소에 추가합니다.
+    newFriendElement.classList.add("visible");
 
+    // 친구 이름 표시용 span 태그 생성 및 설정
+    const friendNameSpan = document.createElement("span");
+    friendNameSpan.classList.add("friend-name");
+    friendNameSpan.innerText = fullName;
+    newFriendElement.appendChild(friendNameSpan);
+  
+    // 삭제 버튼
+    const deleteButton = document.createElement("button");
+    deleteButton.innerText = "삭제";
+    deleteButton.className = "deleteFriendButton";
+    deleteButton.setAttribute("data-username", username);
+    deleteButton.addEventListener("click", function () {
+      socket.send(JSON.stringify({
+        message: "delete_friend",
+        from_user: username, // 현재 사용자의 username으로 가정합니다.
+        friend_user: username,
+      }));
+      newFriendElement.remove();
+    });
+    newFriendElement.appendChild(deleteButton);
+  
+    // 채팅 버튼 생성 및 설정
+    const chatButton = document.createElement("button");
+    chatButton.innerText = "채팅";
+    
+    // 채팅 버튼에 클래스와 id를 추가합니다.
+    chatButton.classList.add("chatFriendButton");
+    chatButton.setAttribute("id", "chatWithFriend_" + username);
+    //이벤트리스너 추가
+    chatButton.addEventListener("click", function () {
+      chatWithFriend(username);
+    });
+    newFriendElement.appendChild(chatButton);
+  
+    // 새로운 친구 목록 요소를 목록에 추가
+    friendList.appendChild(newFriendElement);
+  }
   function addAcceptAndCloseButtonListeners(
     notificationElement,
     notificationId

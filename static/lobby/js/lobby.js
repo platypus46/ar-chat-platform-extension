@@ -48,13 +48,18 @@ function stopLoadingAnimation() {
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
 
-
+  function clearChatMessages() {
+    const messagesContainer = document.getElementById("chatMessages");
+    // 채팅창의 내용을 비웁니다.
+    messagesContainer.innerHTML = '';
+  }
   const ws_protocol =
     window.location.protocol === "https:" ? "wss://" : "ws://";
   const socket = new WebSocket(
     ws_protocol + window.location.host + "/ws/lobby/" + username + "/"
   );
   function chatWithFriend(friendUsername) {
+    clearChatMessages()
     if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED) {
       chatSocket.close();
     }
@@ -309,16 +314,23 @@ function stopLoadingAnimation() {
     document.getElementById("chatControlPannel").style.display="block"
     document.getElementById("chatFriendName").innerText = friendUsername; 
   }
-
+  function closeChatWindow() {
+    // 채팅창을 숨깁니다.
+    document.getElementById("chatWindow").style.display = "none";
+    document.getElementById("chatControlPannel").style.display = "none";
+  
+    // 채팅 메시지를 비웁니다.
+    document.getElementById("chatMessages").innerHTML = "";
+  
+    // 열려 있는 웹소켓 연결이 있다면 닫습니다.
+    if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED) {
+      chatSocket.close();
+    }
+  }
   document
     .getElementById("closechatWindowButton")
     .addEventListener("click", function () {
-      document.getElementById("chatWindow").style.display = "none";
-      document.getElementById("chatControlPannel").style.display="none"
-      document.getElementById("chatMessages").innerHTML = "";
-      if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED) {
-        chatSocket.close();
-      }
+      closeChatWindow()
     });
 
   addFriendButton.addEventListener("click", function () {
@@ -476,10 +488,12 @@ function stopLoadingAnimation() {
   }
   document.querySelector('#friend-pagination-controls button:nth-child(1)').addEventListener('click', function() {
     prevPaginationPage('friend');
+    closeChatWindow()
 });
 
 document.querySelector('#friend-pagination-controls button:nth-child(3)').addEventListener('click', function() {
     nextPaginationPage('friend');
+    closeChatWindow()
 });
 
 document.querySelector('#subscription-pagination-controls button:nth-child(1)').addEventListener('click', function() {
@@ -552,6 +566,7 @@ function prevPaginationPage(pageType) {
         .querySelectorAll(".page")
         .forEach((page) => (page.style.display = "none"));
       document.getElementById("Main_Box").style.display = "block";
+      closeChatWindow()
     });
   });
 });

@@ -275,17 +275,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_last_50_messages(self, room_name):
-        room = ChatRoom.objects.get(name=room_name)
-        messages = ChatMessage.objects.filter(chat_room=room).order_by('-timestamp')[:50]
-        return [
-            {
-                'sender': msg.sender.username, 
-                'message': msg.message,
-                'image_url': msg.image.url if msg.image else None  # 이 부분 추가
-            } 
-            for msg in reversed(messages) 
-            if msg.sender.username in [room.participant1.username, room.participant2.username]
-        ]
+        try:
+            room = ChatRoom.objects.get(name=room_name)
+            messages = ChatMessage.objects.filter(chat_room=room).order_by('-timestamp')[:50]
+            return [
+                {
+                    'sender': msg.sender.username, 
+                    'message': msg.message,
+                    'image_url': msg.image.url if msg.image else None
+                } 
+                for msg in reversed(messages) 
+                if msg.sender.username in [room.participant1.username, room.participant2.username]
+            ]
+        except ChatRoom.DoesNotExist:
+        # 채팅방이 없는 경우 빈 리스트 반환
+            return []
     
     async def fetch_past_messages(self):
         last_50_messages = await self.get_last_50_messages(self.room_name)

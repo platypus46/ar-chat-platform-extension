@@ -96,8 +96,29 @@
       <h2>Chat Page
         <div id="notificationSection">
           <button id="notificationIcon">🔔</button>
-          <ul id="notificationList">
-            <!-- Notifications will be populated here -->
+          <ul id="notificationList"
+            style="
+              display: none;
+              position: absolute;
+              top: 30px;
+              right: 0;
+              background-color: #fff;
+              border: 1px solid #ccc;
+              padding: 10px;
+              z-index: 1000;
+            "
+          >
+            {% for notification in notifications %}
+            <li class="notificationElementClass" data-id="{{ notification.id }}">
+              {{ notification.message }}
+              <button class="acceptFriendRequest" data-id="{{ notification.id }}">
+                수락
+              </button>
+              <button class="closeNotification" data-id="{{ notification.id }}">
+                닫기
+              </button>
+            </li>
+           {% endfor %}
           </ul>
         </div>
       </h2>

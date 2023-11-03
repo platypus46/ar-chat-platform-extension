@@ -1,4 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
+  const notificationElements = document.querySelectorAll('.notificationElementClass');
+
+  // 각 알림 요소에 대해서 이벤트 리스너를 추가합니다.
+  notificationElements.forEach(notificationElement => {
+    const notificationId = notificationElement.getAttribute('data-id');
+    addAcceptAndCloseButtonListeners(notificationElement, notificationId);
+  });
+  
   //구독서비스 상태관리
   let serviceStates = {
     "Questions and Answers(AR)": false,

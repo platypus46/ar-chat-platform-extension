@@ -201,11 +201,10 @@ function stopLoadingAnimation() {
                 })
                 .then(response => response.json())
                 .then(data => {
-                  const messageContent = selectedMessage.textContent.trim();
                   if(data.error) {
                       alert(data.error);
                   } else {
-                      alert(`Message: "${messageContent}"\nDetected Emotion: ${JSON.stringify(data)}`);
+                      alert(`Text Emotion: ${data.emotion}`);
                   }
                 })
                 .catch(error => {

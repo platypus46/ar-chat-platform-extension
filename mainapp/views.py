@@ -302,7 +302,7 @@ def get_emotion_from_flask(request):
             try:
                 data = json.loads(request.body)
                 text_data = data.get('text')
-                flask_api_url = 'http://15.152.243.235/emotion_detection'
+                flask_api_url = 'http://15.152.243.235:5000/emotion_detection'
                 try:
                     response = requests.post(flask_api_url, json={'text': text_data}, timeout=5)  
                     if response.status_code == 200:

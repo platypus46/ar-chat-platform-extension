@@ -399,20 +399,30 @@ function stopLoadingAnimation() {
       addAcceptAndCloseButtonListeners(notificationElement, notificationId);
     } else if (message === "new_friend_added") {
       const newFriendUsername = data["new_friend_username"]; // 수정된 부분
+      const newFriendProfilePictureUrl = data["new_friend_profile_picture_url"];
       const friendList = document.getElementById("friendList");
       const newFriendElement = document.createElement("li");
       newFriendElement.classList.add("visible");
 
+      if (newFriendProfilePictureUrl) {
+        const profilePictureImg = document.createElement("img");
+        profilePictureImg.src = newFriendProfilePictureUrl;
+        profilePictureImg.alt = data["new_friend_name"] + "의 프로필 사진";
+        profilePictureImg.width = "50";
+        profilePictureImg.height = "50";
+        newFriendElement.appendChild(profilePictureImg);
+      }
+
       const friendNameSpan = document.createElement("span");
       friendNameSpan.innerText = data["new_friend_name"]; // 디스플레이 이름은 full_name을 사용할 수 있습니다.
+      friendNameSpan.className = "friend-name";
       newFriendElement.appendChild(friendNameSpan);
      
-
-
       const deleteButton = document.createElement("button");
       deleteButton.innerText = "삭제";
       deleteButton.className = "deleteFriendButton";
       deleteButton.setAttribute("data-username", newFriendUsername);
+      deleteButton.style.marginRight = "10px";
       deleteButton.addEventListener("click", function () {
         socket.send(
           JSON.stringify({

@@ -22,6 +22,15 @@ def get_or_create_chatroom(participant1, participant2):
     )
     return room
 
+@database_sync_to_async
+def get_user_details(username):
+    user = CustomUser.objects.get(username=username)
+    return {
+        'full_name': user.full_name,
+        'username': user.username,
+        'profile_picture_url': user.profile_picture.url if user.profile_picture else None
+    }
+
 @database_sync_to_async  # 이 데코레이터 추가
 def check_user_in_room(scope_user, room):
     allowed_users = [str(room.participant1.username), str(room.participant2.username), 'admin']
@@ -97,14 +106,16 @@ class LobbyConsumer(AsyncWebsocketConsumer):
         friend_request = FriendRequest.objects.create(from_user=from_user_object, to_user=to_user_object)
         notification = Notification.objects.create(user=to_user_object, message=f"{from_user_object.full_name}님이 친구 요청을 보냈습니다.", related_request=friend_request)
         return notification, from_user_object  
+    
 
     async def update_friend_list(self, event):
-        new_friend_name = event.get('new_friend_name', '')
-        new_friend_username = event.get('new_friend_username', '')  # Use get to avoid KeyError
+        new_friend_username = event.get('new_friend_username', '') 
+        user_details = await get_user_details(new_friend_username)
         await self.send(text_data=json.dumps({
             'message': 'new_friend_added',
-            'new_friend_name': new_friend_name,
-            'new_friend_username': new_friend_username  
+            'new_friend_name': user_details['full_name'],
+            'new_friend_username': user_details['username'],
+            'new_friend_profile_picture_url': user_details['profile_picture_url']
         }))
 
     # consumers.py

@@ -176,7 +176,7 @@ html.a-fullscreen {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   font-size: 14px;
-  font-family: 'Dovemayo_gothic', sans-serif; /* Apply the custom font */
+  font-family: 'Dovemayo_gothic', sans-serif; 
 }
 
 #notificationList li {
@@ -664,4 +664,10 @@ html.a-fullscreen {
   align-items: center; 
   overflow: hidden;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+.subscriber-list h3, #Setting_Page h2, #Chat_Page h2 {
+  font-family: 'Nunito', sans-serif;
+  font-weight: bold; 
+  text-shadow: 2px 2px 2px #aaaaaa; 
 }

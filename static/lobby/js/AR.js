@@ -999,6 +999,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (arButton) {
       arButton.style.width = "150px";
       arButton.style.height = "50px";
+      arButton.style.zIndex = 1000;
       arButton.disabled = false; // 버튼 활성화
       arButton.addEventListener("click", function () {
         ui.setAttribute("visible", "true");
@@ -1120,5 +1121,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function isValidExpression(expr) {
     return /^[0-9+\-*/() ]+$/.test(expr); 
-}
+  }
 });

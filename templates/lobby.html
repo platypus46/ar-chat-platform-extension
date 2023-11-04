@@ -62,7 +62,6 @@
         width="100"
         height="100"
       />
-      <!-- 기본 프로필 이미지 설정 -->
       <span id="username">{{full_name}}</span>
     </div>
     <section id="meteorSection">
@@ -82,14 +81,13 @@
       <div id="Subscribe_Box">Subscribe</div>
       <div id="Setting_Box">setting</div>
     </div>
-    <!-- JavaScript 부분 -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const username = "{{ user.username }}"; // Django template에서 현재 로그인된 사용자의 username을 가져옴
+        const username = "{{ user.username }}"; 
         const iconButton = document.getElementById("icon-button");
 
         iconButton.addEventListener("click", function () {
-          window.location.href = `/shop/${username}`; // URL로 이동
+          window.location.href = `/shop/${username}`; 
         });
       });
     </script>

@@ -404,8 +404,9 @@ html.a-fullscreen {
   display: flex;
   border: 3px solid #CFBCDA; /* 외각선 */
   padding: 10px; /* 안쪽 여백 */
-
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
+
 #profileSection {
   height: 130px;
   width: 300px;
@@ -629,4 +630,23 @@ html.a-fullscreen {
 
 .service-name {
   font-family: 'Nunito', sans-serif;
+}
+
+#notificationIcon .fa-bell {
+  color: #FEEF9C;
+}
+
+#notificationIcon {
+  background-color: #C0B4DA; 
+  border: none; 
+  border-radius: 10px; 
+  width: 50px; 
+  height: 50px; 
+  box-sizing: border-box;
+  cursor: pointer; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  overflow: hidden;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
 }

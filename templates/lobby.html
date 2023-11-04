@@ -39,6 +39,7 @@
     <link rel="stylesheet" href="{% static 'lobby/css/lobby.css' %}" />
     <script src="{% static 'lobby/js/AR_setting.js' %}"></script>
     <script src="{% static 'lobby/js/shop.js' %}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <script>
       $(document).mousemove(function(e) {
           $('#sparkle').css({
@@ -95,7 +96,7 @@
     <div id="Chat_Page" class="page">
       <h2>Chat Page
         <div id="notificationSection">
-          <button id="notificationIcon">🔔</button>
+          <button id="notificationIcon"><i class="fas fa-bell"></i></button>
           <ul id="notificationList"
             style="
               display: none;

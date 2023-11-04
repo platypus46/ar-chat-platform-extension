@@ -188,7 +188,30 @@ function stopLoadingAnimation() {
               if (item.textContent.trim() === "Questions and Answers") {
                   aiIcon.style.display = "block";
                   serviceStates["Questions and Answers"] = true;
-                  changeInputStyle("2px solid #000000");  // 예: 빨간색 테두리로 변경
+                  changeInputStyle("2px solid #000000");  
+              } else if (item.textContent.trim() === "Emotion Detection") {
+                fetch('/get_emotion/', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json', 
+                      'X-Requested-With': 'XMLHttpRequest',
+                      'X-CSRFToken': getCookie('csrftoken')
+                  },
+                  body: JSON.stringify({text: selectedMessage.textContent.trim()}) 
+                })
+                .then(response => response.json())
+                .then(data => {
+                  const messageContent = selectedMessage.textContent.trim();
+                  if(data.error) {
+                      alert(data.error);
+                  } else {
+                      alert(`Message: "${messageContent}"\nDetected Emotion: ${JSON.stringify(data)}`);
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  alert('An error occurred while trying to detect the emotion.');
+                });
               } else {
                   alert(`${item.textContent.trim()} clicked!`);
               }

@@ -35,6 +35,7 @@ urlpatterns = [
     path('get_gpt_answer/', views.get_gpt_answer_ajax, name='get_gpt_answer_ajax'),
     path('shop/<str:username>',views.subscription_shop, name= 'shop'),
     path('save_screenshot/', views.save_screenshot, name='save_screenshot'),
+    path('get_emotion/', views.get_emotion_from_flask, name='get_emotion'),
 ]
 
 if settings.DEBUG:  # 개발 모드에서만

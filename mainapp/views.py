@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import ProfilePictureForm
 import speech_recognition as sr
 from django.db.models import Q
+import requests
 import openai
 import base64
 import subprocess
@@ -293,6 +294,31 @@ def subscription_shop(request, username):
     }
 
     return render(request, 'subscription_shop.html', context)
+
+@csrf_exempt
+def get_emotion_from_flask(request):
+    if request.method == "POST":
+        if request.body:
+            try:
+                data = json.loads(request.body)
+                text_data = data.get('text')
+                flask_api_url = 'http://15.152.243.235/emotion_detection'
+                try:
+                    response = requests.post(flask_api_url, json={'text': text_data}, timeout=5)  
+                    if response.status_code == 200:
+                        emotion_data = response.json()
+                        return JsonResponse(emotion_data)
+                    else:
+                        return JsonResponse({'error': 'Flask API에 문제가 있습니다.', 'status_code': response.status_code})
+                except requests.exceptions.RequestException as e:
+                    # 네트워크 문제, URL 찾을 수 없음 등의 에러를 로깅
+                    return JsonResponse({'error': 'Flask API에 연결할 수 없습니다.', 'exception': str(e)})
+            except json.JSONDecodeError as e:
+                return JsonResponse({'error': '유효하지 않은 JSON 데이터입니다.', 'exception': str(e)})
+        else:
+            return JsonResponse({'error': '요청 본문이 비어있습니다.'})
+    else:
+        return JsonResponse({'error': 'POST 요청만 허용됩니다.'})
 
 def test1_view(request):
     return render(request, "test1.html")

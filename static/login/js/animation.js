@@ -42,7 +42,7 @@ function startAnimation() {
         easing: "easeInOutQuad"
       });
 
-      // 모든 문자의 애니메이션이 끝난 후 로그인 박스와 회전 컨트롤을 표시
+      // 모든 문자의 애니메이션이 끝난 후 로그인 박스와 회전 컨트롤 표시
       if (currentLength === totalLength - 1) {
         document.getElementById("gray-box").style.display = "block";
         document.querySelector(".rotation-controls").style.display = "flex";

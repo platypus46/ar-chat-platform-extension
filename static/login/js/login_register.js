@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
     let full_name = document.getElementById("signup-full_name").value;
 
-    // 정규 표현식: 한글과 영어만 허용
     let regex = /^[가-힣A-Za-z]+$/;
 
     if (!full_name || !regex.test(full_name)) {
@@ -79,14 +78,14 @@ document.addEventListener("DOMContentLoaded", function () {
         url: "/validate_step/" + currentStep + "/",
         data: { ...registrationData, csrfmiddlewaretoken: csrftoken },
         success: function (response) {
-          console.log("registrationData:", registrationData); // 이 부분을 추가
+          console.log("registrationData:", registrationData); 
           if (response.status === "success") {
             if (currentStep === 3) {
               $.ajax({
                 type: "POST",
                 url: "/register_login/",
                 data: {
-                  action: "register", // 추가된 부분
+                  action: "register", 
                   ...registrationData,
                   csrfmiddlewaretoken: csrftoken,
                 },

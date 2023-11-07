@@ -33,8 +33,11 @@
     <script src="https://unpkg.com/aframe-troika-text/dist/aframe-troika-text.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
+
+      <!-- customize -->
     <script src="{% static 'tools/aframe-hand-tracking-controls-extras.js' %}"></script>
     <script src="{% static 'tools/hand-tracking-controls-extras-components.js' %}"></script>
+
     <link rel="stylesheet" href="{% static 'lobby/css/AR.css' %}" />
     <link rel="stylesheet" href="{% static 'lobby/css/lobby.css' %}" />
     <script src="{% static 'lobby/js/AR_setting.js' %}"></script>
@@ -164,14 +167,12 @@
         <span id="friend-page-number">1</span>
         <button>다음</button>
       </div>
-     <!-- Chat Window (Initially Hidden) -->
       <div id="windowSection" >
         <div id="chatWindow">
             <h3 id="chatFriendName"></h3>
             <div id="chatMessages"></div>
             </div>
         </div>
-        <!-- 서비스 목록 윈도우 (기존 모달을 윈도우로 변경) -->
         <div id="serviceWindow" style="display: none;">
             <div class="window-content">
                 <ul id="service-list"></ul>
@@ -266,7 +267,7 @@
             type="file"
             id="profileImageInput"
             name="profileImage"
-          /><!-- 수정된 부분 -->
+          />
         </form>
       </div>
       <button class="goBackButton">Back to Main</button>
@@ -425,7 +426,6 @@
               visible="false"
             ></a-entity>
           </a-entity>
-          <!-- Char Pager 툴바 (기본적으로 숨김) -->
           <a-entity
             id="talkToolbar"
             position="0 0 0"
@@ -1004,7 +1004,7 @@
     document
       .getElementById("refreshProfile")
       .addEventListener("click", function () {
-        location.reload(); // 페이지 새로고침
+        location.reload(); 
       });
   </script>
   <script src="{% static 'lobby/js/text_translation.js' %}"></script>

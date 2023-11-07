@@ -164,7 +164,6 @@ function movechat(event) {
   }
 }
 function moveUI(event) {
-  //3차원 좌표부터 변경(실제 UI 움직이기 전)
   const direction = event.target.id;
   switch (direction) {
     case "up":
@@ -187,7 +186,6 @@ function moveUI(event) {
       break;
   }
 
-  // 실제 UI의 위치를 변경
   ui.setAttribute("position", positionToString(currentUIPosition));
 }
 // 친구 관련 의사코드
@@ -203,9 +201,9 @@ const friends = [
 let currentPage = 0;
 let selectedIndex = 0;
 const itemsPerPage = 5;
-const MAX_WIDTH = 0.4; // Maximum width for text
-const MAX_HEIGHT = 0.35; // Maximum height for text
-const LINE_HEIGHT = 0.08; // Estimated height for each line of text
+const MAX_WIDTH = 0.4; 
+const MAX_HEIGHT = 0.35; 
+const LINE_HEIGHT = 0.08; 
 
 function displayFriends() {
   const start = currentPage * itemsPerPage;
@@ -223,9 +221,9 @@ function displayFriends() {
       "text",
       `value: ${friend.name}; color: white; align: center;`
     );
-    entity.setAttribute("position", `0 ${0.07 * (2 - index)} 0`); // 위치 조절
+    entity.setAttribute("position", `0 ${0.07 * (2 - index)} 0`); 
     if (index === selectedIndex) {
-      entity.setAttribute("text", `color: yellow`); // 선택된 친구
+      entity.setAttribute("text", `color: yellow`);
     }
     friendsContainer.appendChild(entity);
   });
@@ -234,7 +232,6 @@ function displayConversation() {
   const selectedFriend = friends[currentPage * itemsPerPage + selectedIndex];
   const friendsContainer = document.getElementById("friendsContainer");
 
-  // Clear previous content
   while (friendsContainer.firstChild) {
     friendsContainer.removeChild(friendsContainer.firstChild);
   }
@@ -244,14 +241,13 @@ function displayConversation() {
     "text",
     `value: ${selectedFriend.conversation}; color: white; align: center;`
   );
-  conversations.setAttribute("position", "0 0 0"); //중앙에 텍스트 배치
+  conversations.setAttribute("position", "0 0 0"); 
   friendsContainer.appendChild(conversations);
 
   document.getElementById("friendList").setAttribute("visible", "false");
 }
 
 scene.addEventListener("loaded", function () {
-  // 로딩 스크린 숨기기
   var loadingScreen = document.getElementById("loadingScreen");
   if (loadingScreen) {
     loadingScreen.style.display = "none";
@@ -266,7 +262,7 @@ scene.addEventListener("loaded", function () {
   if (arButton) {
     arButton.style.width = "150px";
     arButton.style.height = "50px";
-    arButton.disabled = false; // 버튼 활성화
+    arButton.disabled = false; 
     arButton.addEventListener("click", function () {
       ui.setAttribute("visible", "true");
       hideUI.setAttribute("visible", "true");

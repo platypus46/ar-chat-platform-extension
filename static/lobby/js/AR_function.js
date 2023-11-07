@@ -132,7 +132,7 @@ function lengthMeasurement() {
         scene.removeChild(lineEntity);
         dotEntity = null;
         lineEntity = null;
-        isFirstMeasurement = true; // Reset the flag
+        isFirstMeasurement = true; 
         measurementText.setAttribute("troika-text", `value: ${formatText(getLocalizedText("Length: Initialized"))}`);
 
         if (!isBoxVisible) {
@@ -183,7 +183,7 @@ function GPTQuestion() {
     .then((response) => response.json())
     .then((data) => {
       console.log("Received data from server:", data);
-      longAnswer = data.answer;  // 원본 답변 업데이트
+      longAnswer = data.answer;
       stopLoadingAnimation();
       updateAnswer(longAnswer);
     })
@@ -210,7 +210,6 @@ function GPTQuestion() {
     return cookieValue;
   }
 
-  // 페이지 번호를 표시할 a-entity 요소 생성
   const pageEntity = document.createElement("a-entity");
   pageEntity.setAttribute("id", "page-number");
   pageEntity.setAttribute("text", `value: 1/1; color: white; align: center;`);
@@ -331,7 +330,7 @@ function GPTQuestion() {
 
 // 가시성을 토글하는 함수
 function toggleVisibility() {
-  areElementsHidden = !areElementsHidden; // 상태 토글
+  areElementsHidden = !areElementsHidden;
 
   const elementsToToggle = [
     document.querySelector("#palette"),
@@ -344,7 +343,7 @@ function toggleVisibility() {
 
   elementsToToggle.forEach((el) => {
     if (el) {
-      el.setAttribute("visible", !areElementsHidden); // 가시성 설정
+      el.setAttribute("visible", !areElementsHidden); 
     }
   });
 }
@@ -402,7 +401,6 @@ function postIt() {
     }
   };
 
-  // null 체크를 추가합니다.
   if (input_Button) {
     input_Button.addEventListener("click", postItEventListener);
   } else {
@@ -412,7 +410,7 @@ function postIt() {
 
 function createPostIt(position, color) {
   const scene = document.querySelector("a-scene");
-  const cameraEl = document.querySelector("a-camera");  // 카메라 엔터티 참조
+  const cameraEl = document.querySelector("a-camera");  
   let zvalue=0.02;
 
   const postIt = document.createElement("a-box");
@@ -423,7 +421,7 @@ function createPostIt(position, color) {
   postIt.setAttribute("depth", "0.01");
   
 
-  let rotationString = "0 0 0";  // 기본 회전 값
+  let rotationString = "0 0 0"; 
 
   if (cameraEl) {
     const cameraPosition = cameraEl.getAttribute("position");
@@ -432,7 +430,7 @@ function createPostIt(position, color) {
       z: cameraPosition.z - position.z
     };
 
-    // y-축 회전을 계산합니다.
+    // y-축 회전 계산
     let angleRad = Math.atan2(directionVec3.x, directionVec3.z);
     let angleDeg = THREE.MathUtils.radToDeg(angleRad);
 
@@ -454,7 +452,6 @@ function createPostIt(position, color) {
   textEntity.setAttribute("width", 0.4);
   textEntity.setAttribute("rotation", rotationString);  // 텍스트 엔터티도 동일한 회전을 가지도록 설정
 
-  // 한글 폰트 설정
   textEntity.setAttribute("text", "font", "/static/lobby/font/NanumGothic-Bold.json");
   textEntity.setAttribute("text", "fontImage", "/static/lobby/font/NanumGothic-Bold.png");
   textEntity.setAttribute("text", "shader", "msdf");  
@@ -474,7 +471,7 @@ function enterFunction() {
   }
 }
 
-
+//뒤로가기 버튼 동작 후 목록 기능들 제거
 function onBackwardButtonClick() {
   const scene = document.querySelector("a-scene");
   document.getElementById("Miscbutton").setAttribute("visible", true);
@@ -484,8 +481,6 @@ function onBackwardButtonClick() {
     hideUIButton.classList.add("clickable");
   }
 
-
-  // 이벤트 리스너 제거
   if (input_Button) {
     if (measureEventListener) {
       input_Button.removeEventListener("click", measureEventListener);
@@ -526,7 +521,6 @@ function onBackwardButtonClick() {
   colorEvent()
   postItcheck=false;
 
-  // 페이지네이션 이벤트 리스너 제거
   if(onUpButtonClick){
     pageUpbutton.removeEventListener("click", onUpButtonClick);
   }
@@ -534,8 +528,6 @@ function onBackwardButtonClick() {
     pageDownbutton.removeEventListener("click", onDownButtonClick);
   }
 
-  
-   // pageEntity를 찾아서 제거
    const pageEntity = document.getElementById("page-number");
    if (pageEntity) {
      scene.removeChild(pageEntity);

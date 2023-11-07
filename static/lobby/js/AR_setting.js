@@ -12,10 +12,8 @@ AFRAME.registerComponent("auto-font", {
       this.data.fontImage =
         this.data.fontImage || scene.getAttribute("data-font-png");
 
-      // 초기 엔터티에 폰트 적용
       this.applyFontToEntities(this.el.querySelectorAll("[text]"));
 
-      // 새로 추가되는 엔터티에 대한 이벤트 리스너
       this.el.sceneEl.addEventListener(
         "child-attached",
         this.childAttached.bind(this)
@@ -39,19 +37,18 @@ AFRAME.registerComponent("auto-font", {
       entities.forEach((textEl) => {
         textEl.setAttribute("text", "font", this.data.font);
         textEl.setAttribute("text", "fontImage", this.data.fontImage);
-        textEl.setAttribute("text", "shader", "msdf"); // MSDF 쉐이더 적용
+        textEl.setAttribute("text", "shader", "msdf"); 
         textEl.setAttribute("text", "width", 0.3);
       });
     },
   });
 
+// 클릭 이벤트 중복 방지 코드
 AFRAME.registerComponent("scene-debounced-click", {
-    // 클릭 이벤트 중복 방지 코드
     init: function () {
       this.lastClickTime = 0;
-      this.debounceDuration = 200; // 200ms
+      this.debounceDuration = 200; 
   
-      // 씬에 클릭 이벤트 리스너 추가
       this.el.addEventListener("click", this.handleClick.bind(this));
     },
   
@@ -59,8 +56,7 @@ AFRAME.registerComponent("scene-debounced-click", {
       const currentTime = new Date().getTime();
   
       if (currentTime - this.lastClickTime < this.debounceDuration) {
-        // 이전 클릭 이후로 충분한 시간이 지나지 않았으므로 이벤트를 무시합니다.
-        evt.stopPropagation(); // 추가 이벤트 처리를 중지
+        evt.stopPropagation(); 
         return;
       }
   
@@ -68,13 +64,14 @@ AFRAME.registerComponent("scene-debounced-click", {
     },
   });
 
+//모서리가 둥근 박스(3d)
 AFRAME.registerComponent('rounded-box', {
     schema: {
       width: { type: 'number', default: 1 },
       height: { type: 'number', default: 1 },
       depth: { type: 'number', default: 0.1 },
       radius: { type: 'number', default: 0.1 },
-      color: { type: 'color', default: '#D8BFD8' }  // Light purple color
+      color: { type: 'color', default: '#D8BFD8' } 
     },
   
     init: function() {
@@ -99,6 +96,7 @@ AFRAME.registerComponent('rounded-box', {
     }
 });
 
+//모서리가 둥근 박스(2d)
 AFRAME.registerComponent('rounded-plane-box', {
   schema: {
     width: { type: 'number', default: 1 },
@@ -123,7 +121,6 @@ AFRAME.registerComponent('rounded-plane-box', {
     roundedRectShape.lineTo(x + data.radius, y);
     roundedRectShape.quadraticCurveTo(x, y, x, y - data.radius);
 
-    // Convert shape to geometry
     const geometry = new THREE.ShapeBufferGeometry(roundedRectShape);
     const material = new THREE.MeshBasicMaterial({ color: data.color });
     this.mesh = new THREE.Mesh(geometry, material);
@@ -154,9 +151,7 @@ AFRAME.registerComponent('click-handler', {
 
 AFRAME.registerComponent('flat-shading', {
   init: function () {
-    // 해당 엔터티의 material 컴포넌트를 flat shader로 설정
     this.el.setAttribute('material', 'shader', 'flat');
-    // 만약 추후에 생성될 엔터티에도 적용하려면, 이벤트 리스너를 사용
     this.el.sceneEl.addEventListener('child-attached', (event) => {
       event.detail.el.setAttribute('material', 'shader', 'flat');
     });

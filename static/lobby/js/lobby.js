@@ -58,7 +58,6 @@ function stopLoadingAnimation() {
 
   function clearChatMessages() {
     const messagesContainer = document.getElementById("chatMessages");
-    // 채팅창의 내용을 비웁니다.
     messagesContainer.innerHTML = '';
   }
   const ws_protocol =
@@ -93,7 +92,7 @@ function stopLoadingAnimation() {
       } else if (data.message_type === "new_message") {
         if (data.sender !== username) {
           displayMessage(data.sender, data.message, data.image_url);
-          updateScroll();  // 채팅 창을 최신 메시지 위치로 스크롤
+          updateScroll();  
         }
       }
     };
@@ -225,7 +224,6 @@ function stopLoadingAnimation() {
     serviceWindow.style.display = "block";
     displayServiceList("Prompt");
 
-    // 닫기 버튼 이벤트 리스너
     document.querySelector(".close-button").addEventListener("click", function(event) {
       event.stopPropagation();
       serviceWindow.style.display = "none";
@@ -239,7 +237,7 @@ function stopLoadingAnimation() {
 
     function resetInputStyle() {
         const chatInput = document.getElementById("chatInput");
-        chatInput.style.border = "";  // 원래 스타일로 돌아가게 하려면 빈 문자열을 설정
+        chatInput.style.border = "";  
     }
   function displayMessage(sender, message, imageUrl) {
       const chatMessages = document.getElementById("chatMessages");
@@ -272,16 +270,13 @@ function stopLoadingAnimation() {
 
         displayServiceList("Chat");
 
-        // NEW: Reset all service states to false
         for (const service in serviceStates) {
             serviceStates[service] = false;
         }
 
-        // NEW: Hide the AI icon
         aiIcon.style.display = "none";
     });
   
-      // 닫기 버튼 이벤트 리스너
       document.querySelector(".close-button").addEventListener("click", function(event) {
         event.stopPropagation();
         serviceWindow.style.display = "none";
@@ -311,7 +306,6 @@ function stopLoadingAnimation() {
   const imageInput = document.getElementById("imageInput");
   const imageButton = document.getElementById("imageButton");
 
-  // 버튼을 클릭하면 숨겨진 input[type="file"] 요소를 트리거합니다.
   imageButton.addEventListener("click", function() {
       imageInput.click();
   });
@@ -325,7 +319,6 @@ function stopLoadingAnimation() {
 
             displayMessage(username, "", imageAsBase64);
 
-            // 이미지를 base64로 서버에 전송
             chatSocket.send(
               JSON.stringify({
                   image: imageAsBase64,
@@ -344,15 +337,14 @@ function stopLoadingAnimation() {
     document.getElementById("chatControlPannel").style.display="block"
     document.getElementById("chatFriendName").innerText = friendUsername; 
   }
+
+  // 채팅창 숨김
   function closeChatWindow() {
-    // 채팅창을 숨깁니다.
     document.getElementById("chatWindow").style.display = "none";
     document.getElementById("chatControlPannel").style.display = "none";
   
-    // 채팅 메시지를 비웁니다.
     document.getElementById("chatMessages").innerHTML = "";
   
-    // 열려 있는 웹소켓 연결이 있다면 닫습니다.
     if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED) {
       chatSocket.close();
     }
@@ -420,7 +412,7 @@ function stopLoadingAnimation() {
 
       addAcceptAndCloseButtonListeners(notificationElement, notificationId);
     } else if (message === "new_friend_added") {
-      const newFriendUsername = data["new_friend_username"]; // 수정된 부분
+      const newFriendUsername = data["new_friend_username"]; 
       const newFriendProfilePictureUrl = data["new_friend_profile_picture_url"];
       const friendList = document.getElementById("friendList");
       const newFriendElement = document.createElement("li");
@@ -436,7 +428,7 @@ function stopLoadingAnimation() {
       }
 
       const friendNameSpan = document.createElement("span");
-      friendNameSpan.innerText = data["new_friend_name"]; // 디스플레이 이름은 full_name을 사용할 수 있습니다.
+      friendNameSpan.innerText = data["new_friend_name"];
       friendNameSpan.className = "friend-name";
       newFriendElement.appendChild(friendNameSpan);
      
@@ -518,12 +510,10 @@ function stopLoadingAnimation() {
 
   // 페이지 전환 로직
   function showPage(pageId) {
-    // 모든 페이지와 메인 박스를 숨깁니다.
     document
       .querySelectorAll(".page, #Main_Box")
       .forEach((elem) => (elem.style.display = "none"));
 
-    // 선택한 페이지만 보여줍니다.
     document.getElementById(pageId).style.display = "block";
   }
   document.querySelector('#friend-pagination-controls button:nth-child(1)').addEventListener('click', function() {
@@ -601,7 +591,6 @@ function prevPaginationPage(pageType) {
   });
   document.querySelectorAll(".goBackButton").forEach((button) => {
     button.addEventListener("click", function () {
-      // 모든 페이지를 숨기고 메인 박스만 보여줍니다.
       document
         .querySelectorAll(".page")
         .forEach((page) => (page.style.display = "none"));

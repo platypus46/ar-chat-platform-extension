@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function() {
     .then(data => {
       if (data.status === "success") {
         alert("GPT API Key saved successfully!");
-        // Get a new CSRF token from the server and update it in the form
         fetch("/get_new_csrf_token/", {
           method: "GET",
         })

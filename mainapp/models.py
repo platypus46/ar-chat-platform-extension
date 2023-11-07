@@ -4,7 +4,6 @@ import os
 from django.conf import settings
 
 def profile_pic_directory_path(instance, filename):
-    # 확장자를 항상 'jpg'로 설정
     extension = 'jpg'
     
     filename_1 = f"profile/{instance.username}_1.{extension}"
@@ -32,14 +31,13 @@ class CustomUser(AbstractUser):
 
     def save(self, *args, **kwargs):
         is_new = not self.pk  # 새로운 사용자인지 확인
-        super().save(*args, **kwargs)  # 원래의 save 메서드 호출
+        super().save(*args, **kwargs) 
 
-        if is_new:  # 만약 새로운 사용자라면
-            # 기본 구독 로직
+        if is_new:  
             hand_type = SubscriptionType.objects.get_or_create(name="Hand")[0]
             controller_type = SubscriptionType.objects.get_or_create(name="Controller")[0]
 
-            # 추가된 구독 타입
+
             two_d_type = SubscriptionType.objects.get_or_create(name="2D")[0]
             three_d_type = SubscriptionType.objects.get_or_create(name="3D")[0]
             prompt_type = SubscriptionType.objects.get_or_create(name="Prompt")[0]
@@ -49,11 +47,9 @@ class CustomUser(AbstractUser):
             length_service = Service.objects.get_or_create(name="Length Measurement")[0]
             post_it_service = Service.objects.get_or_create(name="Post-It")[0]
 
-            # 새로운 서비스 추가
             emotion_detection = Service.objects.get_or_create(name="Emotion Detection")[0]
             qa_subscription_td = Service.objects.get_or_create(name="Questions and Answers")[0]
 
-            # 기존 서비스 구독 로직
             qa_subscription = Subscription.objects.create(user=self, service=qa_service)
             qa_subscription.types.add(three_d_type,hand_type, controller_type)
 
@@ -63,7 +59,6 @@ class CustomUser(AbstractUser):
             post_it_subscription = Subscription.objects.create(user=self, service=post_it_service)
             post_it_subscription.types.add(three_d_type,hand_type)
 
-            # 새로운 서비스 구독 로직
             emotion_detection_subscription = Subscription.objects.create(user=self, service=emotion_detection)
             emotion_detection_subscription.types.add(two_d_type, chat_type)
 
@@ -106,7 +101,6 @@ class FriendRequest(models.Model):
 
 class ChatRoom(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    # Change this to ForeignKey
     participant1 = models.ForeignKey(CustomUser, related_name='chat_rooms1', on_delete=models.CASCADE)
     participant2 = models.ForeignKey(CustomUser, related_name='chat_rooms2', on_delete=models.CASCADE)
 

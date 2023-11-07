@@ -38,5 +38,5 @@ urlpatterns = [
     path('get_emotion/', views.get_emotion_from_flask, name='get_emotion'),
 ]
 
-if settings.DEBUG:  # 개발 모드에서만
+if settings.DEBUG: 
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

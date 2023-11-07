@@ -58,15 +58,14 @@ class LobbyConsumer(AsyncWebsocketConsumer):
         if message_type == 'friend_request':
             from_user = text_data_json['from_user']
             to_user = text_data_json['to_user']
-            notification, from_user_object = await self.create_friend_request(from_user, to_user)  # 이 부분 수정
+            notification, from_user_object = await self.create_friend_request(from_user, to_user)  
 
-            # to_user에게만 알림을 보냅니다.
             await self.channel_layer.group_send(
                 to_user,
                 {
                     'type': 'send_notification',
                     'message': 'friend_request',
-                    'from_full_name': from_user_object.full_name,  # 이 부분을 수정
+                    'from_full_name': from_user_object.full_name, 
                     'notification_id': notification.id
                 }
             )
@@ -118,7 +117,7 @@ class LobbyConsumer(AsyncWebsocketConsumer):
             'new_friend_profile_picture_url': user_details['profile_picture_url']
         }))
 
-    # consumers.py
+
     @database_sync_to_async
     def accept_friend_request(self, notification_id):
         notification = Notification.objects.get(id=notification_id)
@@ -126,7 +125,7 @@ class LobbyConsumer(AsyncWebsocketConsumer):
         friend_request.is_accepted = True
         friend_request.save()
 
-        # 중복 체크 추가
+        
         if not Friendship.objects.filter(user=friend_request.from_user, friend=friend_request.to_user).exists():
             Friendship.objects.create(user=friend_request.from_user, friend=friend_request.to_user)
 
@@ -173,12 +172,11 @@ class LobbyConsumer(AsyncWebsocketConsumer):
             }
         )
 
-    @database_sync_to_async  # 동기 함수
+    @database_sync_to_async 
     def delete_friend(self, from_username, friend_username):
         from_user = CustomUser.objects.get(username=from_username)
         friend_user = CustomUser.objects.get(username=friend_username)
 
-        # Refresh the state from the database
         from_user.refresh_from_db()
         friend_user.refresh_from_db()
 
@@ -299,7 +297,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 if msg.sender.username in [room.participant1.username, room.participant2.username]
             ]
         except ChatRoom.DoesNotExist:
-        # 채팅방이 없는 경우 빈 리스트 반환
             return []
     
     async def fetch_past_messages(self):

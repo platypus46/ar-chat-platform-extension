@@ -1033,7 +1033,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   inputButton.addEventListener("click", function () {
     const message = sttText.getAttribute("troika-text").value.replace(/\n/g, "");
-    // Only run the following logic when the chat page is visible
     if (isChatVisible) {
       if (chatSocket) {
         chatSocket.close();

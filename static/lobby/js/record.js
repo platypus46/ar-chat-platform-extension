@@ -11,7 +11,8 @@ let sttText = document.querySelector("#sttText");
 const subTextbar = document.getElementById("subTextbar");
 let desiredScale = "0.7 0.7 1";
 
-let currentLanguage = "en";  // 초기 언어 설정
+//초기언어=영어
+let currentLanguage = "en"; 
 let language_mode = document.querySelector("#language-mode");
 let language_text = language_mode.querySelector("a-text");
 
@@ -47,7 +48,6 @@ AFRAME.registerComponent('char-pager', {
 
           el.innerHTML = '';
 
-          // 이전버튼
           let prevButton = document.createElement('a-text');
           prevButton.setAttribute('value', '<');
           prevButton.setAttribute('color', 'black');
@@ -108,7 +108,6 @@ AFRAME.registerComponent('char-pager', {
             el.appendChild(charEntity);
         });
         
-          // 다음버튼
           let nextButton = document.createElement('a-text');
           nextButton.setAttribute('value', '>');
           nextButton.setAttribute('color', 'black');
@@ -161,7 +160,6 @@ AFRAME.registerComponent('emoji-pager', {
 
           el.innerHTML = '';
 
-          // 이전버튼
           let prevButton = document.createElement('a-text');
           prevButton.setAttribute('value', '<');
           prevButton.setAttribute('color', 'black');
@@ -224,8 +222,7 @@ AFRAME.registerComponent('emoji-pager', {
             el.appendChild(boxEntity);
             el.appendChild(charEntity);
         });
-        
-          // 다음버튼
+    
           let nextButton = document.createElement('a-text');
           nextButton.setAttribute('value', '>');
           nextButton.setAttribute('color', 'black');
@@ -261,7 +258,6 @@ async function initRecorder() {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   mediaRecorder = new MediaRecorder(stream);
   
-  // Initialization of global variables after ensuring mediaRecorder is set up
   recordButton = document.getElementById("recordButton");
   recordText = document.getElementById("recordText");
   eraserButton = document.getElementById("eraser-button");
@@ -314,7 +310,7 @@ async function initRecorder() {
       isRecording = false;
       recordButton.setAttribute("gltf-model", recordButtonModel);
     } else {
-      sttText.setAttribute("troika-text","value", ""); // 녹음 시작 전 sttText 초기화
+      sttText.setAttribute("troika-text","value", ""); 
       mediaRecorder.start();
       recordText.setAttribute("value", "recording...");
       isRecording = true;
@@ -341,13 +337,11 @@ async function initRecorder() {
     if (isBoxVisible) {
         targetPositionY = "-0.08"; 
 
-        // `troika-text`의 `value` 속성을 설정합니다.
         const currentText = sttText.getAttribute('troika-text').value;
         subTextbar.setAttribute('troika-text', `value: ${currentText.substring(0, 10).replace(/\n/g, "")}`);
     } else {
         targetPositionY = "0.08"; 
 
-        // `troika-text`의 `value` 속성을 빈 문자열로 설정합니다.
         subTextbar.setAttribute('troika-text', 'value: ');
     }
   

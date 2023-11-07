@@ -1,4 +1,3 @@
-
 from django.contrib import admin
 from .models import CustomUser, Friendship, ChatMessage, Subscription, ChatRoom, Notification
 
@@ -8,5 +7,3 @@ admin.site.register(Subscription)
 admin.site.register(ChatMessage)
 admin.site.register(ChatRoom)
 admin.site.register(Notification)
-
-# Register your models here.

@@ -49,6 +49,12 @@ This is a 1:1 chatting scene in an AR space.
 [LHH-97](https://github.com/LHH-97)  
 
 ## Resource  
-API: GPT-3.5-Turbo(질문 및 대답), SpeechRecognition를 이용한 Google Cloud Speech AI사용(음성 인식), 단발식 한국어 대화 데이터셋을 활용하여 감정 분석을 위해 미세 조정된 KcBERT 모델(감정 분류)
-배경화면: https://hwang-daram.com/work/?q=YToyOntzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjtzOjQ6InBhZ2UiO2k6Mjt9&bmode=view&idx=12493814&t=board (@HWANG_DARAM)
+**API**  
+- GPT-3.5-Turbo(질문 및 대답)  
+- SpeechRecognition를 이용한 Google Cloud Speech AI사용(음성 인식)  
+- 단발식 한국어 대화 데이터셋을 활용하여 감정 분석을 위해 미세 조정된 KcBERT 모델(감정 분류)  
+  
+       
+**Background Image**      
+[@HWANG_DARAM](https://hwang-daram.com/work/q=YToyOntzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjtzOjQ6InBhZ2UiO2k6Mjt9&bmode=view&idx=12493814&t=board) 
  

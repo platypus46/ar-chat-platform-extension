@@ -41,7 +41,7 @@ This is a 1:1 chatting scene in an AR space.
 ## Usages
 1.ngok설치  
 2. ngrok url을 django settings.py에서 ALLOWED_HOSTS,CORS_ORIGIN_WHITELIST,CSRF_TRUSTED_ORIGINS에 각각 입력  
-3. 터미널에 docker-compose up --build 실행  
+3. 터미널에서 docker-compose up --build 실행  
 (실행 전 장고 키 입력 및 migrate,migrations필요)
   
   

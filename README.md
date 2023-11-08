@@ -32,8 +32,7 @@ This is a 1:1 chatting scene in an AR space.
   
 **(Emotion Classification API)**  
 ![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)  
-
-
+ 
    
   
 ## Usages
@@ -48,3 +47,8 @@ This is a 1:1 chatting scene in an AR space.
 [platypus46](https://github.com/platypus46)  
 [BlackShrike](https://github.com/BlackShrike)  
 [LHH-97](https://github.com/LHH-97)  
+
+## Resource  
+API: GPT-3.5-Turbo(질문 및 대답), SpeechRecognition를 이용한 Google Cloud Speech AI사용(음성 인식), 단발식 한국어 대화 데이터셋을 활용하여 감정 분석을 위해 미세 조정된 KcBERT 모델(감정 분류)
+배경화면: https://hwang-daram.com/work/?q=YToyOntzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjtzOjQ6InBhZ2UiO2k6Mjt9&bmode=view&idx=12493814&t=board (@HWANG_DARAM)
+ 

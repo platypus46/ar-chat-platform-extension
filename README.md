@@ -1,6 +1,6 @@
 # PLATYVERSE(Ar-Chat-Platform-Extension)
 
-**2D, 3D 환경에서 실시간 1:1 채팅을 지원하며, '길이 측정', '포스트잇', 'GPT를 이용한 질문과 답변' 등 가능한 추가 기능을 사용할 수 있는 장고 웹 프로젝트입니다.**    
+**2D, 3D 환경에서 1:1 채팅을 지원하며, '길이 측정', '포스트잇', 'GPT를 이용한 질문과 답변' 등 가능한 추가 기능을 사용할 수 있는 장고 웹 프로젝트입니다.**    
 (It is a Django web project that supports 1:1 chatting in 2D and 3D environments, and can use additional functions such as 'length measurement', 'post-it', and 'questions and answers using GPT')  
 
 **※본 페이지에는 여러 개의 GIF 이미지가 포함되어 있어 로딩에 시간이 다소 걸릴 수 있습니다. 모든 내용이 잘 표시될 때까지 잠시만 기다려 주세요. 감사합니다!**  
